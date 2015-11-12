@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="AlpheusAFPParser/deployment/AlpheusAFPParser_v0.2_sources.jar"/>
+    <options buildIfNeeded="true" compress="false" descriptionLocation="/AlpheusAFPParser/ExportJar_sources.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <selectedElements exportClassFiles="false" exportJavaFiles="true" exportOutputFolder="false">
+        <javaElement handleIdentifier="=AlpheusAFPParser/src"/>
+    </selectedElements>
+</jardesc>
