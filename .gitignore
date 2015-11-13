@@ -14,3 +14,4 @@ bin
 .settings
 deployment
 junit
+generated_build.xml
