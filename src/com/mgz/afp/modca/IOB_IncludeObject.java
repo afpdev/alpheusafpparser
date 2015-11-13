@@ -18,6 +18,7 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ import com.mgz.afp.triplets.Triplet;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
 import com.mgz.util.UtilCharacterEncoding;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 /**
  * MO:DCA, page 200.<br>
@@ -82,7 +82,7 @@ public class IOB_IncludeObject extends StructuredFieldBaseName {
 
 	@Override
 	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		ByteOutputStream baos = new ByteOutputStream();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		baos.write(UtilCharacterEncoding.stringToByteArray(getName(), config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
 		baos.write(reserved8);
 		baos.write(objectType.toByte());
@@ -96,7 +96,7 @@ public class IOB_IncludeObject extends StructuredFieldBaseName {
 		if(triplets!=null){
 			for(Triplet triplet : triplets) triplet.writeAFP(baos, config);
 		}
-		writeFullStructuredField(os, baos.getBytes());
+		writeFullStructuredField(os, baos.toByteArray());
 	}
 
 	public byte getReserved8() {

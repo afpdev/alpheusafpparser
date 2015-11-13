@@ -18,6 +18,7 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.ioca;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -53,7 +54,6 @@ import com.mgz.afp.ioca.IPD_Segment.UnknownSegmentExtended;
 import com.mgz.afp.ioca.IPD_Segment.UnknownSegmentLong;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 public class IPD_ImagePictureData extends StructuredField {
 	List<IPD_Segment> listOfSegments;
@@ -108,9 +108,9 @@ public class IPD_ImagePictureData extends StructuredField {
 	@Override
 	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
 		if(listOfSegments!=null && !listOfSegments.isEmpty()){
-			ByteOutputStream baos = new ByteOutputStream();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			for(IPD_Segment segment : listOfSegments) segment.writeAFP(baos, config);
-			writeFullStructuredField(os, baos.getBytes());
+			writeFullStructuredField(os, baos.toByteArray());
 		}else{
 			writeFullStructuredField(os, null);
 		}
