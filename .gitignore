@@ -1,6 +1,5 @@
 generator
 generated_SF
-deployment
 nbproject
 project_docu
 test/testfiles
@@ -13,3 +12,5 @@ manifest.mf
 bin
 .svn
 .settings
+deployment
+junit
