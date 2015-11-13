@@ -43,7 +43,7 @@ public class AFPWriterTest {
 		
 		OutputStream os = new FileOutputStream("./output/" + AFPWriterTest.class.getSimpleName()+ ".tmp");
 		
-		for(File afpFile : ConstantsForTesting.afpFiles){
+		for(File afpFile : Constants.afpFiles){
 
 			System.out.println(" --- -------------------------------------");
 			System.out.println(" --- FILE: " + afpFile.getAbsolutePath());

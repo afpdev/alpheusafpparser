@@ -46,7 +46,7 @@ public class AFPParserTest {
 	@Test
 	public void testParsingAllTestFiles() throws IOException, AFPParserException, NoSuchAlgorithmException {
 		AFPParserConfiguration pc = new AFPParserConfiguration();
-		for(File afpFile : ConstantsForTesting.afpFiles){
+		for(File afpFile : Constants.afpFiles){
 
 			System.out.println(" --- FILE: " + afpFile.getAbsolutePath());
 
@@ -105,7 +105,7 @@ public class AFPParserTest {
 		MessageDigest mdIs = MessageDigest.getInstance("MD5");
 		MessageDigest mdOs = MessageDigest.getInstance("MD5");
 
-		for(File afpFile : ConstantsForTesting.afpFiles){		
+		for(File afpFile : Constants.afpFiles){		
 
 
 			DigestInputStream dis = new DigestInputStream(new FileInputStream(afpFile), mdIs);
@@ -120,14 +120,11 @@ public class AFPParserTest {
 				sf = parser.parseNextSF();
 				if(sf!=null){ 
 					sf.writeAFP(dos,pc);
-					if(!Arrays.equals(mdIs.digest(), mdOs.digest())){
 
-						sf.writeAFP(dos,pc);
-						assertArrayEquals(afpFile.getName() + " 0x" + Long.toHexString(sf.getStructuredFieldIntroducer().getFileOffset()) + " " +sf.getClass().getSimpleName(), 
-								dis.getMessageDigest().digest(),
-								dos.getMessageDigest().digest()
-								);
-					}
+					assertArrayEquals(afpFile.getName() + " 0x" + Long.toHexString(sf.getStructuredFieldIntroducer().getFileOffset()) + " " +sf.getClass().getSimpleName(), 
+							dis.getMessageDigest().digest(),
+							dos.getMessageDigest().digest()
+							);
 
 				}
 
@@ -149,7 +146,7 @@ public class AFPParserTest {
 		MessageDigest mdIs = MessageDigest.getInstance("MD5");
 		MessageDigest mdOs = MessageDigest.getInstance("MD5");
 
-		for(File afpFile : ConstantsForTesting.afpFiles){		
+		for(File afpFile : Constants.afpFiles){		
 
 
 			DigestInputStream dis = new DigestInputStream(new FileInputStream(afpFile), mdIs);

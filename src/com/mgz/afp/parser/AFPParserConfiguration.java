@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.security.DigestInputStream;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.StructuredFieldBaseData;
@@ -98,7 +99,7 @@ public class AFPParserConfiguration implements Serializable,Cloneable{
 		if(inputStream==null && afpFile!=null){
 			inputStream = new BufferedInputStream(new FileInputStream(afpFile),this.bufferSize);
 			isParserOwnsInputStream = true;
-		}else if(inputStream!=null && !(inputStream instanceof BufferedInputStream) && bufferSize>0){
+		}else if(inputStream!=null && !(inputStream instanceof BufferedInputStream || inputStream instanceof DigestInputStream) && bufferSize>0){
 			inputStream = new BufferedInputStream(inputStream,this.bufferSize);
 		}
 		return inputStream;
