@@ -20,7 +20,7 @@ package com.mgz.test;
 import java.io.File;
 
 
-public class ConstantsForTesting {
+public class Constants {
 	public static final File[] afpFiles = {
 			new File("./testfiles/3828micr.afp"),
 			new File("./testfiles/afptech2.afp"),
