@@ -396,7 +396,7 @@ using the US-ASCII coded character set.
 			System.arraycopy(sfData, offset +4, reserved4_5, 0, reserved4_5.length);
 			structureFlags = StructureFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset +6, 2));
 			registeredObjectID = new byte[16];
-			System.arraycopy(registeredObjectID, offset +8, registeredObjectID, 0, registeredObjectID.length);
+			System.arraycopy(sfData, offset +8, registeredObjectID, 0, registeredObjectID.length);
 
 			int actualLength = StructuredField.getActualLength(sfData, offset, length);
 			if(actualLength>24){
