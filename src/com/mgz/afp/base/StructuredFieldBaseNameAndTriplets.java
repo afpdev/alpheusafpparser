@@ -41,10 +41,19 @@ public abstract class StructuredFieldBaseNameAndTriplets extends StructuredField
 	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException{
 		super.decodeAFP(sfData, offset, length, config);
 		int actualLength = getActualLength(sfData, offset, length);
-		if(actualLength>8){
-			triplets = TripletParser.parseTriplets(sfData, 8, sfData.length-8, config);
+		int tripletOffset = this.getOffsetToTriplets();
+		if(actualLength>tripletOffset){
+			triplets = TripletParser.parseTriplets(sfData, tripletOffset, sfData.length-tripletOffset, config);
 		}else{
 			triplets=null;
+		}
+	}
+	private int getOffsetToTriplets() {
+		SFTypeID sfTypeID = this.getStructuredFieldIntroducer().getSFTypeID();
+		if (sfTypeID == SFTypeID.BDT_BeginDocument || sfTypeID == SFTypeID.BRS_BeginResource) {
+			return 10;
+		} else {
+			return 8;
 		}
 	}
 
