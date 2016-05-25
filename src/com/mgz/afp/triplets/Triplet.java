@@ -1691,8 +1691,8 @@ triplet is used to specify theextent of an object area in the X
 			StructuredField.checkDataLength(sfData, offset, length, 9);
 			super.decodeAFP(sfData, offset, length, config);
 			sizeType_0x02 = sfData[offset +2];
-			xSize = UtilBinaryDecoding.parseShort(sfData, offset +3, 3);
-			ySize = UtilBinaryDecoding.parseShort(sfData, offset +6, 3);
+			xSize = UtilBinaryDecoding.parseInt(sfData, offset +3, 3);
+			ySize = UtilBinaryDecoding.parseInt(sfData, offset +6, 3);
 		}
 
 		@Override
