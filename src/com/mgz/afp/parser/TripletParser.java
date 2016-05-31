@@ -44,7 +44,7 @@ public class TripletParser {
 		int actualLength = StructuredField.getActualLength(sfData, offset, length);
 		int pos =0;
 		while(pos<actualLength){
-			Triplet triplet = null;
+			Triplet triplet;
 			try{
 				triplet = parseTriplet(sfData, offset +pos, actualLength -pos, config);
 			}catch(AFPParserException pex){
@@ -54,7 +54,8 @@ public class TripletParser {
 				byte[] tripletData = new byte[actualLength];
 				System.arraycopy(sfData, offset, tripletData, 0, actualLength);
 				undef.setTripletData(tripletData);
-				
+				undef.setLength((short)(sfData[offset+pos] & 0xFF));
+				undef.setTripletID(TripletID.Undefined);
 			}
 			resultingTriplets.add(triplet);
 			
