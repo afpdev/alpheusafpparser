@@ -163,7 +163,7 @@ public class AFPParserConfiguration implements Serializable,Cloneable{
 	
 	/**
 	 * Returns true if the parser is building shallow {@link StructuredField}s.
-	 * Shallow SFs consist only of {@link StructuredFieldIntroducer}, the value of all other fields remain undefined until {@link StructuredField#realize()} is called.
+	 * Shallow SFs consist only of {@link StructuredFieldIntroducer}, the value of all other fields remain undefined until {@link AFPParser#reload(StructuredField)} is called.
 	 * Shallow SFs require considerably less memory than fully realized SFs.  
 	 * @return
 	 */
