@@ -1310,7 +1310,7 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
 		/**
 		 * Sets the value of {@link #xAxisLengthForRoundCorner}.
 		 * Sets the value of {@link #lengthOfFollowingData} accordingly.
-		 * @param yAxisLengthForRoundCorner value of {@link #xAxisLengthForRoundCorner}, may be null.
+		 * @param xAxisLengthForRoundCorner value of {@link #xAxisLengthForRoundCorner}, may be null.
 		 */
 		public void setxAxisLengthForRoundCorner(Short xAxisLengthForRoundCorner) {
 			this.xAxisLengthForRoundCorner = xAxisLengthForRoundCorner;
