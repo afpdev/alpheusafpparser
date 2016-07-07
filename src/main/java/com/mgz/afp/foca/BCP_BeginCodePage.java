@@ -22,5 +22,5 @@ import com.mgz.afp.base.StructuredFieldBaseNameAndTriplets;
 
 
 public class BCP_BeginCodePage extends StructuredFieldBaseNameAndTriplets {
-	
+
 }

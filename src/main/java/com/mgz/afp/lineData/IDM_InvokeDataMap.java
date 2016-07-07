@@ -21,16 +21,14 @@ package com.mgz.afp.lineData;
 import com.mgz.afp.base.StructuredFieldBaseName;
 
 /**
- *  Programming Guide and Line Data Reference(ha3l3r04.pdf), page 93.<br>
- *  <br>
- *  The Invoke Data Map structured field selects a new Data Map for printing line
-data and ends the current line-format page. With LND Data Maps, processing
-begins with the first Line Descriptor (LND) structured field of the invoked Data
-Map for the next line-format page. With RCD Data Maps, processing begins with
-the first Record Descriptor (RCD) structured field that matches the Record ID of
-the current line-data record. With XMD Data Maps, processing begins with the first
-XML Descriptor (XMD) structured field that matches the current Qualified Tag.
+ * Programming Guide and Line Data Reference(ha3l3r04.pdf), page 93.<br> <br> The Invoke Data Map
+ * structured field selects a new Data Map for printing line data and ends the current line-format
+ * page. With LND Data Maps, processing begins with the first Line Descriptor (LND) structured field
+ * of the invoked Data Map for the next line-format page. With RCD Data Maps, processing begins with
+ * the first Record Descriptor (RCD) structured field that matches the Record ID of the current
+ * line-data record. With XMD Data Maps, processing begins with the first XML Descriptor (XMD)
+ * structured field that matches the current Qualified Tag.
  */
 
-public class IDM_InvokeDataMap extends StructuredFieldBaseName{
+public class IDM_InvokeDataMap extends StructuredFieldBaseName {
 }

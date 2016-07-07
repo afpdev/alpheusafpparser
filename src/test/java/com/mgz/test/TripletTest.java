@@ -17,29 +17,30 @@ You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
 
 import com.mgz.afp.parser.TripletParser;
 import com.mgz.afp.triplets.Triplet;
 import com.mgz.afp.triplets.Triplet.TripletID;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 
 public class TripletTest {
 
-	@Test
-	public void testTripletInstanciation() {
-		System.out.println("Defined MODCA Triplets:");
-		for(TripletID tID : TripletID.values()){
-			Triplet t = TripletParser.createTripletInstance(tID);
-			
-			assertNotNull(t);
-			System.out.println(t.getClass().getSimpleName());
-			assertEquals(tID.name(), t.getClass().getSimpleName());
-		}
-	}
+  @Test
+  public void testTripletInstanciation() {
+    System.out.println("Defined MODCA Triplets:");
+    for (TripletID tID : TripletID.values()) {
+      Triplet t = TripletParser.createTripletInstance(tID);
 
-	
+      assertNotNull(t);
+      System.out.println(t.getClass().getSimpleName());
+      assertEquals(tID.name(), t.getClass().getSimpleName());
+    }
+  }
+
+
 }

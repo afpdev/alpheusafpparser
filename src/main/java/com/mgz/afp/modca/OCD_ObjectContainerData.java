@@ -21,11 +21,9 @@ package com.mgz.afp.modca;
 import com.mgz.afp.base.StructuredFieldBaseData;
 
 /**
- * MO:DCA, page 304.<br>
- * <br> 
-The Object Container Data structured field contains the data for an object carried
-in an object container. See “Object Type Identifiers” in MO:DCA spec on page 623 for the list of
-object types that may be carried in an object container.
+ * MO:DCA, page 304.<br> <br> The Object Container Data structured field contains the data for an
+ * object carried in an object container. See “Object Type Identifiers” in MO:DCA spec on page 623
+ * for the list of object types that may be carried in an object container.
  */
 public class OCD_ObjectContainerData extends StructuredFieldBaseData {
 }

@@ -18,18 +18,25 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.enums;
 
-public enum AFPObjectType{
-	PageSegment(0x5F),
-	OtherObjectData(0x92),
-	GraphicsGOCA(0xBB),
-	BarCode(0xEB),
-	Overlay(0xDF),
-	Image(0xFB);
-	int code;
-	AFPObjectType(int code){ this.code = code;}
-	public static AFPObjectType valueOf(short code){
-		for(AFPObjectType ot:values()) if(ot.code == code) return ot;
-		return null;
-	}
-	public int toByte(){ return code; }
+public enum AFPObjectType {
+  PageSegment(0x5F),
+  OtherObjectData(0x92),
+  GraphicsGOCA(0xBB),
+  BarCode(0xEB),
+  Overlay(0xDF),
+  Image(0xFB);
+  int code;
+
+  AFPObjectType(int code) {
+    this.code = code;
+  }
+
+  public static AFPObjectType valueOf(short code) {
+    for (AFPObjectType ot : values()) if (ot.code == code) return ot;
+    return null;
+  }
+
+  public int toByte() {
+    return code;
+  }
 }

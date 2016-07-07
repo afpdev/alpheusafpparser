@@ -19,11 +19,13 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 package com.mgz.afp.exceptions;
 
 public class AFPException extends Exception {
-	private static final long serialVersionUID = 1L;
-	public AFPException(String msg, Throwable e) {
-		super(msg, e);
-	}
-	public AFPException(String msg) {
-		super(msg);
-	}
+  private static final long serialVersionUID = 1L;
+
+  public AFPException(String msg, Throwable e) {
+    super(msg, e);
+  }
+
+  public AFPException(String msg) {
+    super(msg);
+  }
 }

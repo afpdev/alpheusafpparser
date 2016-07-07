@@ -19,15 +19,17 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 package com.mgz.afp.base;
 
 public interface IHasName {
-	/**
-	* Sets the name.
-	* @param name the name of this structured field
-	*/
-	public void setName(String name);
-	
-	/**
-	* Returns the name.
-	* @return name of this structured field.
-	*/
-	public String getName();
+  /**
+   * Returns the name.
+   *
+   * @return name of this structured field.
+   */
+  public String getName();
+
+  /**
+   * Sets the name.
+   *
+   * @param name the name of this structured field
+   */
+  public void setName(String name);
 }

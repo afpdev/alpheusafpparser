@@ -18,14 +18,18 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.lineData;
 
-public enum RCD_XMD_RecordTypeElementType{
-	Body,
-	PageHeader,
-	PageTrailer,
-	GroupHeader;
-	public static RCD_XMD_RecordTypeElementType valuesOf(byte code){
-		for(RCD_XMD_RecordTypeElementType rt : values()) if(rt.ordinal()==code) return rt;
-		return null;
-	}
-	public int toByte(){ return this.ordinal();}
+public enum RCD_XMD_RecordTypeElementType {
+  Body,
+  PageHeader,
+  PageTrailer,
+  GroupHeader;
+
+  public static RCD_XMD_RecordTypeElementType valuesOf(byte code) {
+    for (RCD_XMD_RecordTypeElementType rt : values()) if (rt.ordinal() == code) return rt;
+    return null;
+  }
+
+  public int toByte() {
+    return this.ordinal();
+  }
 }

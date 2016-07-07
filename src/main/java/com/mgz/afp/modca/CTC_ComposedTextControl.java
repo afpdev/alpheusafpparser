@@ -18,28 +18,28 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 public class CTC_ComposedTextControl extends StructuredField {
-	static final byte[] constantData =  {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x2D,0x00}; 
-			
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException{
-		checkDataLength(sfData, offset, length, constantData.length);
-	}
+  static final byte[] constantData = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2D, 0x00};
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		
-		writeFullStructuredField(os, constantData);
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    checkDataLength(sfData, offset, length, constantData.length);
+  }
 
-	public byte[] getConstantData() {
-		return constantData;
-	}
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+
+    writeFullStructuredField(os, constantData);
+  }
+
+  public byte[] getConstantData() {
+    return constantData;
+  }
 }

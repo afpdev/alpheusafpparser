@@ -20,6 +20,6 @@ package com.mgz.afp.base;
 
 import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
 
-public interface IRepeatingGroup extends IAFPDecodeableWriteable{
+public interface IRepeatingGroup extends IAFPDecodeableWriteable {
 
 }

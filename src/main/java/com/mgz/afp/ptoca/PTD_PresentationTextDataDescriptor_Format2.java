@@ -18,12 +18,6 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.ptoca;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.enums.AFPUnitBase;
 import com.mgz.afp.exceptions.AFPParserException;
@@ -32,133 +26,139 @@ import com.mgz.afp.parser.PTOCAControlSequenceParser;
 import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence;
 import com.mgz.util.UtilBinaryDecoding;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 public class PTD_PresentationTextDataDescriptor_Format2 extends StructuredField {
-	AFPUnitBase xUnitBase;
-	AFPUnitBase yUnitBase;
-	short xUnitsPerUnitBase;
-	short yUnitsPerUnitBase;
-	short xSize;
-	short ySize;
-	byte[] reserved12_13;
-	List<PTOCAControlSequence> controlSequences;
-	
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		checkDataLength(sfData, offset, length, 12);
-		
-		xUnitBase = AFPUnitBase.valueOf(sfData[offset]);
-		yUnitBase = AFPUnitBase.valueOf(sfData[offset +1]);
-		xUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset +2, 2);
-		yUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset +4, 2);
-		xSize = UtilBinaryDecoding.parseShort(sfData, offset +7, 2);
-		ySize = UtilBinaryDecoding.parseShort(sfData, offset +10, 2);
+  AFPUnitBase xUnitBase;
+  AFPUnitBase yUnitBase;
+  short xUnitsPerUnitBase;
+  short yUnitsPerUnitBase;
+  short xSize;
+  short ySize;
+  byte[] reserved12_13;
+  List<PTOCAControlSequence> controlSequences;
 
-		int actualLength = StructuredField.getActualLength(sfData,offset,length);
-		if(actualLength>13){
-			reserved12_13 = new byte[2];
-			System.arraycopy(sfData, offset +12, reserved12_13, 0, reserved12_13.length);
-			
-			if(actualLength>15){
-				controlSequences = PTOCAControlSequenceParser.parseControlSequences(sfData, offset +15, -1, config);
-			}else{
-				controlSequences = null;
-			}			
-		}else{
-			reserved12_13 = null;
-			controlSequences = null;
-		}
-	}
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		
-		baos.write(xUnitBase.toByte());
-		baos.write(yUnitBase.toByte());
-		baos.write(UtilBinaryDecoding.shortToByteArray(xUnitsPerUnitBase, 2));
-		baos.write(UtilBinaryDecoding.shortToByteArray(yUnitsPerUnitBase, 2));
-		baos.write(UtilBinaryDecoding.shortToByteArray(xSize, 3));
-		baos.write(UtilBinaryDecoding.shortToByteArray(ySize, 3));
-		if(reserved12_13!=null){
-			baos.write(reserved12_13,0,2);
-		}
-		
-		writeFullStructuredField(os, baos.toByteArray());
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    checkDataLength(sfData, offset, length, 12);
 
-	public AFPUnitBase getxUnitBase() {
-		return xUnitBase;
-	}
+    xUnitBase = AFPUnitBase.valueOf(sfData[offset]);
+    yUnitBase = AFPUnitBase.valueOf(sfData[offset + 1]);
+    xUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 2, 2);
+    yUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 4, 2);
+    xSize = UtilBinaryDecoding.parseShort(sfData, offset + 7, 2);
+    ySize = UtilBinaryDecoding.parseShort(sfData, offset + 10, 2);
 
-	public void setxUnitBase(AFPUnitBase xUnitBase) {
-		this.xUnitBase = xUnitBase;
-	}
+    int actualLength = StructuredField.getActualLength(sfData, offset, length);
+    if (actualLength > 13) {
+      reserved12_13 = new byte[2];
+      System.arraycopy(sfData, offset + 12, reserved12_13, 0, reserved12_13.length);
 
-	public AFPUnitBase getyUnitBase() {
-		return yUnitBase;
-	}
+      if (actualLength > 15) {
+        controlSequences = PTOCAControlSequenceParser.parseControlSequences(sfData, offset + 15, -1, config);
+      } else {
+        controlSequences = null;
+      }
+    } else {
+      reserved12_13 = null;
+      controlSequences = null;
+    }
+  }
 
-	public void setyUnitBase(AFPUnitBase yUnitBase) {
-		this.yUnitBase = yUnitBase;
-	}
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-	public short getxUnitsPerUnitBase() {
-		return xUnitsPerUnitBase;
-	}
+    baos.write(xUnitBase.toByte());
+    baos.write(yUnitBase.toByte());
+    baos.write(UtilBinaryDecoding.shortToByteArray(xUnitsPerUnitBase, 2));
+    baos.write(UtilBinaryDecoding.shortToByteArray(yUnitsPerUnitBase, 2));
+    baos.write(UtilBinaryDecoding.shortToByteArray(xSize, 3));
+    baos.write(UtilBinaryDecoding.shortToByteArray(ySize, 3));
+    if (reserved12_13 != null) {
+      baos.write(reserved12_13, 0, 2);
+    }
 
-	public void setxUnitsPerUnitBase(short xUnitsPerUnitBase) {
-		this.xUnitsPerUnitBase = xUnitsPerUnitBase;
-	}
+    writeFullStructuredField(os, baos.toByteArray());
+  }
 
-	public short getyUnitsPerUnitBase() {
-		return yUnitsPerUnitBase;
-	}
+  public AFPUnitBase getxUnitBase() {
+    return xUnitBase;
+  }
 
-	public void setyUnitsPerUnitBase(short yUnitsPerUnitBase) {
-		this.yUnitsPerUnitBase = yUnitsPerUnitBase;
-	}
+  public void setxUnitBase(AFPUnitBase xUnitBase) {
+    this.xUnitBase = xUnitBase;
+  }
 
-	public short getxSize() {
-		return xSize;
-	}
+  public AFPUnitBase getyUnitBase() {
+    return yUnitBase;
+  }
 
-	public void setxSize(short xSize) {
-		this.xSize = xSize;
-	}
+  public void setyUnitBase(AFPUnitBase yUnitBase) {
+    this.yUnitBase = yUnitBase;
+  }
 
-	public short getySize() {
-		return ySize;
-	}
+  public short getxUnitsPerUnitBase() {
+    return xUnitsPerUnitBase;
+  }
 
-	public void setySize(short ySize) {
-		this.ySize = ySize;
-	}
+  public void setxUnitsPerUnitBase(short xUnitsPerUnitBase) {
+    this.xUnitsPerUnitBase = xUnitsPerUnitBase;
+  }
 
-	public byte[] getReserved12_13() {
-		return reserved12_13;
-	}
+  public short getyUnitsPerUnitBase() {
+    return yUnitsPerUnitBase;
+  }
 
-	public void setReserved12_13(byte[] reserved12_13) {
-		this.reserved12_13 = reserved12_13;
-	}
+  public void setyUnitsPerUnitBase(short yUnitsPerUnitBase) {
+    this.yUnitsPerUnitBase = yUnitsPerUnitBase;
+  }
 
-	public List<PTOCAControlSequence> getControlSeqences() {
-		return controlSequences;
-	}
+  public short getxSize() {
+    return xSize;
+  }
 
-	public void setControlSeqences(List<PTOCAControlSequence> controlSeqences) {
-		this.controlSequences = controlSeqences;
-	}
-	
-	public void addControlSequence(PTOCAControlSequence controlSequence){
-		if(controlSequence==null) return;
-		if(controlSequences==null) controlSequences = new ArrayList<PTOCAControlSequence>();
-		controlSequences.add(controlSequence);
-	}
+  public void setxSize(short xSize) {
+    this.xSize = xSize;
+  }
 
-	public void remoceControlSequence(PTOCAControlSequence controlSequence){
-		if(controlSequences==null) return;
-		controlSequences.remove(controlSequence);
-	}
+  public short getySize() {
+    return ySize;
+  }
+
+  public void setySize(short ySize) {
+    this.ySize = ySize;
+  }
+
+  public byte[] getReserved12_13() {
+    return reserved12_13;
+  }
+
+  public void setReserved12_13(byte[] reserved12_13) {
+    this.reserved12_13 = reserved12_13;
+  }
+
+  public List<PTOCAControlSequence> getControlSeqences() {
+    return controlSequences;
+  }
+
+  public void setControlSeqences(List<PTOCAControlSequence> controlSeqences) {
+    this.controlSequences = controlSeqences;
+  }
+
+  public void addControlSequence(PTOCAControlSequence controlSequence) {
+    if (controlSequence == null) return;
+    if (controlSequences == null) controlSequences = new ArrayList<PTOCAControlSequence>();
+    controlSequences.add(controlSequence);
+  }
+
+  public void remoceControlSequence(PTOCAControlSequence controlSequence) {
+    if (controlSequences == null) return;
+    controlSequences.remove(controlSequence);
+  }
 }

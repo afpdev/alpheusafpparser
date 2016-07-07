@@ -19,21 +19,28 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 package com.mgz.afp.enums;
 
 /**
- * Color spaces in AFP. 
+ * Color spaces in AFP.
  */
-public enum AFPColorSpace{
-	RGB(0x01),
-	YCrCb(0x02),
-	CMYK(0x04),
-	Highlight(0x06),
-	CIELAB(0x08),
-	YCbCr(0x12),
-	StandardOCA(0x40);
-	int code;
-	AFPColorSpace(int code){ this.code=code; }
-	public static AFPColorSpace valueOf(byte code){
-		for(AFPColorSpace cs : values()) if (cs.code==code) return cs;
-		return null;
-	}
-	public int toByte(){ return code;}
+public enum AFPColorSpace {
+  RGB(0x01),
+  YCrCb(0x02),
+  CMYK(0x04),
+  Highlight(0x06),
+  CIELAB(0x08),
+  YCbCr(0x12),
+  StandardOCA(0x40);
+  int code;
+
+  AFPColorSpace(int code) {
+    this.code = code;
+  }
+
+  public static AFPColorSpace valueOf(byte code) {
+    for (AFPColorSpace cs : values()) if (cs.code == code) return cs;
+    return null;
+  }
+
+  public int toByte() {
+    return code;
+  }
 }

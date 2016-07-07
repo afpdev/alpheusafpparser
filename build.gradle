@@ -2,9 +2,10 @@ group 'com.mgz'
 version '0.2'
 
 apply plugin: 'java'
+apply plugin: 'checkstyle'
 
 sourceCompatibility = 1.6
-println "Source: " + sourceCompatibility
+println 'Source Compatibility:' + sourceCompatibility
 
 repositories {
     mavenCentral()
@@ -22,6 +23,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
+}
+
+checkstyle {
+    toolVersion = '7.0'
 }
 
 artifacts {

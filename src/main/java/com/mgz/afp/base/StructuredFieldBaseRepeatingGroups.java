@@ -18,36 +18,36 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.base;
 
+import com.mgz.afp.base.annotations.AFPField;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mgz.afp.base.annotations.AFPField;
+public abstract class StructuredFieldBaseRepeatingGroups extends StructuredField implements IHasRepeatingGroups {
+  @AFPField
+  protected List<IRepeatingGroup> repeatingGroups;
 
-public abstract class StructuredFieldBaseRepeatingGroups extends StructuredField implements IHasRepeatingGroups{
-	@AFPField
-	protected List<IRepeatingGroup> repeatingGroups;
+  @Override
+  public final List<IRepeatingGroup> getRepeatingGroups() {
+    return repeatingGroups;
+  }
 
-	@Override
-	public final List<IRepeatingGroup> getRepeatingGroups() {
-		return repeatingGroups;
-	}
+  @Override
+  public final void setRepeatingGroups(List<IRepeatingGroup> repeatingGroups) {
+    this.repeatingGroups = repeatingGroups;
+  }
 
-	@Override
-	public final void setRepeatingGroups(List<IRepeatingGroup> repeatingGroups) {
-		this.repeatingGroups = repeatingGroups;
-	}
-	
-	@Override
-	public final void addRepeatingGroup(IRepeatingGroup rg){
-		if(rg==null) return;
-		if(repeatingGroups==null) repeatingGroups = new ArrayList<IRepeatingGroup>();
-		repeatingGroups.add(rg);
-		
-	}
-	
-	@Override
-	public final void removeRepeatingGroup(IRepeatingGroup rg){
-		if(repeatingGroups==null) return;
-		else repeatingGroups.remove(rg);
-	}
+  @Override
+  public final void addRepeatingGroup(IRepeatingGroup rg) {
+    if (rg == null) return;
+    if (repeatingGroups == null) repeatingGroups = new ArrayList<IRepeatingGroup>();
+    repeatingGroups.add(rg);
+
+  }
+
+  @Override
+  public final void removeRepeatingGroup(IRepeatingGroup rg) {
+    if (repeatingGroups == null) return;
+    else repeatingGroups.remove(rg);
+  }
 }

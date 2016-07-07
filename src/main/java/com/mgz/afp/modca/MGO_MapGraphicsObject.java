@@ -18,40 +18,36 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.mgz.afp.base.RepeatingGroupWithTriplets;
 import com.mgz.afp.base.StructuredFieldBaseRepeatingGroups;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
- * MO:DCA, page 271.<br>
- * <br>
-The Map Graphics Object structured field specifies how a graphics data object is
-mapped into its object area.
- *
+ * MO:DCA, page 271.<br> <br> The Map Graphics Object structured field specifies how a graphics data
+ * object is mapped into its object area.
  */
 public class MGO_MapGraphicsObject extends StructuredFieldBaseRepeatingGroups {
 
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		MGO_RepeatinGroup rg = new MGO_RepeatinGroup();
-		rg.decodeAFP(sfData, offset, length, config);
-		addRepeatingGroup(rg);
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    MGO_RepeatinGroup rg = new MGO_RepeatinGroup();
+    rg.decodeAFP(sfData, offset, length, config);
+    addRepeatingGroup(rg);
+  }
 
 
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config)
+          throws IOException {
+    // TODO Auto-generated method stub
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config)
-			throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
+  }
 
 
-	public static class MGO_RepeatinGroup extends RepeatingGroupWithTriplets{
-	}
+  public static class MGO_RepeatinGroup extends RepeatingGroupWithTriplets {
+  }
 }

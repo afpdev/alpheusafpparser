@@ -18,11 +18,6 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca_L;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-
 import com.mgz.afp.base.IHasRepeatingGroups;
 import com.mgz.afp.base.IRepeatingGroup;
 import com.mgz.afp.base.RepeatingGroupWithTriplets;
@@ -30,50 +25,47 @@ import com.mgz.afp.base.StructuredFieldBaseRepeatingGroups;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
 
 /**
-MO:DCA-L, page 12.
-<br><br>
-The Map Color Attribute Table structured field maps a unique Resource Local ID
-to the name of a Begin Color Attribute Table structured field. A local ID may be
-embedded one or more times within an object’s data.
- * 
- * 
-MO:DCA, page 383.
-<br><br>
-Map Color Attribute
-Table (MCA) structured field in MO:DCA-L
-data streams. Note that the MO:DCA-L format
-has been functionally capped and is no longer
-defined in the MO:DCA reference; for a
-definition of this format, see MO:DCA-L: The
-OS/2 Presentation Manager Metafile (.met) Format.
+ * MO:DCA-L, page 12. <br><br> The Map Color Attribute Table structured field maps a unique Resource
+ * Local ID to the name of a Begin Color Attribute Table structured field. A local ID may be
+ * embedded one or more times within an object’s data.
+ *
+ *
+ * MO:DCA, page 383. <br><br> Map Color Attribute Table (MCA) structured field in MO:DCA-L data
+ * streams. Note that the MO:DCA-L format has been functionally capped and is no longer defined in
+ * the MO:DCA reference; for a definition of this format, see MO:DCA-L: The OS/2 Presentation
+ * Manager Metafile (.met) Format.
  */
 
 public class MCA_MapColorAttribteTable extends StructuredFieldBaseRepeatingGroups implements IHasRepeatingGroups {
-		@Override
-		public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-			int actualLength = getActualLength(sfData, offset, length);
-			repeatingGroups = new ArrayList<IRepeatingGroup>();
-			int pos=0;
-			while(pos < actualLength){
-				MCA_RepeatinGroup rg = new MCA_RepeatinGroup();
-				rg.decodeAFP(sfData, offset +pos, -1, config);
-				repeatingGroups.add(rg);
-				pos+=rg.getRepeatingGroupLength();
-			}
-		}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    int actualLength = getActualLength(sfData, offset, length);
+    repeatingGroups = new ArrayList<IRepeatingGroup>();
+    int pos = 0;
+    while (pos < actualLength) {
+      MCA_RepeatinGroup rg = new MCA_RepeatinGroup();
+      rg.decodeAFP(sfData, offset + pos, -1, config);
+      repeatingGroups.add(rg);
+      pos += rg.getRepeatingGroupLength();
+    }
+  }
 
 
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
 
-		@Override
-		public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			for(IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
-			
-			writeFullStructuredField(os, baos.toByteArray());
-		}
+    writeFullStructuredField(os, baos.toByteArray());
+  }
 
-	public static class MCA_RepeatinGroup extends RepeatingGroupWithTriplets{
-	}
+  public static class MCA_RepeatinGroup extends RepeatingGroupWithTriplets {
+  }
 }

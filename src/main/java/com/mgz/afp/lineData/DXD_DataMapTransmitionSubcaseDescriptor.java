@@ -21,8 +21,7 @@ package com.mgz.afp.lineData;
 import com.mgz.afp.base.StructuredFieldBaseData;
 
 /**
- * Programming Guide and Line Data Reference (ha3l3r04.pdf), page 87<br>
- * <br>
+ * Programming Guide and Line Data Reference (ha3l3r04.pdf), page 87<br> <br>
  */
 public class DXD_DataMapTransmitionSubcaseDescriptor extends StructuredFieldBaseData {
 }

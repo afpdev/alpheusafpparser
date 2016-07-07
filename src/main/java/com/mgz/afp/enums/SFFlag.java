@@ -21,32 +21,30 @@ package com.mgz.afp.enums;
 import java.util.EnumSet;
 
 public enum SFFlag {
-	isSegmented,
-	hasExtension,
-	isPadded;
-	
-	public static EnumSet<SFFlag> valueOf(int flagByte){
-		EnumSet<SFFlag> result = EnumSet.noneOf(SFFlag.class); 
-		
-		if((flagByte & 0x80) != 0) result.add(isSegmented);
-		if((flagByte & 0x20) != 0) result.add(hasExtension);
-		if((flagByte & 0x08) != 0) result.add(isPadded);
-		
-		return result;
-	}
-	
-	/**
-	 * Converts the {@link SFFlag} in given {@link EnumSet} to AFP SF FlagByte.
-	 * @param flags
-	 * @return
-	 */
-	public static int toByte(EnumSet<SFFlag> flags){
-		int result = 0;
-		
-		if(flags.contains(isSegmented)) result+=0x80;
-		if(flags.contains(hasExtension)) result+=0x20;
-		if(flags.contains(isPadded)) result+=0x08;
-		
-		return result;
-	}
+  isSegmented,
+  hasExtension,
+  isPadded;
+
+  public static EnumSet<SFFlag> valueOf(int flagByte) {
+    EnumSet<SFFlag> result = EnumSet.noneOf(SFFlag.class);
+
+    if ((flagByte & 0x80) != 0) result.add(isSegmented);
+    if ((flagByte & 0x20) != 0) result.add(hasExtension);
+    if ((flagByte & 0x08) != 0) result.add(isPadded);
+
+    return result;
+  }
+
+  /**
+   * Converts the {@link SFFlag} in given {@link EnumSet} to AFP SF FlagByte.
+   */
+  public static int toByte(EnumSet<SFFlag> flags) {
+    int result = 0;
+
+    if (flags.contains(isSegmented)) result += 0x80;
+    if (flags.contains(hasExtension)) result += 0x20;
+    if (flags.contains(isPadded)) result += 0x08;
+
+    return result;
+  }
 }
