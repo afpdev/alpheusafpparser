@@ -26,6 +26,8 @@ import com.mgz.afp.writer.AFPWriterHumanReadable;
 import com.mgz.afp.writer.IAFPWriter;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +38,8 @@ import java.io.OutputStream;
 
 public class AFPWriterTest {
 
+  public static final Logger LOG = LoggerFactory.getLogger("AFPWriterTest");
+
   @Test
   public void testWriteSF() throws IOException, AFPParserException {
     AFPParserConfiguration pc = new AFPParserConfiguration();
@@ -45,11 +49,7 @@ public class AFPWriterTest {
     OutputStream os = new FileOutputStream("./output/" + AFPWriterTest.class.getSimpleName() + ".tmp");
 
     for (File afpFile : Constants.afpFiles) {
-
-      System.out.println(" --- -------------------------------------");
-      System.out.println(" --- FILE: " + afpFile.getAbsolutePath());
-      System.out.println(" --- -------------------------------------");
-
+      LOG.debug("--- FILE: {}", afpFile.getAbsolutePath());
       pc.setInputStream(new FileInputStream(afpFile));
 
       AFPParser parser = new AFPParser(pc);
