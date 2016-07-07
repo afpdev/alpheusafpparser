@@ -95,7 +95,7 @@ public class CAT_ColorAttributeTable extends StructuredField {
       this.colorTableLocalID = colorTableLocalID;
     }
 
-    public static enum ResetLCTFlag {
+    public enum ResetLCTFlag {
       DoNotResetLCT,
       ResetLCT;
 

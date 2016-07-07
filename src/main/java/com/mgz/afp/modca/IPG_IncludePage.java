@@ -80,7 +80,7 @@ public class IPG_IncludePage extends StructuredFieldBaseTriplets {
     this.flags = flags;
   }
 
-  public static enum IPG_Flag {
+  public enum IPG_Flag {
     Reserved,
     PageIsContainedInResourceDocument;
 

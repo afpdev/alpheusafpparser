@@ -411,7 +411,7 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       this.lineType = lineType;
     }
 
-    public static enum LineType {
+    public enum LineType {
       Default,
       Dotted,
       ShortDashed,
@@ -482,7 +482,7 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       this.lineEnd = lineEnd;
     }
 
-    public static enum LineEnd {
+    public enum LineEnd {
       Default,
       Flat,
       Square,
@@ -523,7 +523,7 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       this.lineJoin = lineJoin;
     }
 
-    public static enum LineJoin {
+    public enum LineJoin {
       Default,
       Bevel,
       Round,

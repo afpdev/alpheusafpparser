@@ -150,7 +150,7 @@ public class PPO_PreprocessPresentationObject extends StructuredFieldBaseRepeati
       this.yOrigin = yOrigin;
     }
 
-    public static enum PPO_Flag implements IMutualExclusiveGroupedFlag {
+    public enum PPO_Flag implements IMutualExclusiveGroupedFlag {
       ObjectOrientation_0Deg_DoNotPreprocess(0),
       ObjectOrientation_0Deg_Preprocess(0),
       ObjectOrientation_90Deg_DoNotPreprocess(1),

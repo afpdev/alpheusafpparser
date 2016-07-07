@@ -152,7 +152,7 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
     this.repeatingGroups = repeatingGroups;
   }
 
-  public static enum CCP_Flag {
+  public enum CCP_Flag {
     BeforeSubpageActions(0x80),
     AfterSubpageActions(0x40),
     SpacingActions(0x20);
@@ -291,7 +291,7 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
       this.comparisonString = comparisonString;
     }
 
-    public static enum CCP_TimingOfAction {
+    public enum CCP_TimingOfAction {
       Default_Immediately(0),
       Immediately(1),
       BeforeCurrentSubPage(2),
@@ -314,7 +314,7 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
       }
     }
 
-    public static enum CCP_MediumMapAction {
+    public enum CCP_MediumMapAction {
       Ignore,
       CurrentMediumMap_PageEject,
       InvokeNamedMediumMap,
@@ -331,7 +331,7 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
       }
     }
 
-    public static enum CCP_DataMapAction {
+    public enum CCP_DataMapAction {
       Ignore,
       CurrentDataMap_PageEject,
       InvokeNamedDataMap,
@@ -348,7 +348,7 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
       }
     }
 
-    public static enum CCP_Comparison {
+    public enum CCP_Comparison {
       AnyChange,
       EqualTo,
       LessThan,

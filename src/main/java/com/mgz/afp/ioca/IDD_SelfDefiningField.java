@@ -51,7 +51,7 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
   }
 
 
-  public static enum SelfDefiningFieldType {
+  public enum SelfDefiningFieldType {
     Unknown(0x00),
     SetBilevelImageColor(0xF6),
     SetExtendedBilevelImageColor(0xF4),
@@ -266,7 +266,7 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
       this.functionSetIdentifier = functionSetIdentifier;
     }
 
-    public static enum FunctionSetIdentifier {
+    public enum FunctionSetIdentifier {
       FS10(0x0A),
       FS11(0x0B),
       FS40(0x28),

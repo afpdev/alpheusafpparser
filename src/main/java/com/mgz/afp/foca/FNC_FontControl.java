@@ -420,7 +420,7 @@ public class FNC_FontControl extends StructuredField {
     this.fnnRepeatingGroupLength = fnnRepeatingGroupLength;
   }
 
-  public static enum PatternTechnologyIdentifier {
+  public enum PatternTechnologyIdentifier {
     LaserMatrixNBitWide((byte) 0x05),
     CompositeAdobeType0((byte) 0x1E),
     Type1FontPrinterFileBinary((byte) 0x1F);
@@ -442,7 +442,7 @@ public class FNC_FontControl extends StructuredField {
     }
   }
 
-  public static enum FNC_FontUseFlag {
+  public enum FNC_FontUseFlag {
     MICRPrinting, // bit 7
     ExtensionFont, // bit 6
     RetiredDoNotShiftBaseLineOffset, // bit 3
@@ -470,7 +470,7 @@ public class FNC_FontControl extends StructuredField {
     }
   }
 
-  public static enum FontUnitBase {
+  public enum FontUnitBase {
     BaseIsFixedAt10Inches,
     BaseIsRelativ;
 
@@ -487,7 +487,7 @@ public class FNC_FontControl extends StructuredField {
     }
   }
 
-  public static enum RasterPatternDataAlignment {
+  public enum RasterPatternDataAlignment {
     Alignment_1Byte((byte) 0x00),
     Alignment_4Byte((byte) 0x02),
     Alignment_8Byte((byte) 0x03);

@@ -71,7 +71,7 @@ public class FNO_FontOrientation extends StructuredField {
     this.repeatingGroups = repeatingGroups;
   }
 
-  public static enum FNO_ControlFlag implements IMutualExclusiveGroupedFlag {
+  public enum FNO_ControlFlag implements IMutualExclusiveGroupedFlag {
     FontIndex_Number0(0),
     FontIndex_Number1(0),
     FontIndex_Number2(0),

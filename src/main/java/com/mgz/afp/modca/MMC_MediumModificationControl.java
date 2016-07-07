@@ -138,7 +138,7 @@ public class MMC_MediumModificationControl extends StructuredField {
       this.parameter = parameter;
     }
 
-    public static enum MMC_KeyWordID {
+    public enum MMC_KeyWordID {
       HorizontalPrintAdjustment_RetiredFor3800(0x0E),
       MediumDestinationSelector_high(0x90),
       MediumDestinationSelector_low(0x91),

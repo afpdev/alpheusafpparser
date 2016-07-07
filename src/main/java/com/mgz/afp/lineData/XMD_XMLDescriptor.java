@@ -319,7 +319,7 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
     this.reserved49_61 = reserved49_61;
   }
 
-  public static enum XMD_Flag {
+  public enum XMD_Flag {
     // (0) 0x800000 reserved.
     // (1) 0x400000 reserved.
     GenerateInlinePosition_CurrentPosition(2),

@@ -96,7 +96,7 @@ public class MFC_MediumFinishingControl extends StructuredFieldBaseTriplets {
     this.scope = scope;
   }
 
-  public static enum MFC_Flag {
+  public enum MFC_Flag {
     ProcessAsNOP,
     ProcessAsSpecified;
 
@@ -111,7 +111,7 @@ public class MFC_MediumFinishingControl extends StructuredFieldBaseTriplets {
     }
   }
 
-  public static enum MFC_BoundaryConditionForSheetCollection {
+  public enum MFC_BoundaryConditionForSheetCollection {
     NoSheetCollection,
     BeginSheetCollection,
     ContinueSheetCollection;
@@ -127,7 +127,7 @@ public class MFC_MediumFinishingControl extends StructuredFieldBaseTriplets {
     }
   }
 
-  public static enum MFC_Scope {
+  public enum MFC_Scope {
     PrintFileLevel,
     DocumentLevel_AllDocuments,
     DocumentLevel_SelectedDocument,

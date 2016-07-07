@@ -56,7 +56,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
   }
 
 
-  public static enum IPD_SegmentType {
+  public enum IPD_SegmentType {
     BeginSegment(0x70),
     EndSegment(0x71),
     BeginImageContent(0x91),
@@ -99,7 +99,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
     }
   }
 
-  public static enum IPD_CompressionAlgorithm {
+  public enum IPD_CompressionAlgorithm {
     IBM_MMR_ModfiedModifiedRead(0x01),
     NoCompression(0x03),
     RL4_RunLength4(0x06),
@@ -133,7 +133,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
     }
   }
 
-  public static enum IPD_RecordingAlgorithm {
+  public enum IPD_RecordingAlgorithm {
     Retired(0x00),
     RIDIC_RecodrdingImageDataInlineCoding(0x01),
     BottomToTop(0x03),
@@ -156,7 +156,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
     }
   }
 
-  public static enum IPD_BitOrder {
+  public enum IPD_BitOrder {
     LeftToRight(0x00),
     RightToLeft(0x01);
     int type;
@@ -527,7 +527,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
       this.nrOfBitsIDEsComponent4 = nrOfBitsIDEsComponent4;
     }
 
-    public static enum IDEStructureFlag implements IMutualExclusiveGroupedFlag {
+    public enum IDEStructureFlag implements IMutualExclusiveGroupedFlag {
       Additive(0),
       Subtractive(0),
       GrayCodingOff(1),
@@ -604,7 +604,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
     }
 
 
-    public static enum AlgorithmType {
+    public enum AlgorithmType {
       Recording(0x00),
       Compressing(0x10);
       int code;
@@ -670,7 +670,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
       this.compressionAlgorithmID = compressionAlgorithmID;
     }
 
-    public static enum CompressionAlgorithmID {
+    public enum CompressionAlgorithmID {
       JPEG(0x83),
       Userdefined(0xFE);
       int code;
@@ -718,7 +718,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
       os.write(reserved5_7);
     }
 
-    public static enum JPEGCompressionAlgorithmSpecificationMarker {
+    public enum JPEGCompressionAlgorithmSpecificationMarker {
       NonDifferentialHuffman_BaselineDCT(0xC0),
       NonDifferentialHuffman_ExtendedSequentialDCT(0xC1),
       NonDifferentialHuffman_ProgressiveDCT(0xC2),
@@ -1004,7 +1004,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
       if (relativeResolution != null) os.write(relativeResolution.toByte());
     }
 
-    public static enum RelativeTileResolution {
+    public enum RelativeTileResolution {
       SameAsImagePresentationSpace(0x01),
       HalfOfImagePresentationSpace(0x02);
       int code;

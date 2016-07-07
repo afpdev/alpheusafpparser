@@ -157,7 +157,7 @@ public class CPD_CodePageDescriptor extends StructuredField {
     this.encodingScheme = encodingScheme;
   }
 
-  public static enum EncodingScheme {
+  public enum EncodingScheme {
     NoEncodingSchemeSpecified(0x0000),
     SingleByte_EncodingNotSpecified(0x0100),
     DoubleByte_EncodingNotSpecified(0x0200),
