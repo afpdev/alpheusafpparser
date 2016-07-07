@@ -31,7 +31,7 @@ import com.mgz.util.UtilBinaryDecoding;
 
 
 /** 
- * <b>Structured Field Introducer (SFI)<b><br>
+ * <b>Structured Field Introducer (SFI)</b><br>
  * The MO:DCA Structured Field Introducer (SFI) identifies type and length of the structured field.
  */
 public class StructuredFieldIntroducer {
