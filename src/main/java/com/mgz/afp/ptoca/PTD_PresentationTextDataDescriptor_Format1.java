@@ -18,125 +18,122 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.ptoca;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.enums.AFPUnitBase;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
- * MO:DCA, page 614.
- * <br><br>
-The Presentation Text Data Descriptor Format 1 structured field specifies the size
-of a text object presentation space and the measurement units used for the size and
-for all linear measurements within the text object.
+ * MO:DCA, page 614. <br><br> The Presentation Text Data Descriptor Format 1 structured field
+ * specifies the size of a text object presentation space and the measurement units used for the
+ * size and for all linear measurements within the text object.
  */
 public class PTD_PresentationTextDataDescriptor_Format1 extends StructuredField {
-	AFPUnitBase xUnitBase;
-	AFPUnitBase yUnitBase;
-	short xUnitsPerUnitBase;
-	short yUnitsPerUnitBase;
-	short xSize;
-	short ySize;
-	byte[] reserved10_11;
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		checkDataLength(sfData, offset, length, 10);
-		
-		xUnitBase = AFPUnitBase.valueOf(sfData[offset]);
-		yUnitBase = AFPUnitBase.valueOf(sfData[offset +1]);
-		xUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset +2, 2);
-		yUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset +4, 2);
-		xSize = UtilBinaryDecoding.parseShort(sfData, offset +6, 2);
-		ySize = UtilBinaryDecoding.parseShort(sfData, offset +8, 2);
+  AFPUnitBase xUnitBase;
+  AFPUnitBase yUnitBase;
+  short xUnitsPerUnitBase;
+  short yUnitsPerUnitBase;
+  short xSize;
+  short ySize;
+  byte[] reserved10_11;
 
-		int actualLength = StructuredField.getActualLength(sfData,offset,length);
-		if(actualLength>10){
-			reserved10_11 = new byte[2];
-			System.arraycopy(sfData, offset +10, reserved10_11, 0, reserved10_11.length);
-		}else{
-			reserved10_11 = null;
-		}
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    checkDataLength(sfData, offset, length, 10);
+
+    xUnitBase = AFPUnitBase.valueOf(sfData[offset]);
+    yUnitBase = AFPUnitBase.valueOf(sfData[offset + 1]);
+    xUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 2, 2);
+    yUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 4, 2);
+    xSize = UtilBinaryDecoding.parseShort(sfData, offset + 6, 2);
+    ySize = UtilBinaryDecoding.parseShort(sfData, offset + 8, 2);
+
+    int actualLength = StructuredField.getActualLength(sfData, offset, length);
+    if (actualLength > 10) {
+      reserved10_11 = new byte[2];
+      System.arraycopy(sfData, offset + 10, reserved10_11, 0, reserved10_11.length);
+    } else {
+      reserved10_11 = null;
+    }
+  }
 
 
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		
-		baos.write(xUnitBase.toByte());
-		baos.write(yUnitBase.toByte());
-		baos.write(UtilBinaryDecoding.shortToByteArray(xUnitsPerUnitBase, 2));
-		baos.write(UtilBinaryDecoding.shortToByteArray(yUnitsPerUnitBase, 2));
-		baos.write(UtilBinaryDecoding.shortToByteArray(xSize, 2));
-		baos.write(UtilBinaryDecoding.shortToByteArray(ySize, 2));
-		if(reserved10_11!=null){
-			baos.write(reserved10_11,0,2);
-		}
-		
-		writeFullStructuredField(os, baos.toByteArray());
-	}
+    baos.write(xUnitBase.toByte());
+    baos.write(yUnitBase.toByte());
+    baos.write(UtilBinaryDecoding.shortToByteArray(xUnitsPerUnitBase, 2));
+    baos.write(UtilBinaryDecoding.shortToByteArray(yUnitsPerUnitBase, 2));
+    baos.write(UtilBinaryDecoding.shortToByteArray(xSize, 2));
+    baos.write(UtilBinaryDecoding.shortToByteArray(ySize, 2));
+    if (reserved10_11 != null) {
+      baos.write(reserved10_11, 0, 2);
+    }
 
-	public AFPUnitBase getxUnitBase() {
-		return xUnitBase;
-	}
+    writeFullStructuredField(os, baos.toByteArray());
+  }
 
-	public void setxUnitBase(AFPUnitBase xUnitBase) {
-		this.xUnitBase = xUnitBase;
-	}
+  public AFPUnitBase getxUnitBase() {
+    return xUnitBase;
+  }
 
-	public AFPUnitBase getyUnitBase() {
-		return yUnitBase;
-	}
+  public void setxUnitBase(AFPUnitBase xUnitBase) {
+    this.xUnitBase = xUnitBase;
+  }
 
-	public void setyUnitBase(AFPUnitBase yUnitBase) {
-		this.yUnitBase = yUnitBase;
-	}
+  public AFPUnitBase getyUnitBase() {
+    return yUnitBase;
+  }
 
-	public short getxUnitsPerUnitBase() {
-		return xUnitsPerUnitBase;
-	}
+  public void setyUnitBase(AFPUnitBase yUnitBase) {
+    this.yUnitBase = yUnitBase;
+  }
 
-	public void setxUnitsPerUnitBase(short xUnitsPerUnitBase) {
-		this.xUnitsPerUnitBase = xUnitsPerUnitBase;
-	}
+  public short getxUnitsPerUnitBase() {
+    return xUnitsPerUnitBase;
+  }
 
-	public short getyUnitsPerUnitBase() {
-		return yUnitsPerUnitBase;
-	}
+  public void setxUnitsPerUnitBase(short xUnitsPerUnitBase) {
+    this.xUnitsPerUnitBase = xUnitsPerUnitBase;
+  }
 
-	public void setyUnitsPerUnitBase(short yUnitsPerUnitBase) {
-		this.yUnitsPerUnitBase = yUnitsPerUnitBase;
-	}
+  public short getyUnitsPerUnitBase() {
+    return yUnitsPerUnitBase;
+  }
 
-	public short getxSize() {
-		return xSize;
-	}
+  public void setyUnitsPerUnitBase(short yUnitsPerUnitBase) {
+    this.yUnitsPerUnitBase = yUnitsPerUnitBase;
+  }
 
-	public void setxSize(short xSize) {
-		this.xSize = xSize;
-	}
+  public short getxSize() {
+    return xSize;
+  }
 
-	public short getySize() {
-		return ySize;
-	}
+  public void setxSize(short xSize) {
+    this.xSize = xSize;
+  }
 
-	public void setySize(short ySize) {
-		this.ySize = ySize;
-	}
+  public short getySize() {
+    return ySize;
+  }
 
-	public byte[] getReserved10_11() {
-		return reserved10_11;
-	}
+  public void setySize(short ySize) {
+    this.ySize = ySize;
+  }
 
-	public void setReserved10_11(byte[] reserved10_11) {
-		this.reserved10_11 = reserved10_11;
-	}
+  public byte[] getReserved10_11() {
+    return reserved10_11;
+  }
+
+  public void setReserved10_11(byte[] reserved10_11) {
+    this.reserved10_11 = reserved10_11;
+  }
 
 }

@@ -18,41 +18,41 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.base;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 public abstract class StructuredFieldBaseUndefined extends StructuredField {
-	@AFPField(maxSize=32759)
-	byte[] payload;
-	
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException{
-		payload=null;
-		
-		int actualLength=0;
-		if(length!=-1) actualLength=length;
-		else actualLength = sfData.length-offset;
-		if(actualLength>0){
-			payload = new byte[actualLength];
-			System.arraycopy(sfData, offset, payload, 0, actualLength);
-		}
-	}
+  @AFPField(maxSize = 32759)
+  byte[] payload;
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException{
-		writeFullStructuredField(os, payload);
-	}
 
-	public byte[] getPayload() {
-		return payload;
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    payload = null;
 
-	public void setPayload(byte[] payload) {
-		this.payload = payload;
-	}
+    int actualLength = 0;
+    if (length != -1) actualLength = length;
+    else actualLength = sfData.length - offset;
+    if (actualLength > 0) {
+      payload = new byte[actualLength];
+      System.arraycopy(sfData, offset, payload, 0, actualLength);
+    }
+  }
+
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    writeFullStructuredField(os, payload);
+  }
+
+  public byte[] getPayload() {
+    return payload;
+  }
+
+  public void setPayload(byte[] payload) {
+    this.payload = payload;
+  }
 }

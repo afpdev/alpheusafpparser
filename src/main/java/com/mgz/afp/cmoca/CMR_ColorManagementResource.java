@@ -20,6 +20,6 @@ package com.mgz.afp.cmoca;
 
 import com.mgz.afp.base.StructuredFieldBaseData;
 
-public class CMR_ColorManagementResource extends StructuredFieldBaseData{
+public class CMR_ColorManagementResource extends StructuredFieldBaseData {
 
 }

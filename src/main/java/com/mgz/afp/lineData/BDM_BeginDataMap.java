@@ -18,10 +18,6 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.lineData;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.mgz.afp.base.IHasName;
 import com.mgz.afp.base.StructuredFieldBaseTriplets;
 import com.mgz.afp.exceptions.AFPParserException;
@@ -30,86 +26,95 @@ import com.mgz.afp.triplets.Triplet;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilCharacterEncoding;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 
 /**
- * Programming Guide and Line Data Reference (ha3l3r04.pdf), page 75<br>
- * <br>
- * The Begin Data Map structured field begins a Data Map resource object.
+ * Programming Guide and Line Data Reference (ha3l3r04.pdf), page 75<br> <br> The Begin Data Map
+ * structured field begins a Data Map resource object.
  */
-public class BDM_BeginDataMap extends StructuredFieldBaseTriplets implements IHasName{
-	/** Format of the data map of {@link BDM_BeginDataMap} */
-	public static enum BDM_DataFormat{
-		UsingLND,
-		UsingRCD,
-		UsingXMD;
-		public static BDM_DataFormat valueOf(byte dataFormtCode){
-			for(BDM_DataFormat df : values()) if(df.ordinal()==dataFormtCode) return df;
-			return null;
-		}
-		public int toByte(){ return ordinal();}
-	}
-	
-	String name;
-	BDM_DataFormat dataFormat;
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		int actualLength = getActualLength(sfData, offset, length);
+public class BDM_BeginDataMap extends StructuredFieldBaseTriplets implements IHasName {
+  String name;
+  BDM_DataFormat dataFormat;
 
-		name = new String(sfData,offset,8,config.getAfpCharSet());
-		if(actualLength>8){
-			dataFormat = BDM_DataFormat.valueOf(sfData[offset +8]);
-			if(actualLength>9){
-				super.decodeAFP(sfData, offset +9, actualLength -9, config);
-			}else{
-				triplets = null;
-			}
-		}else{
-			dataFormat=null;
-			triplets=null;
-		}
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    int actualLength = getActualLength(sfData, offset, length);
 
+    name = new String(sfData, offset, 8, config.getAfpCharSet());
+    if (actualLength > 8) {
+      dataFormat = BDM_DataFormat.valueOf(sfData[offset + 8]);
+      if (actualLength > 9) {
+        super.decodeAFP(sfData, offset + 9, actualLength - 9, config);
+      } else {
+        triplets = null;
+      }
+    } else {
+      dataFormat = null;
+      triplets = null;
+    }
+  }
 
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
+    if (dataFormat != null) {
+      baos.write(dataFormat.toByte());
+      if (triplets != null) {
+        for (Triplet t : triplets) t.writeAFP(baos, config);
+      }
+    }
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		baos.write(UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
-		if(dataFormat!=null){
-			baos.write(dataFormat.toByte());
-			if(triplets!=null) {
-				for(Triplet t: triplets) t.writeAFP(baos, config);
-			}
-		}
-		
-		writeFullStructuredField(os, baos.toByteArray());
-	}
+    writeFullStructuredField(os, baos.toByteArray());
+  }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+  @Override
+  public String getName() {
+    return name;
+  }
 
-	@Override
-	public void setName(String dataMapName) {
-		this.name = dataMapName;
-	}
+  @Override
+  public void setName(String dataMapName) {
+    this.name = dataMapName;
+  }
 
-	/**
-	 * Returns the data format specified by this Data Map.
-	 * @return data format specified by this Data Map.
-	 */
-	public BDM_DataFormat getDataFormat() {
-		return dataFormat;
-	}
+  /**
+   * Returns the data format specified by this Data Map.
+   *
+   * @return data format specified by this Data Map.
+   */
+  public BDM_DataFormat getDataFormat() {
+    return dataFormat;
+  }
 
-	/**
-	 * Sets the data format specified by this {@link BDM_BeginDataMap}.
-	 * @param dataFormat data format specified by this {@link BDM_BeginDataMap}
-	 */
-	public void setDataFormat(BDM_DataFormat dataFormat) {
-		this.dataFormat = dataFormat;
-	}
+  /**
+   * Sets the data format specified by this {@link BDM_BeginDataMap}.
+   *
+   * @param dataFormat data format specified by this {@link BDM_BeginDataMap}
+   */
+  public void setDataFormat(BDM_DataFormat dataFormat) {
+    this.dataFormat = dataFormat;
+  }
+
+  /**
+   * Format of the data map of {@link BDM_BeginDataMap}
+   */
+  public static enum BDM_DataFormat {
+    UsingLND,
+    UsingRCD,
+    UsingXMD;
+
+    public static BDM_DataFormat valueOf(byte dataFormtCode) {
+      for (BDM_DataFormat df : values()) if (df.ordinal() == dataFormtCode) return df;
+      return null;
+    }
+
+    public int toByte() {
+      return ordinal();
+    }
+  }
 
 }

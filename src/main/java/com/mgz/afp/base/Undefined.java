@@ -19,6 +19,5 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 package com.mgz.afp.base;
 
 
-
 public class Undefined extends StructuredFieldBaseUndefined {
 }

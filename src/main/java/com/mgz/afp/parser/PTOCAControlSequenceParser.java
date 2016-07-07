@@ -18,55 +18,55 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence;
 import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence.ControlSequenceIntroducer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PTOCAControlSequenceParser {
-	public static List<PTOCAControlSequence> parseControlSequences(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException{
+  public static List<PTOCAControlSequence> parseControlSequences(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
 
-		List<PTOCAControlSequence> controlSequences = new ArrayList<PTOCAControlSequence>();
+    List<PTOCAControlSequence> controlSequences = new ArrayList<PTOCAControlSequence>();
 
-		int actualLength = StructuredField.getActualLength(sfData, offset, length);
-		int pos = 0;
-		boolean isChained = false;
-		while(pos<actualLength){
-			ControlSequenceIntroducer csi = ControlSequenceIntroducer.parseCSI(isChained, sfData, offset+pos, -1, config);
-			
-			PTOCAControlSequence cs = createControlSequenceInstance(csi);
-			// Move pos to begin of CS payload.
-			if(isChained) pos+= 2;
-			else pos+= 4;
+    int actualLength = StructuredField.getActualLength(sfData, offset, length);
+    int pos = 0;
+    boolean isChained = false;
+    while (pos < actualLength) {
+      ControlSequenceIntroducer csi = ControlSequenceIntroducer.parseCSI(isChained, sfData, offset + pos, -1, config);
 
-			cs.decodeAFP(sfData, offset + pos, csi.getLength()-2, config);
-			isChained = cs.getCsi().isChained();
-			
-			controlSequences.add(cs);
-			pos+= csi.getLength()-2;
-		}
+      PTOCAControlSequence cs = createControlSequenceInstance(csi);
+      // Move pos to begin of CS payload.
+      if (isChained) pos += 2;
+      else pos += 4;
 
-		return controlSequences;
-	}
+      cs.decodeAFP(sfData, offset + pos, csi.getLength() - 2, config);
+      isChained = cs.getCsi().isChained();
 
-	public static final PTOCAControlSequence createControlSequenceInstance(ControlSequenceIntroducer csi) throws AFPParserException{
-		PTOCAControlSequence cs = null;
-		String className = null;
-		try{
-			className = com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence.class.getName()+ "$" + csi.getControlSequenceFunctionType().name();
-			Class<?> clazz  = Class.forName(className);
-			cs = (PTOCAControlSequence) clazz.newInstance();
-		}catch(Throwable cnfex){
-			throw new AFPParserException(PTOCAControlSequence.class.getSimpleName()+": failed to instantiate control sequence class '" + className + "'.");
-		}
+      controlSequences.add(cs);
+      pos += csi.getLength() - 2;
+    }
 
-		if(cs==null) cs = new com.mgz.afp.ptoca.controlSequence.Undefined();
-		cs.setCsi(csi);
+    return controlSequences;
+  }
 
-		return cs;
-	}
+  public static final PTOCAControlSequence createControlSequenceInstance(ControlSequenceIntroducer csi) throws AFPParserException {
+    PTOCAControlSequence cs = null;
+    String className = null;
+    try {
+      className = com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence.class.getName() + "$" + csi.getControlSequenceFunctionType().name();
+      Class<?> clazz = Class.forName(className);
+      cs = (PTOCAControlSequence) clazz.newInstance();
+    } catch (Throwable cnfex) {
+      throw new AFPParserException(PTOCAControlSequence.class.getSimpleName() + ": failed to instantiate control sequence class '" + className + "'.");
+    }
+
+    if (cs == null) cs = new com.mgz.afp.ptoca.controlSequence.Undefined();
+    cs.setCsi(csi);
+
+    return cs;
+  }
 
 }

@@ -21,11 +21,9 @@ package com.mgz.afp.lineData;
 import com.mgz.afp.base.StructuredFieldBaseName;
 
 /**
- * Programming Guide and Line Data Reference (ha3l3r04.pdf), page 82.<br>
- * <br>
- * The Begin Data Map Transmission Subcase structured field begins a Data Map
- * Transmission Subcase object, which contains the structured fields used to map lines
- * of data to the page.<br>
+ * Programming Guide and Line Data Reference (ha3l3r04.pdf), page 82.<br> <br> The Begin Data Map
+ * Transmission Subcase structured field begins a Data Map Transmission Subcase object, which
+ * contains the structured fields used to map lines of data to the page.<br>
  */
 public class BDX_BeginDataMapTransmitionSubcase extends StructuredFieldBaseName {
 

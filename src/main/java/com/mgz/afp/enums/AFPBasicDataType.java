@@ -19,16 +19,28 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 package com.mgz.afp.enums;
 
 public enum AFPBasicDataType {
-	/** Architected constant. */
-	CODE,
-	/** Character string, which may consist of any code points */
-	CHAR,
-	/**  Bit string. */
-	BITS,
-	/** Unsigned binary. */
-	UBIN,
-	/**  Signed binary. */
-	SBIN,
-	/** Undefined type. */
-	UNDF;
+  /**
+   * Architected constant.
+   */
+  CODE,
+  /**
+   * Character string, which may consist of any code points
+   */
+  CHAR,
+  /**
+   * Bit string.
+   */
+  BITS,
+  /**
+   * Unsigned binary.
+   */
+  UBIN,
+  /**
+   * Signed binary.
+   */
+  SBIN,
+  /**
+   * Undefined type.
+   */
+  UNDF;
 }

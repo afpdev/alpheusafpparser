@@ -19,24 +19,23 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 package com.mgz.afp.enums;
 
 /**
- * MO:DCA, page 301.<br>
- * <br>
- * Specifies the reference coordinate system.
+ * MO:DCA, page 301.<br> <br> Specifies the reference coordinate system.
  */
 public enum AFPReferenceCoordinateSystem {
-	AsDefined_PageOverlayIPS,
-	Standard,
-	Retired;
-	public static AFPReferenceCoordinateSystem valueOf(byte codeByte){
-		if(codeByte == 0x00) return AsDefined_PageOverlayIPS;
-		else if(codeByte == 0x01) return Standard;
-		else if(codeByte == 0x05) return Retired;
-		return null;
-	}
-	
-	public int toByte(){
-		if(this==AsDefined_PageOverlayIPS) return 0x00;
-		else if (this == Standard) return 0x01;
-		else return 0x05;
-	}
+  AsDefined_PageOverlayIPS,
+  Standard,
+  Retired;
+
+  public static AFPReferenceCoordinateSystem valueOf(byte codeByte) {
+    if (codeByte == 0x00) return AsDefined_PageOverlayIPS;
+    else if (codeByte == 0x01) return Standard;
+    else if (codeByte == 0x05) return Retired;
+    return null;
+  }
+
+  public int toByte() {
+    if (this == AsDefined_PageOverlayIPS) return 0x00;
+    else if (this == Standard) return 0x01;
+    else return 0x05;
+  }
 }

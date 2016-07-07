@@ -18,11 +18,6 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.base;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.exceptions.AFPValidationException;
 import com.mgz.afp.parser.AFPParserConfiguration;
@@ -30,45 +25,50 @@ import com.mgz.afp.parser.TripletParser;
 import com.mgz.afp.triplets.Triplet;
 import com.mgz.util.UtilBinaryDecoding;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 public class RepeatingGroupWithTriplets extends RepeatingGroupBase implements IHasTriplets {
-	protected List<Triplet> triplets;
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		super.decodeAFP(sfData, offset, length, config);
-		if(repeatingGroupLength>2){
-			triplets = TripletParser.parseTriplets(sfData, offset+2, repeatingGroupLength-2, config);
-		}
-	}
+  protected List<Triplet> triplets;
 
-	@Override
-	public void validate() throws AFPValidationException {
-		// TODO: validate.
-		
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    super.decodeAFP(sfData, offset, length, config);
+    if (repeatingGroupLength > 2) {
+      triplets = TripletParser.parseTriplets(sfData, offset + 2, repeatingGroupLength - 2, config);
+    }
+  }
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		os.write(UtilBinaryDecoding.intToByteArray(repeatingGroupLength, 2));
-		if(triplets!=null) for(Triplet t : triplets) t.writeAFP(os, config);
-	}
-	
-	public List<Triplet> getTriplets() {
-		return triplets;
-	}
+  @Override
+  public void validate() throws AFPValidationException {
+    // TODO: validate.
 
-	public void setTriplets(List<Triplet> triplets) {
-		this.triplets =triplets;
-	}
+  }
 
-	public void addTriplet(Triplet triplet) {
-		if(triplet==null) return;
-		if(triplets==null) triplets = new ArrayList<Triplet>();
-		triplets.add(triplet);
-	}
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    os.write(UtilBinaryDecoding.intToByteArray(repeatingGroupLength, 2));
+    if (triplets != null) for (Triplet t : triplets) t.writeAFP(os, config);
+  }
 
-	public void removeTriplet(Triplet triplet) {
-		if(triplets==null) return;
-		else triplets.add(triplet);
-	}
+  public List<Triplet> getTriplets() {
+    return triplets;
+  }
+
+  public void setTriplets(List<Triplet> triplets) {
+    this.triplets = triplets;
+  }
+
+  public void addTriplet(Triplet triplet) {
+    if (triplet == null) return;
+    if (triplets == null) triplets = new ArrayList<Triplet>();
+    triplets.add(triplet);
+  }
+
+  public void removeTriplet(Triplet triplet) {
+    if (triplets == null) return;
+    else triplets.add(triplet);
+  }
 }

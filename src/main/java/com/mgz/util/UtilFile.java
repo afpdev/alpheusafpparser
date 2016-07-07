@@ -27,29 +27,30 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class UtilFile {
-	public static byte[] digestFile(File file) throws IOException{
-		byte[] buffer = new byte[10 * 1024];
+  public static byte[] digestFile(File file) throws IOException {
+    byte[] buffer = new byte[10 * 1024];
 
-		MessageDigest md;
-		try {
-			md = MessageDigest.getInstance("MD5");
+    MessageDigest md;
+    try {
+      md = MessageDigest.getInstance("MD5");
 
-			InputStream is = null;
-			DigestInputStream dis = null;
-			try  {
-				is = new FileInputStream(file);
-				dis = new DigestInputStream(is, md);
-				while(dis.read(buffer)>-1);
-			}finally{
-				try {
-					if(dis!=null) dis.close();
-					else if(is!=null) is.close();
-				} catch (IOException e) {}
-			}
-			byte[] digest = md.digest();
-			return digest;
-		} catch (NoSuchAlgorithmException e1) {
-			return null;
-		}		
-	}
+      InputStream is = null;
+      DigestInputStream dis = null;
+      try {
+        is = new FileInputStream(file);
+        dis = new DigestInputStream(is, md);
+        while (dis.read(buffer) > -1) ;
+      } finally {
+        try {
+          if (dis != null) dis.close();
+          else if (is != null) is.close();
+        } catch (IOException e) {
+        }
+      }
+      byte[] digest = md.digest();
+      return digest;
+    } catch (NoSuchAlgorithmException e1) {
+      return null;
+    }
+  }
 }

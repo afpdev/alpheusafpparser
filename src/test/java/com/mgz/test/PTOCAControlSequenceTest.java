@@ -17,11 +17,6 @@ You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
 
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.PTOCAControlSequenceParser;
@@ -29,41 +24,48 @@ import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence;
 import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence.ControlSequenceFunctionType;
 import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence.ControlSequenceIntroducer;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 
 public class PTOCAControlSequenceTest {
 
-	@Test
-	public void testInstantiationOfPTOCAControlSequences() throws AFPParserException {
-		
-		
-		ControlSequenceIntroducer csi = new ControlSequenceIntroducer();
-		for (ControlSequenceFunctionType csft : ControlSequenceFunctionType.values()){
-			csi.setControlSequenceFunctionType(csft);
-			PTOCAControlSequence cs = PTOCAControlSequenceParser.createControlSequenceInstance(csi);
-			assertEquals(csft.name(), cs.getClass().getSimpleName());
-			assertFalse(csft != ControlSequenceFunctionType.Undefined && cs instanceof com.mgz.afp.ptoca.controlSequence.Undefined);
+  @Test
+  public void testInstantiationOfPTOCAControlSequences() throws AFPParserException {
 
-		}
 
-	}
-	
-	@Test
-	public void testUniqunessOfControlSequenceFunctionType(){
-		for (ControlSequenceFunctionType csft : ControlSequenceFunctionType.values()){
-			for (ControlSequenceFunctionType otherCsft : ControlSequenceFunctionType.values()){
-				if(csft==otherCsft) continue;
-				assertFalse(csft.toByte(true)==otherCsft.toByte(true));
-				assertFalse(csft.toByte(false)==otherCsft.toByte(false));
-			}
-			
-		}
-	}
-	@Test
-	public void testConstructionOfControlSequenceFunctionType() throws AFPParserException{
-		for (ControlSequenceFunctionType csft : ControlSequenceFunctionType.values()){
-			ControlSequenceFunctionType other = ControlSequenceFunctionType .valueOf((short)csft.toByte(false));
-			assertTrue(csft == other);
-		}
-	}
+    ControlSequenceIntroducer csi = new ControlSequenceIntroducer();
+    for (ControlSequenceFunctionType csft : ControlSequenceFunctionType.values()) {
+      csi.setControlSequenceFunctionType(csft);
+      PTOCAControlSequence cs = PTOCAControlSequenceParser.createControlSequenceInstance(csi);
+      assertEquals(csft.name(), cs.getClass().getSimpleName());
+      assertFalse(csft != ControlSequenceFunctionType.Undefined && cs instanceof com.mgz.afp.ptoca.controlSequence.Undefined);
+
+    }
+
+  }
+
+  @Test
+  public void testUniqunessOfControlSequenceFunctionType() {
+    for (ControlSequenceFunctionType csft : ControlSequenceFunctionType.values()) {
+      for (ControlSequenceFunctionType otherCsft : ControlSequenceFunctionType.values()) {
+        if (csft == otherCsft) continue;
+        assertFalse(csft.toByte(true) == otherCsft.toByte(true));
+        assertFalse(csft.toByte(false) == otherCsft.toByte(false));
+      }
+
+    }
+  }
+
+  @Test
+  public void testConstructionOfControlSequenceFunctionType() throws AFPParserException {
+    for (ControlSequenceFunctionType csft : ControlSequenceFunctionType.values()) {
+      ControlSequenceFunctionType other = ControlSequenceFunctionType.valueOf((short) csft.toByte(false));
+      assertTrue(csft == other);
+    }
+  }
 
 }

@@ -18,12 +18,6 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.ioca;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.ioca.IPD_Segment.BandImage;
@@ -55,64 +49,144 @@ import com.mgz.afp.ioca.IPD_Segment.UnknownSegmentLong;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
-public class IPD_ImagePictureData extends StructuredField {
-	List<IPD_Segment> listOfSegments;
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		int actualLength = length!=-1 ? length : sfData.length-offset;
-		
-		listOfSegments = new ArrayList<IPD_Segment>();
-		int pos =0;
-		while(pos<actualLength){
-			int segmentTypeCode = sfData[offset +pos];
-			if(segmentTypeCode == 0xFE) segmentTypeCode = UtilBinaryDecoding.parseInt(sfData, offset + pos, 2);
-			IPD_SegmentType segmentType = IPD_SegmentType.valueOf(segmentTypeCode);
-			
-			IPD_Segment ipdSegment = null;
-			switch(segmentType){
-			case BeginSegment:{ ipdSegment = new BeginSegment(); } break;
-			case EndSegment:{ ipdSegment = new EndSegment(); } break;
-			case BeginImageContent:{ ipdSegment = new BeginImageContent(); } break;
-			case EndImageContent:{ ipdSegment = new EndImageContent(); } break;
-			case ImageSize:{ ipdSegment = new ImageSize(); } break;
-			case ImageEncoding:{ ipdSegment = new ImageEncoding(); } break;
-			case IDESize:{ ipdSegment = new IDESize(); } break;
-			case BandImage:{ ipdSegment = new BandImage(); } break;
-			case IDEStructure:{ ipdSegment = new IDEStructure(); } break;
-			case ExternalAlgorithmSpecification:{ ipdSegment = new ExternalAlgorithmSpecification(); } break;
-			case ImageSubsampling:{ ipdSegment = new ImageSubsampling(); } break; 
-			case BeginTile:{ ipdSegment = new BeginTile(); } break;
-			case EndTile:{ ipdSegment = new EndTile(); } break;
-			case TilePosition:{ ipdSegment = new TilePosition(); } break;
-			case TileSize:{ ipdSegment = new TileSize(); } break;
-			case TileSetColor:{ ipdSegment = new TileSetColor(); } break;
-			case IncludeTile:{ ipdSegment = new IncludeTile(); } break;
-			case TileTOC:{ ipdSegment = new TileTOC(); } break;
-			case BeginTransparencyMask:{ ipdSegment = new BeginTransparencyMask(); } break;
-			case EndTransparencyMask:{ ipdSegment = new EndTransparencyMask(); } break;
-			case ImageData:{ ipdSegment = new ImageData(); } break;
-			case BandImageData:{ ipdSegment = new BandImageData(); } break;
-			case UnknownIPDSegmentLong:{ ipdSegment = new UnknownSegmentLong(); } break;
-			case UnknownIPDSegmentExtended:{ ipdSegment = new UnknownSegmentExtended(); } break;
-			}
-			
-			ipdSegment.decodeAFP(sfData, offset +pos, actualLength - pos, config);
-			listOfSegments.add(ipdSegment);
-			
-			if(ipdSegment instanceof IPD_SegmentExtended) pos+= (4 + ipdSegment.lengthOfFollowingData);
-			else pos+= (2 + ipdSegment.lengthOfFollowingData);
-		}
-	}
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		if(listOfSegments!=null && !listOfSegments.isEmpty()){
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			for(IPD_Segment segment : listOfSegments) segment.writeAFP(baos, config);
-			writeFullStructuredField(os, baos.toByteArray());
-		}else{
-			writeFullStructuredField(os, null);
-		}
-	}
+public class IPD_ImagePictureData extends StructuredField {
+  List<IPD_Segment> listOfSegments;
+
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    int actualLength = length != -1 ? length : sfData.length - offset;
+
+    listOfSegments = new ArrayList<IPD_Segment>();
+    int pos = 0;
+    while (pos < actualLength) {
+      int segmentTypeCode = sfData[offset + pos];
+      if (segmentTypeCode == 0xFE)
+        segmentTypeCode = UtilBinaryDecoding.parseInt(sfData, offset + pos, 2);
+      IPD_SegmentType segmentType = IPD_SegmentType.valueOf(segmentTypeCode);
+
+      IPD_Segment ipdSegment = null;
+      switch (segmentType) {
+        case BeginSegment: {
+          ipdSegment = new BeginSegment();
+        }
+        break;
+        case EndSegment: {
+          ipdSegment = new EndSegment();
+        }
+        break;
+        case BeginImageContent: {
+          ipdSegment = new BeginImageContent();
+        }
+        break;
+        case EndImageContent: {
+          ipdSegment = new EndImageContent();
+        }
+        break;
+        case ImageSize: {
+          ipdSegment = new ImageSize();
+        }
+        break;
+        case ImageEncoding: {
+          ipdSegment = new ImageEncoding();
+        }
+        break;
+        case IDESize: {
+          ipdSegment = new IDESize();
+        }
+        break;
+        case BandImage: {
+          ipdSegment = new BandImage();
+        }
+        break;
+        case IDEStructure: {
+          ipdSegment = new IDEStructure();
+        }
+        break;
+        case ExternalAlgorithmSpecification: {
+          ipdSegment = new ExternalAlgorithmSpecification();
+        }
+        break;
+        case ImageSubsampling: {
+          ipdSegment = new ImageSubsampling();
+        }
+        break;
+        case BeginTile: {
+          ipdSegment = new BeginTile();
+        }
+        break;
+        case EndTile: {
+          ipdSegment = new EndTile();
+        }
+        break;
+        case TilePosition: {
+          ipdSegment = new TilePosition();
+        }
+        break;
+        case TileSize: {
+          ipdSegment = new TileSize();
+        }
+        break;
+        case TileSetColor: {
+          ipdSegment = new TileSetColor();
+        }
+        break;
+        case IncludeTile: {
+          ipdSegment = new IncludeTile();
+        }
+        break;
+        case TileTOC: {
+          ipdSegment = new TileTOC();
+        }
+        break;
+        case BeginTransparencyMask: {
+          ipdSegment = new BeginTransparencyMask();
+        }
+        break;
+        case EndTransparencyMask: {
+          ipdSegment = new EndTransparencyMask();
+        }
+        break;
+        case ImageData: {
+          ipdSegment = new ImageData();
+        }
+        break;
+        case BandImageData: {
+          ipdSegment = new BandImageData();
+        }
+        break;
+        case UnknownIPDSegmentLong: {
+          ipdSegment = new UnknownSegmentLong();
+        }
+        break;
+        case UnknownIPDSegmentExtended: {
+          ipdSegment = new UnknownSegmentExtended();
+        }
+        break;
+      }
+
+      ipdSegment.decodeAFP(sfData, offset + pos, actualLength - pos, config);
+      listOfSegments.add(ipdSegment);
+
+      if (ipdSegment instanceof IPD_SegmentExtended)
+        pos += (4 + ipdSegment.lengthOfFollowingData);
+      else pos += (2 + ipdSegment.lengthOfFollowingData);
+    }
+  }
+
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    if (listOfSegments != null && !listOfSegments.isEmpty()) {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      for (IPD_Segment segment : listOfSegments) segment.writeAFP(baos, config);
+      writeFullStructuredField(os, baos.toByteArray());
+    } else {
+      writeFullStructuredField(os, null);
+    }
+  }
 }

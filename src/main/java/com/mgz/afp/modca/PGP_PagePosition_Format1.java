@@ -18,50 +18,49 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 public class PGP_PagePosition_Format1 extends StructuredField {
-	int xOrigin;
-	int yOrigin;
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		checkDataLength(sfData, offset, length, 6);
-		xOrigin = UtilBinaryDecoding.parseInt(sfData, offset, 3);
-		yOrigin = UtilBinaryDecoding.parseInt(sfData, offset +3, 3);
-	}
+  int xOrigin;
+  int yOrigin;
+
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    checkDataLength(sfData, offset, length, 6);
+    xOrigin = UtilBinaryDecoding.parseInt(sfData, offset, 3);
+    yOrigin = UtilBinaryDecoding.parseInt(sfData, offset + 3, 3);
+  }
 
 
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream(6);
+    baos.write(UtilBinaryDecoding.intToByteArray(xOrigin, 3));
+    baos.write(UtilBinaryDecoding.intToByteArray(yOrigin, 3));
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(6);
-		baos.write(UtilBinaryDecoding.intToByteArray(xOrigin, 3));
-		baos.write(UtilBinaryDecoding.intToByteArray(yOrigin, 3));
-		
-		writeFullStructuredField(os, baos.toByteArray());
-	}
+    writeFullStructuredField(os, baos.toByteArray());
+  }
 
-	public int getxOrigin() {
-		return xOrigin;
-	}
+  public int getxOrigin() {
+    return xOrigin;
+  }
 
-	public void setxOrigin(int xOrigin) {
-		this.xOrigin = xOrigin;
-	}
+  public void setxOrigin(int xOrigin) {
+    this.xOrigin = xOrigin;
+  }
 
-	public int getyOrigin() {
-		return yOrigin;
-	}
+  public int getyOrigin() {
+    return yOrigin;
+  }
 
-	public void setyOrigin(int yOrigin) {
-		this.yOrigin = yOrigin;
-	}
+  public void setyOrigin(int yOrigin) {
+    this.yOrigin = yOrigin;
+  }
 }
