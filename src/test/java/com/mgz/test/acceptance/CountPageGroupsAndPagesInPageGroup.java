@@ -7,6 +7,9 @@ import com.mgz.afp.modca.BPG_BeginPage;
 import com.mgz.afp.parser.AFPParser;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +19,9 @@ import java.io.InputStream;
 
 public class CountPageGroupsAndPagesInPageGroup {
 
-  public static void main(String[] args) throws FileNotFoundException, AFPParserException, IOException {
+  public static final Logger LOG = LoggerFactory.getLogger("CountPageGroupsAndPagesInPageGroup");
+
+  public static void main(String[] args) throws AFPParserException, IOException {
 
     InputStream is = new BufferedInputStream(new FileInputStream(new File(args[0])), 1024 * 1024);
     AFPParserConfiguration pc = new AFPParserConfiguration();
@@ -33,7 +38,8 @@ public class CountPageGroupsAndPagesInPageGroup {
       if (sf != null) {
         if (sf instanceof BNG_BeginNamedPageGroup) {
           if (currentBNG != null) {
-            System.out.println("PageGroup #" + pageGroupCount + " '" + currentBNG.getName() != null ? currentBNG.getName() : "" + "' has " + pageCount + " pages.");
+            String message = "PageGroup #" + pageGroupCount + " '" + currentBNG.getName() != null ? currentBNG.getName() : "" + "' has " + pageCount + " pages.";
+            LOG.info(message);
           }
           currentBNG = (BNG_BeginNamedPageGroup) sf;
           pageGroupCount++;
@@ -46,7 +52,8 @@ public class CountPageGroupsAndPagesInPageGroup {
 
     // Print out last Page Group.
     if (currentBNG != null) {
-      System.out.println("PageGroup #" + pageGroupCount + " '" + currentBNG.getName() != null ? currentBNG.getName() : "" + "' has " + pageCount + " pages.");
+      String message = "PageGroup #" + pageGroupCount + " '" + currentBNG.getName() != null ? currentBNG.getName() : "" + "' has " + pageCount + " pages.";
+      LOG.info(message);
     }
 
     // Close input stream.
