@@ -6,10 +6,5 @@ jdk:
 os:
   - linux
 
-branches:
-  only:
-    - master
-    
-
 notifications:
   email: false
