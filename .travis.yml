@@ -1,0 +1,11 @@
+language: java
+
+jdk:
+  - oraclejdk6
+
+os:
+  - linux
+
+branches:
+  only:
+    - master
