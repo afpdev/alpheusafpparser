@@ -59,7 +59,7 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
     int fieldType;
 
     SelfDefiningFieldType(int fieldTypeByte) {
-      this.fieldType = fieldTypeByte;
+      fieldType = fieldTypeByte;
     }
 
     public static SelfDefiningFieldType valueOf(short fieldTypeByte) {

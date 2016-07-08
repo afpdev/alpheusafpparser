@@ -30,24 +30,24 @@ public interface IHasTriplets {
   /**
    * Returns the list of {@link Triplet}s.
    */
-  public List<Triplet> getTriplets();
+  List<Triplet> getTriplets();
 
   /**
    * Sets the list of {@link Triplet}s.
    */
-  public void setTriplets(List<Triplet> triplets);
+  void setTriplets(List<Triplet> triplets);
 
   /**
    * Convenient method to add {@link Triplet} to the list of {@link Triplet}s.
    *
    * @param triplet {@link Triplet} to add.
    */
-  public void addTriplet(Triplet triplet);
+  void addTriplet(Triplet triplet);
 
   /**
    * Convenient method to removes the given {@link Triplet} to the list of {@link Triplet}s.
    *
    * @param triplet {@link Triplet} to remove.
    */
-  public void removeTriplet(Triplet triplet);
+  void removeTriplet(Triplet triplet);
 }

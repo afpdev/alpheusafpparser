@@ -21,8 +21,12 @@ package com.mgz.util;
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.base.annotations.AFPType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,11 +35,13 @@ import java.util.List;
 import java.util.Map;
 
 public class UtilReflection {
+
+  public static final Logger LOG = LoggerFactory.getLogger("UtilReflection");
+
   public static Comparator<Field> comparatorFields = new FieldComparator();
 
-  ;
   private static AFPField annotationAFPField;
-  public static AFPField defaultAFPFieldAnnotation = UtilReflection.getAFPFieldDefaultAnnotation();
+  public static AFPField defaultAFPFieldAnnotation = getAFPFieldDefaultAnnotation();
 
   public static Object getFieldValue(Field field, Object instance) {
     if (instance == null) return null;
@@ -47,8 +53,8 @@ public class UtilReflection {
       Object val = field.get(instance);
       field.setAccessible(isAccessable);
       return val;
-    } catch (IllegalArgumentException e1) {
-    } catch (IllegalAccessException e1) {
+    } catch (IllegalArgumentException | IllegalAccessException e1) {
+      LOG.error("Exception: {}", e1.getLocalizedMessage());
     }
 
     // If this failed go for getter method.
@@ -60,7 +66,7 @@ public class UtilReflection {
         try {
           returnValue = method.invoke(instance);
         } catch (Throwable e) {
-          e.printStackTrace();
+          LOG.error("Exception: {}", e.getLocalizedMessage());
         }
         return returnValue;
       }
@@ -76,26 +82,21 @@ public class UtilReflection {
       field.setAccessible(true);
       field.set(instance, value);
       field.setAccessible(isAccessable);
-    } catch (IllegalArgumentException e1) {
-    } catch (IllegalAccessException e1) {
+    } catch (IllegalArgumentException | IllegalAccessException e1) {
+      LOG.error("Exception: {}", e1.getLocalizedMessage());
     }
   }
 
   public static boolean isNumeric(Class<?> fieldType) {
-    if (Number.class.isAssignableFrom(fieldType)
-            || (fieldType.isPrimitive() && (
+    return Number.class.isAssignableFrom(fieldType)
+            || fieldType.isPrimitive() && (
             double.class.isAssignableFrom(fieldType)
                     || float.class.isAssignableFrom(fieldType)
                     || long.class.isAssignableFrom(fieldType)
                     || int.class.isAssignableFrom(fieldType)
                     || short.class.isAssignableFrom(fieldType)
                     || byte.class.isAssignableFrom(fieldType)
-    )
-    )
-            ) {
-      return true;
-    }
-    return false;
+    );
   }
 
   public static boolean isAFPType(Class<?> clazz) {
@@ -133,7 +134,7 @@ public class UtilReflection {
         defaultAnnotation = c.getAnnotation(AFPType.class) != null ? defaultAFPFieldAnnotation : defaultAnnotation;
 
       for (Field field : c.getDeclaredFields()) {
-        if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) continue;
+        if (Modifier.isStatic(field.getModifiers())) continue;
         AFPField annotation = field.getAnnotation(AFPField.class);
         if (annotation == null) annotation = defaultAnnotation;
         if (annotation == null || annotation.isHidden()) continue;
@@ -153,7 +154,7 @@ public class UtilReflection {
 
   public static class FieldComparator implements Comparator<Field> {
 
-    private static Map<String, Integer> specialOrderedFields = new HashMap<String, Integer>();
+    private static final Map<String, Integer> specialOrderedFields = new HashMap<String, Integer>();
 
     {
       specialOrderedFields.put("extension", Integer.valueOf(1000));
@@ -173,5 +174,4 @@ public class UtilReflection {
 
   }
 
-  ;
 }

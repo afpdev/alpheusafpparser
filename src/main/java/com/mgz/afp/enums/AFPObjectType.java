@@ -32,7 +32,11 @@ public enum AFPObjectType {
   }
 
   public static AFPObjectType valueOf(short code) {
-    for (AFPObjectType ot : values()) if (ot.code == code) return ot;
+    for (AFPObjectType ot : values()) {
+      if (ot.code == code) {
+        return ot;
+      }
+    }
     return null;
   }
 

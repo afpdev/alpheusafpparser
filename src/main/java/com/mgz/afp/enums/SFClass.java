@@ -35,8 +35,11 @@ public enum SFClass {
    * Returns the {@link SFClass} for given byte value sfClass.
    */
   public static SFClass valueOf(int sfClass) {
-    if (sfClass == 0xD3) return D3;
-    else return Undefined;
+    if (sfClass == 0xD3) {
+      return D3;
+    } else {
+      return Undefined;
+    }
   }
 
   public int toByte() {

@@ -41,6 +41,7 @@ import java.io.OutputStream;
  */
 @AFPType
 public abstract class StructuredField implements IAFPDecodeableWriteable {
+
   @AFPField
   StructuredFieldIntroducer structuredFieldIntroducer;
   /**
@@ -191,4 +192,8 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
     else return structuredFieldIntroducer.actualConfig.isBuildShallow();
   }
 
+  @Override
+  public String toString() {
+    return "StructuredField{" + structuredFieldIntroducer + '}';
+  }
 }

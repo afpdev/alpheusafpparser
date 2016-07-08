@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 
 public class UtilCharacterEncoding {
-  final public static char[] hexArray = "0123456789ABCDEF".toCharArray();
+  public static final char[] hexArray = "0123456789ABCDEF".toCharArray();
 
   /**
    * Returns the hex value for a given character
