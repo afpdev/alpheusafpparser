@@ -76,7 +76,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     this.tripletID = tripletID;
   }
 
-  public static enum TripletID {
+  public enum TripletID {
     Undefined(0x00),
     CodedGraphicCharacterSetGlobalID(0x01),
     FullyQualifiedName(0x02),
@@ -179,7 +179,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
   /**
    * Specifies how the GID will be used, eg. in Fully Qualified Name Triplet 0x02.
    */
-  public static enum GlobalID_Use {
+  public enum GlobalID_Use {
     ReplaceFirstGIDBame(0x01),
     FontFamilyName(0x07),
     FontTypefaceName(0x08),
@@ -225,7 +225,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
   /**
    * Specifies the GID format
    */
-  public static enum GlobalID_Format {
+  public enum GlobalID_Format {
     CharacterString(0x00),
     OID(0x10),
     URL(0x20);
@@ -434,7 +434,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(baos.toByteArray());
     }
 
-    public static enum DataObjecMapingOption {
+    public enum DataObjecMapingOption {
       Position(0x00),
       PositionAndTrim(0x10),
       ScaleToFit(0x20),
@@ -544,7 +544,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
      * Specifies the object class based on differentiators such as temporal characteristics and
      * presentation form.
      */
-    public static enum ObjectClass {
+    public enum ObjectClass {
       TimeInvariantPaginatedPresentationObject(0x01),
       TimeVariantPresentationObject(0x10),
       ExecutableProgram(0x20),
@@ -567,7 +567,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum StructureFlag implements IMutualExclusiveGroupedFlag {
+    public enum StructureFlag implements IMutualExclusiveGroupedFlag {
       // b 0-1
       OC_Reserved(0),
       OC_DataNotCarriedInObjectContainer(0),
@@ -677,7 +677,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
 
-    public static enum MODCAInterchangeSet_Type {
+    public enum MODCAInterchangeSet_Type {
       Presentation;
 
       public static MODCAInterchangeSet_Type valueOf(byte typeCode) throws AFPParserException {
@@ -690,7 +690,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum MODCAInterchangeSet_Identifier {
+    public enum MODCAInterchangeSet_Identifier {
       MODCA_IS1(0x0900),
       MODCA_IS2_Retired(0x0C00),
       MODCA_IS3(0x0D00);
@@ -770,7 +770,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
 
-    public static enum FDS_FontWeigthClass {
+    public enum FDS_FontWeigthClass {
       NotSpecified(0x00),
       UltraLight(0x01),
       ExtraLight(0x02),
@@ -797,7 +797,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum FDS_FontWidthClass {
+    public enum FDS_FontWidthClass {
       NotSpecified(0x00),
       UltraCondensed(0x01),
       ExtraCondensed(0x02),
@@ -824,7 +824,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum FDS_FontDsFlag implements IMutualExclusiveGroupedFlag {
+    public enum FDS_FontDsFlag implements IMutualExclusiveGroupedFlag {
       NoItalicCharacters(0),
       ItalicCharacters(0),
       NoUnderscoredCharacters(1),
@@ -895,7 +895,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum FDS_FontUsFlag implements IMutualExclusiveGroupedFlag {
+    public enum FDS_FontUsFlag implements IMutualExclusiveGroupedFlag {
       // bit 0 is reserved.
       FontType_BitmapFont(1),
       FontType_OutlineOrVector(1),
@@ -1007,7 +1007,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     /**
      * Unfortunately, this type is different to {@link AFPObjectType}.
      */
-    public static enum ROT_ObjectType {
+    public enum ROT_ObjectType {
       PresentationText(0x02),
       GraphicsObject_GOCA(0x03),
       BarCodeObject_BCOCA(0x05),
@@ -1084,7 +1084,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
 
-    public static enum OCAFunctionSet {
+    public enum OCAFunctionSet {
       PTOCA_PT1_or_BCOCA_BCD1(0x0000),
       PTOCA_PT2_or_GOCA_DR2V0(0x4000),
       IOCA_FS10(0x8000);
@@ -1140,7 +1140,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     /**
      * Specifies the resource type associated with the extended local ID.
      */
-    public static enum ERLI_ResourceType {
+    public enum ERLI_ResourceType {
       IOBReference_Reserved,
       MediaTypeResource,
       MediaDestinationResource;
@@ -1188,7 +1188,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(UtilBinaryDecoding.shortToByteArray(resourceLocalID, 1));
     }
 
-    public static enum RLI_ResourceType {
+    public enum RLI_ResourceType {
       UsageDependent,
       PageOverlay,
       CodedFont,
@@ -1392,7 +1392,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(mediaEjectControl.toByte());
     }
 
-    public static enum MediaEjectControlType {
+    public enum MediaEjectControlType {
       EjectToNewSheet,
       ConditionalEjectToNextPartition,
       ConditionalEjectToNextFrontsidePartition,
@@ -1448,7 +1448,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       if (levelOfOverlay != null) os.write(levelOfOverlay);
     }
 
-    public static enum PageOverlayType {
+    public enum PageOverlayType {
       Normal,
       Annotation,
       Redaction,
@@ -1493,7 +1493,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     /**
      * Specifies the processing frequency of the associated page overlay.
      */
-    public static enum FrequencyOfUse {
+    public enum FrequencyOfUse {
       Low, High;
 
       public static FrequencyOfUse valueOf(byte codeByte) {
@@ -1574,7 +1574,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       ChecksumFlag.handler.setFlag(objectCheckSumFlags, flag);
     }
 
-    public static enum CheckSumFormat {
+    public enum CheckSumFormat {
       ObjectCycleRedundancyCheck,
       Retired_PrivateUse;
 
@@ -1591,7 +1591,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum ChecksumFlag implements IMutualExclusiveGroupedFlag {
+    public enum ChecksumFlag implements IMutualExclusiveGroupedFlag {
       UsageScope_PublicUnlimited(0),
       UsageScope_PrivateLimited(0),
       ResourceRetention_SaveResource(1),
@@ -1665,7 +1665,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(UtilCharacterEncoding.stringToByteArray(dataSetID, config.getAfpCharSet(), 44, Constants.EBCDIC_BLANK));
     }
 
-    public static enum AFPSystem {
+    public enum AFPSystem {
       MVS,
       VM,
       PC_DOS,
@@ -1784,7 +1784,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(locationAndOrientation.toByte());
     }
 
-    public static enum LocationAndOrientation {
+    public enum LocationAndOrientation {
       Standard_0,
       LowerLeft_270,
       LowerRight_180,
@@ -2013,7 +2013,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       this.encodingSchemeForUserData = encodingSchemeForUserData;
     }
 
-    public static enum EncodingScheme implements IMutualExclusiveGroupedFlag {
+    public enum EncodingScheme implements IMutualExclusiveGroupedFlag {
       BasicEncoding_NotSpecified(0),
       BasicEncoding_IBMPC_Data(0),
       BasicEncoding_IBMPC_Display(0),
@@ -2239,7 +2239,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
         os.write(UtilBinaryDecoding.longToByteArray(nrOfPrecedingObjectsHigh, 4));
     }
 
-    public static enum ObjectType {
+    public enum ObjectType {
       Document,
       Page_PaginatedObject;
 
@@ -2362,7 +2362,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
     }
 
-    public static enum DateAndTimeStampType {
+    public enum DateAndTimeStampType {
       Creation,
       RMARK_Retired,
       Revision;
@@ -2431,7 +2431,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(mediumOrientation.toByte());
     }
 
-    public static enum MediumOrientationValue {
+    public enum MediumOrientationValue {
       Portrait,
       Landscape,
       ReversePortrait,
@@ -2511,7 +2511,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(backgroundMixingFlag.toByte());
     }
 
-    public static enum BackgroundMixingFlag {
+    public enum BackgroundMixingFlag {
       DoNotResetColor,
       ResetColor;
 
@@ -2578,7 +2578,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       mixingRules.remove(mixingRule);
     }
 
-    public static enum MixingKeyword {
+    public enum MixingKeyword {
       BackgroudOnBackground,
       BackgroundOnForeground,
       ForegroundOnBackground,
@@ -2594,7 +2594,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum MixingRule {
+    public enum MixingRule {
       Overpaint,
       Underpaint,
       Blend,
@@ -2689,7 +2689,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(diffMinutes);
     }
 
-    public static enum TimeZone {
+    public enum TimeZone {
       CoordinatedUTC,
       AheadUTC,
       BehindUTC;
@@ -2738,7 +2738,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(reserved4_5);
     }
 
-    public static enum TonerSaverFunction {
+    public enum TonerSaverFunction {
       DeactivateTonerSaver,
       ActivateTonerSaver,
       DefaultTonerSaverSetting;
@@ -2793,7 +2793,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(reserved7);
     }
 
-    public static enum ExceptionContinuationRule {
+    public enum ExceptionContinuationRule {
       Stop,
       DoNotStop;
 
@@ -2808,7 +2808,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum ExceptionReportingRule {
+    public enum ExceptionReportingRule {
       Report,
       DoNotReport;
 
@@ -2823,7 +2823,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum ExceptionSubstitutionRule {
+    public enum ExceptionSubstitutionRule {
       AnySubstitution_Default;
 
       public static ExceptionSubstitutionRule valueOf(byte ruleByte) throws AFPParserException {
@@ -2952,7 +2952,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       if (parameterValue != null) os.write(parameterValue);
     }
 
-    public static enum ParameterSyntax {
+    public enum ParameterSyntax {
       Undefined,
       UnsignedNumber,
       SignedNumber,
@@ -3012,7 +3012,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       PresentationControlFlags.handler.setFlag(presentationControlFlags, presentationControlFlag);
     }
 
-    public static enum PresentationControlFlags implements IMutualExclusiveGroupedFlag {
+    public enum PresentationControlFlags implements IMutualExclusiveGroupedFlag {
       ViewControl_View(0),
       ViewControl_DoNotView(0),
       IndexingControl_Indexing(1),
@@ -3082,7 +3082,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(UtilBinaryDecoding.shortToByteArray(unitsPerUnitBase, 2));
     }
 
-    public static enum MetricTechnology {
+    public enum MetricTechnology {
       Fixed,
       Relative;
 
@@ -3149,7 +3149,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum OperationType {
+    public enum OperationType {
       CornerStaple(0x01),
       SaddleStitchOut(0x02),
       EdgeStitch(0x03),
@@ -3179,7 +3179,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum ReferenceCorner {
+    public enum ReferenceCorner {
       BottomRightCorner_BottomEdge(0x00),
       TopRightCorner_RightEdge(0x01),
       TopLeftCorner_TopEdge(0x02),
@@ -3351,7 +3351,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(reserved14_15);
     }
 
-    public static enum FontInformationFlag implements IMutualExclusiveGroupedFlag {
+    public enum FontInformationFlag implements IMutualExclusiveGroupedFlag {
       MICR_NonMICR(0),
       MICR_MICR(0),
       Location_Anyware(1),
@@ -3507,7 +3507,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       this.variantCode = variantCode;
     }
 
-    public static enum LocalSelectorFlag implements IMutualExclusiveGroupedFlag {
+    public enum LocalSelectorFlag implements IMutualExclusiveGroupedFlag {
       LanguageCode_NotSpecified(0),
       LanguageCode_TwoBytes(0),
       LanguageCode_ThreeBytes(0),
@@ -3673,7 +3673,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       this.cmrScope = cmrScope;
     }
 
-    public static enum CMRProcessingMode {
+    public enum CMRProcessingMode {
       AuditCMR,
       InstructionCMR,
       LinkCMR;
@@ -3688,7 +3688,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum CMRScope {
+    public enum CMRScope {
       DataObject,
       PageOrOverlay,
       Document,
@@ -3746,7 +3746,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(reserved8_9);
     }
 
-    public static enum Intent {
+    public enum Intent {
       Perceptual,
       MediaRelativeColorimetric,
       Saturation,
@@ -3831,7 +3831,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
 
-    public static enum Appearance {
+    public enum Appearance {
       DeviceDefault,
       DeviceDefaultMonochrome;
 
@@ -3906,7 +3906,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(pdfPresentationSpace.toByte());
     }
 
-    public static enum PDFPresentationSpace {
+    public enum PDFPresentationSpace {
       MediaBox,
       CropBox,
       BleedBox,

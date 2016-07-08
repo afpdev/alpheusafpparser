@@ -24,6 +24,9 @@ import com.mgz.afp.enums.SFTypeID;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +38,9 @@ import java.util.EnumSet;
  * identifies type and length of the structured field.
  */
 public class StructuredFieldIntroducer {
+
+  public static final Logger LOG = LoggerFactory.getLogger("StructuredFieldIntroducer");
+
   /**
    * SFLength[0,1]
    */
@@ -93,7 +99,7 @@ public class StructuredFieldIntroducer {
   }
 
   public byte[] toBytes() {
-    ByteArrayOutputStream b = null;
+    ByteArrayOutputStream b;
     if (flagByte == null || !flagByte.contains(SFFlag.hasExtension))
       b = new ByteArrayOutputStream(8);
     else b = new ByteArrayOutputStream(8 + extenstionLength);
@@ -116,8 +122,7 @@ public class StructuredFieldIntroducer {
       }
 
     } catch (IOException e) {
-      // Should never happen.
-      e.printStackTrace();
+      LOG.error("Exception: {}", e.getLocalizedMessage());
     }
     return b.toByteArray();
   }
@@ -226,5 +231,12 @@ public class StructuredFieldIntroducer {
 
   public void setActualConfig(AFPParserConfiguration actualConfig) {
     this.actualConfig = actualConfig;
+  }
+
+  @Override
+  public String toString() {
+    return "StructuredFieldIntroducer{" +
+            "sfTypeID=" + sfTypeID +
+            '}';
   }
 }

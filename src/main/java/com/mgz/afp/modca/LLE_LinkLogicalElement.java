@@ -117,7 +117,7 @@ public class LLE_LinkLogicalElement extends StructuredField {
   /**
    * Specifies the purpose of the link.
    */
-  public static enum LLE_LinkType {
+  public enum LLE_LinkType {
     NavigationLink,
     AnnotationLink,
     AppendLink;
@@ -202,7 +202,7 @@ public class LLE_LinkLogicalElement extends StructuredField {
       this.repeatingGroupFunction = repeatingGroupFunction;
     }
 
-    public static enum LLE_RepeatingGroupFunction {
+    public enum LLE_RepeatingGroupFunction {
       LinkAttributeSpecification,
       LinkSourceSpecification,
       LinkTargetSpecification;

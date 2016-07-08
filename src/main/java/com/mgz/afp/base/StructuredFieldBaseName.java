@@ -55,10 +55,12 @@ public abstract class StructuredFieldBaseName extends StructuredField implements
     else writeFullStructuredField(os, null);
   }
 
+  @Override
   public final String getName() {
     return name;
   }
 
+  @Override
   public final void setName(String name) {
     this.name = name;
   }

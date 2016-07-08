@@ -225,7 +225,7 @@ public class BDD_BarCodeDataDescriptor extends StructuredField {
     this.wideToNarrowRatio = wideToNarrowRatio;
   }
 
-  public static enum BarCodeType {
+  public enum BarCodeType {
     Code39_3of9Code_AIM_USS_39(0x01, true, true, new byte[]{0x01, 0x02}),
     MSI_MmodifiedPlesseyCode(0x02, true, true, new byte[]{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09}),
     UPC_CGPC_VersionA(0x03, true, true, new byte[]{0x00}),

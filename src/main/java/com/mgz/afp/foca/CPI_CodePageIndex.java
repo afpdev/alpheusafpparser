@@ -116,7 +116,7 @@ public class CPI_CodePageIndex extends StructuredField {
     writeFullStructuredField(os, baos.toByteArray());
   }
 
-  public static enum GraphicCharacterUseFlag {
+  public enum GraphicCharacterUseFlag {
     /**
      * When this flag is set, the character is an invalid coded character (see “Invalid Coded
      * Character” on page 112). When this flag bit is set to B'0' (off), the character is a valid

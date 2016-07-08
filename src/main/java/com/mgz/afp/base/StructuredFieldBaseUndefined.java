@@ -34,9 +34,12 @@ public abstract class StructuredFieldBaseUndefined extends StructuredField {
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     payload = null;
 
-    int actualLength = 0;
-    if (length != -1) actualLength = length;
-    else actualLength = sfData.length - offset;
+    int actualLength;
+    if (length != -1) {
+      actualLength = length;
+    } else {
+      actualLength = sfData.length - offset;
+    }
     if (actualLength > 0) {
       payload = new byte[actualLength];
       System.arraycopy(sfData, offset, payload, 0, actualLength);

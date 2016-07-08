@@ -27,9 +27,13 @@ public enum AFPReferenceCoordinateSystem {
   Retired;
 
   public static AFPReferenceCoordinateSystem valueOf(byte codeByte) {
-    if (codeByte == 0x00) return AsDefined_PageOverlayIPS;
-    else if (codeByte == 0x01) return Standard;
-    else if (codeByte == 0x05) return Retired;
+    if (codeByte == 0x00) {
+      return AsDefined_PageOverlayIPS;
+    } else if (codeByte == 0x01) {
+      return Standard;
+    } else if (codeByte == 0x05) {
+      return Retired;
+    }
     return null;
   }
 

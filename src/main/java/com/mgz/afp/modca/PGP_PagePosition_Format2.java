@@ -171,7 +171,7 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
       this.pageModififationControlID = pageModififationControlID;
     }
 
-    public static enum PGP_SheetSideAndPartitionSelection {
+    public enum PGP_SheetSideAndPartitionSelection {
       PageFrontSideIfNoNUp_DefaultFrontSideIfNUp(0x00),
       PageBackSideIfNoNUp_DefaultBackSideIfNup(0x01),
       Partition1_FrontSide(0x10),
@@ -199,7 +199,7 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
       }
     }
 
-    public static enum PGP_RGFlag implements IMutualExclusiveGroupedFlag {
+    public enum PGP_RGFlag implements IMutualExclusiveGroupedFlag {
       VariablPageData_PresentVPDInPartiton(0),
       VariablPageData_DoNotPresentVPDInPartiton(0),
       PCMOverlay_PresentPCMOverlaysInPartition(1),

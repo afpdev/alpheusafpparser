@@ -29,9 +29,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 @AFPType
-public class RepeatingGroupBase implements IAFPDecodeableWriteable, IRepeatingGroup {
+public class RepeatingGroupBase implements IRepeatingGroup {
   protected int repeatingGroupLength;
 
+  @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     repeatingGroupLength = UtilBinaryDecoding.parseInt(sfData, offset, 2);
   }
@@ -40,6 +41,7 @@ public class RepeatingGroupBase implements IAFPDecodeableWriteable, IRepeatingGr
     // TODO: validate.
   }
 
+  @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     os.write(UtilBinaryDecoding.intToByteArray(repeatingGroupLength, 2));
   }

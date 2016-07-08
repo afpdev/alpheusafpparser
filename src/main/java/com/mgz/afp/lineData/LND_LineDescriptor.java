@@ -264,7 +264,7 @@ public class LND_LineDescriptor extends StructuredFieldBaseTriplets {
     this.baselineOrientation = baselineOrientation;
   }
 
-  public static enum LND_Flag implements IMutualExclusiveGroupedFlag {
+  public enum LND_Flag implements IMutualExclusiveGroupedFlag {
     Skipping_CurrentPageDoesNotEnd(0),
     Skipping_CurrentPagesEnds(0),
     Spacing_CurrentPageDoesNotEnd(1),

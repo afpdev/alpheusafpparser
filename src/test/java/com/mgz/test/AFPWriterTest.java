@@ -43,18 +43,16 @@ public class AFPWriterTest {
   @Test
   public void testWriteSF() throws IOException, AFPParserException {
     AFPParserConfiguration pc = new AFPParserConfiguration();
-
     IAFPWriter afpWriter = new AFPWriterHumanReadable();
+    OutputStream os = new FileOutputStream("./src/test/output/" + AFPWriterTest.class.getSimpleName() + ".tmp");
 
-    OutputStream os = new FileOutputStream("./output/" + AFPWriterTest.class.getSimpleName() + ".tmp");
-
-    for (File afpFile : Constants.afpFiles) {
-      LOG.debug("--- FILE: {}", afpFile.getAbsolutePath());
+    for (File afpFile : Constants.getAfpFiles()) {
+      LOG.debug("File: {}", afpFile.getAbsolutePath());
       pc.setInputStream(new FileInputStream(afpFile));
 
       AFPParser parser = new AFPParser(pc);
 
-      StructuredField sf = null;
+      StructuredField sf;
       do {
         sf = parser.parseNextSF();
         if (sf != null) {

@@ -46,7 +46,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     this.csi = csi;
   }
 
-  public static enum ControlSequenceFunctionType {
+  public enum ControlSequenceFunctionType {
     Undefined(0x00),
     SIM_SetInlineMargin(0xC0), // (SIM)” on page 87
     SIA_SetIntercharacterAdjustment(0xC2), // (SIA)” on page 84
@@ -95,7 +95,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  public static enum PTOCA_BypassFlag {
+  public enum PTOCA_BypassFlag {
     BypassRelativeMoveInline,
     BypassAbsoluteMoveInline,
     BypassSpaceCharactersVariableSpaceCharacters,
@@ -821,7 +821,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       this.direction = direction;
     }
 
-    public static enum SIA_Direction {
+    public enum SIA_Direction {
       PositiveIDirection,
       NegativeIDirection;
 
@@ -899,7 +899,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       this.precision = precision;
     }
 
-    public static enum STC_Precision {
+    public enum STC_Precision {
       IfSpecifiedColorNotSupported_EceptionAndDefault0xFF07,
       IfSpecifiedColorNotSupported_SubstitutColorOrDefaul0xFF07;
 
@@ -1031,7 +1031,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       this.temporaryBaselineIncrement = temporaryBaselineIncrement;
     }
 
-    public static enum TBM_Direction {
+    public enum TBM_Direction {
       DoNotChangeBaseline,
       ReturnToEstablishedBaseline,
       MoveAwayFromIAxis,
@@ -1047,7 +1047,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       }
     }
 
-    public static enum TBM_Precision {
+    public enum TBM_Precision {
       AccuratelyPlaced,
       MayBeSimulated;
 

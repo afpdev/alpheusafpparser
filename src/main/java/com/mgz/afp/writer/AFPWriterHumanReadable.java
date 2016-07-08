@@ -33,8 +33,7 @@ public class AFPWriterHumanReadable implements IAFPWriter {
   @Override
   public String writeSF(StructuredField sf) {
     StringBuilder sb = new StringBuilder();
-    sb.append(sf.getClass().getSimpleName())
-            .append("{\n");
+    sb.append(sf.getClass().getSimpleName()).append("{\n");
 
     Class<? extends Object> clazz = sf.getClass();
     do {
@@ -59,7 +58,7 @@ public class AFPWriterHumanReadable implements IAFPWriter {
         }
         if (method == null) continue;
 
-        Object o = null;
+        Object o;
         try {
           o = method.invoke(sf);
           if (o == null && annotationAFPField.isOptional()) continue;

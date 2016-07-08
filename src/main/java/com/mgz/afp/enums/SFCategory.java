@@ -73,7 +73,6 @@ public enum SFCategory {
   NoOperation(0xEE),
   Image(0xFB);
 
-
   int val;
 
   SFCategory(int val) {
@@ -82,7 +81,9 @@ public enum SFCategory {
 
   public static SFCategory valueOf(int sfCategoryByte) {
     for (SFCategory sfCategory : SFCategory.values()) {
-      if (sfCategory.val == sfCategoryByte) return sfCategory;
+      if (sfCategory.val == sfCategoryByte) {
+        return sfCategory;
+      }
     }
     return Undefined;
   }

@@ -56,23 +56,31 @@ public abstract class StructuredFieldBaseTriplets extends StructuredField implem
     writeFullStructuredField(os, baos.toByteArray());
   }
 
+  @Override
   public final List<Triplet> getTriplets() {
     return triplets;
   }
 
+  @Override
   public final void setTriplets(List<Triplet> triplets) {
     this.triplets = triplets;
   }
 
+  @Override
   public final void addTriplet(Triplet triplet) {
-    if (triplet == null) return;
-    if (triplets == null) triplets = new ArrayList<Triplet>();
-    triplets.add(triplet);
+    if (triplet != null) {
+      if (triplets == null) {
+        triplets = new ArrayList<Triplet>();
+      }
+      triplets.add(triplet);
+    }
   }
 
+  @Override
   public final void removeTriplet(Triplet triplet) {
-    if (triplets == null) return;
-    triplets.remove(triplet);
+    if (triplets != null) {
+      triplets.remove(triplet);
+    }
   }
 
 }

@@ -73,7 +73,11 @@ public enum AFPColorValue {
   }
 
   public static AFPColorValue valueOf(int code) throws AFPParserException {
-    for (AFPColorValue cv : values()) if (cv.code == code) return cv;
+    for (AFPColorValue cv : values()) {
+      if (cv.code == code) {
+        return cv;
+      }
+    }
     throw new AFPParserException(AFPColorValue.class.getSimpleName() + ": color code 0x" + Integer.toHexString(code) + " is undefined.");
   }
 

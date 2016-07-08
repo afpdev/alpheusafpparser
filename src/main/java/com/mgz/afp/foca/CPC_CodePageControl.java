@@ -152,7 +152,7 @@ public class CPC_CodePageControl extends StructuredField {
     this.unicodeScalarValue = unicodeScalarValue;
   }
 
-  public static enum DefaultCharacterUseFlag {
+  public enum DefaultCharacterUseFlag {
     /**
      * When this flag is set, the character is an invalid coded character (see “Invalid Coded
      * Character” on page 112). When this flag bit is set to B'0' (off), the character is a valid
@@ -191,7 +191,7 @@ public class CPC_CodePageControl extends StructuredField {
     }
   }
 
-  public static enum CPIRepeatingGroupLength {
+  public enum CPIRepeatingGroupLength {
     SingleByteCodePage(0x0A),
     DoubleByteCodePage(0x0B),
     SingleByteCodePageUnicodeScalarValues(0xFE),
@@ -227,7 +227,7 @@ public class CPC_CodePageControl extends StructuredField {
     }
   }
 
-  public static enum CodePageUseFlag {
+  public enum CodePageUseFlag {
     /**
      * When this flag bit is set to B'1' (on), the CPI repeating groups are sorted in ascending code
      * point order. When this flag bit is set to B'0' (off), the CPI repeating groups are sorted in

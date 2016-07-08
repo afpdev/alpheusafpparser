@@ -31,10 +31,16 @@ import com.mgz.afp.foca.FNC_FontControl;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 
 public class AFPParser {
+
+  public static final Logger LOG = LoggerFactory.getLogger("AFPParser");
+
   private static String afpPackagePrefix = "com.mgz.afp.";
   private static String[] afpPackages = {
           afpPackagePrefix + "modca.",
@@ -137,13 +143,14 @@ public class AFPParser {
         }
 
       } catch (Throwable th) {
-        th.printStackTrace();
+        LOG.error("Exception: {}", th.getLocalizedMessage());
       } finally {
         if (is != null) {
           try {
             is.close();
             conf.setInputStream(null);
           } catch (IOException e) {
+            LOG.error("Exception: {}", e.getLocalizedMessage());
           }
         }
       }
@@ -160,9 +167,9 @@ public class AFPParser {
     try {
       InputStream is = parserConf.getInputStream();
 
-      int tmp = 0;
-      byte[] sfData = null;
-      byte[] padding = null;
+      int tmp;
+      byte[] sfData;
+      byte[] padding;
       do {
         tmp = is.read();
         if (tmp != -1) nrOfBytesRead++;
@@ -180,6 +187,8 @@ public class AFPParser {
         } else {
           sf = createSFInstance(sfi);
         }
+
+        LOG.debug("Token: {}", sf);
 
         int lenOfGrossPayload = sfi.getSFLength() - sfi.getLengthOfStructuredFieldIntroducerIncludingExtension();
 
@@ -230,8 +239,7 @@ public class AFPParser {
               sf.decodeAFP(sfData, 0, -1, parserConf);
             }
           } catch (Throwable th) {
-
-
+            LOG.error("Throwable: {}", th.getLocalizedMessage());
             sf = errSf = new StructuredFieldErrornouslyBuilt();
             errSf.setCausingException(th);
             errSf.setStructuredFieldIntroducer(sfi);
@@ -272,14 +280,13 @@ public class AFPParser {
         errSf.setStructuredFieldIntroducer(sfi);
       }
 
-
       // Call error() which may or may not re-throw the given exception
       if (e instanceof AFPParserException) {
         ((AFPParserException) e).setErrornouslyBuiltStructuredField(errSf);
         error((AFPParserException) e);
-      } else
+      } else {
         error(new AFPParserException("An exception occured when parsing structured field at file index position 0x" + Long.toHexString(nrOfBytesRead) + ".", e));
-
+      }
       return errSf;
     }
   }

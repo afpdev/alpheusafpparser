@@ -301,7 +301,7 @@ public class FND_FontDescriptor extends StructuredField {
   }
 
 
-  public static enum FontWeightClass {
+  public enum FontWeightClass {
     Ultralight,
     Extralight,
     Light,
@@ -323,7 +323,7 @@ public class FND_FontDescriptor extends StructuredField {
   }
 
 
-  public static enum FontWidthClass {
+  public enum FontWidthClass {
     Ultracondensed,
     Extracondensed,
     Condensed,
@@ -345,7 +345,7 @@ public class FND_FontDescriptor extends StructuredField {
   }
 
 
-  public static enum FontDesignFlag {
+  public enum FontDesignFlag {
     Italic,
     Underscored,
     Hollow,

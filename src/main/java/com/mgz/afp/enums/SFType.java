@@ -135,7 +135,9 @@ public enum SFType {
 
   public static SFType valueOf(int sfTypeByte) {
     for (SFType sfType : SFType.values()) {
-      if (sfType.val == sfTypeByte) return sfType;
+      if (sfType.val == sfTypeByte) {
+        return sfType;
+      }
     }
     return Undefined;
   }

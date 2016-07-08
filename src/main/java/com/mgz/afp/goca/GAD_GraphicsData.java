@@ -558,7 +558,7 @@ public class GAD_GraphicsData extends StructuredField {
       this.drawingOrders = drawingOrders;
     }
 
-    public static enum SegmentPropertiesFlag implements IMutualExclusiveGroupedFlag {
+    public enum SegmentPropertiesFlag implements IMutualExclusiveGroupedFlag {
       Chained(0),
       Unchained(0),
       NoProlog(1),
