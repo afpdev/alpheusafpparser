@@ -1,4 +1,4 @@
-package com.mgz.afp.examples;
+package com.mgz.test.acceptance;
 
 import java.io.BufferedInputStream;
 import java.io.File;
