@@ -26,12 +26,22 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-checkstyle {
-    toolVersion = '7.0'
-}
-
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
+configurations {
+    checkstyleConfig
+}
+
+dependencies {
+    checkstyleConfig ("com.puppycrawl.tools:checkstyle:7.1") {
+        transitive = false
+    }
+}
+checkstyle {
+    toolVersion = '7.1'
+    config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
 }
 
