@@ -16,18 +16,25 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
-package com.mgz.test;
+package com.mgz.acceptance;
 
 import java.io.File;
 import java.io.FileFilter;
 
 
-public class Constants {
+public class FilesSuite {
 
   private static final String[] allowedExtensions = {".afp", ".ovl", ".240", ".300", ".CDP"};
-  private static final File[] afpFiles = findFiles(new File("src/test/resources/afp"));
+  private static File[] afpFiles;
 
   public static File[] getAfpFiles() {
+    if (afpFiles == null) {
+      synchronized (FilesSuite.class) {
+        if (afpFiles == null) {
+          afpFiles = findFiles(new File("./src/test/resources/afp"));
+        }
+      }
+    }
     return afpFiles;
   }
 

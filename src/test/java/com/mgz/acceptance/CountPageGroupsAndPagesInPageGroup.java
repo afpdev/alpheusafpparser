@@ -1,4 +1,4 @@
-package com.mgz.test.acceptance;
+package com.mgz.acceptance;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.exceptions.AFPParserException;
@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 

@@ -16,11 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
-package com.mgz.test;
+package com.mgz.afp.ptoca.controlSequence;
 
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.PTOCAControlSequenceParser;
-import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence;
 import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence.ControlSequenceFunctionType;
 import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence.ControlSequenceIntroducer;
 

@@ -16,15 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
-package com.mgz.test;
+package com.mgz.acceptance;
 
 import com.mgz.afp.base.StructuredField;
-import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParser;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.afp.writer.AFPWriterHumanReadable;
 import com.mgz.afp.writer.IAFPWriter;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,37 +32,50 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 
 
 public class AFPWriterTest {
 
   public static final Logger LOG = LoggerFactory.getLogger("AFPWriterTest");
+  private static File[] filesSuite = {};
+
+  @BeforeClass
+  public static void onlyOnce() throws Exception {
+    if (FilesSuite.getAfpFiles() != null) {
+      filesSuite = FilesSuite.getAfpFiles();
+    }
+  }
 
   @Test
-  public void testWriteSF() throws IOException, AFPParserException {
-    AFPParserConfiguration pc = new AFPParserConfiguration();
-    IAFPWriter afpWriter = new AFPWriterHumanReadable();
-    OutputStream os = new FileOutputStream("./src/test/output/" + AFPWriterTest.class.getSimpleName() + ".tmp");
+  public void testWriteSF() {
+    try {
+      AFPParserConfiguration pc = new AFPParserConfiguration();
+      IAFPWriter afpWriter = new AFPWriterHumanReadable();
+      if (new File("./output/").mkdir()) {
+        OutputStream os = new FileOutputStream("./output/" + AFPWriterTest.class.getSimpleName() + ".tmp");
 
-    for (File afpFile : Constants.getAfpFiles()) {
-      LOG.debug("File: {}", afpFile.getAbsolutePath());
-      pc.setInputStream(new FileInputStream(afpFile));
+        for (File afpFile : filesSuite) {
+          LOG.debug("File: {}", afpFile.getAbsolutePath());
+          pc.setInputStream(new FileInputStream(afpFile));
 
-      AFPParser parser = new AFPParser(pc);
+          AFPParser parser = new AFPParser(pc);
 
-      StructuredField sf;
-      do {
-        sf = parser.parseNextSF();
-        if (sf != null) {
-          os.write(afpWriter.writeSF(sf).getBytes());
+          StructuredField sf;
+          do {
+            sf = parser.parseNextSF();
+            if (sf != null) {
+              os.write(afpWriter.writeSF(sf).getBytes());
+            }
+          } while (sf != null);
+
+          pc.getInputStream().close();
         }
-      } while (sf != null);
-
-      pc.getInputStream().close();
+        os.close();
+      }
+    } catch (Exception exception) {
+      LOG.error("Unable to write SF: {}", exception.getLocalizedMessage());
     }
-    os.close();
   }
 
 }

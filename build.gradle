@@ -26,6 +26,15 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
+//task cleanOutput(type: Delete) {
+//    delete 'output', 'output'
+//    followSymlinks = true
+//}
+
+clean.doFirst {
+    delete "${rootDir}/output/"
+}
+
 artifacts {
     archives sourcesJar
     archives javadocJar

@@ -91,6 +91,7 @@ buildNumber.properties
 ### Gradle ###
 .gradle
 build/
+output/
 
 # Ignore Gradle GUI config
 gradle-app.setting
