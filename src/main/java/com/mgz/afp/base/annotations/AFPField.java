@@ -28,7 +28,6 @@ public @interface AFPField {
    */
   boolean isHidden() default false;
 
-
   /**
    * Indicates if a field is editable.
    */

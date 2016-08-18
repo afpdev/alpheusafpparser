@@ -40,7 +40,6 @@ public class UtilBinaryDecodingTest {
     assertTrue(result.length == 2);
   }
 
-
   @Test
   public void testParseBitSet() {
     byte[] bytes = {(byte) 0xF6, 0x6D};
@@ -60,11 +59,9 @@ public class UtilBinaryDecodingTest {
       }
     }
 
-
     for (int i = 0; i < bytes.length; i++) {
       assertEquals("byte " + i + " differs", bytes[i], result[i]);
     }
-
 
   }
 

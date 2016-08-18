@@ -138,7 +138,7 @@ public class IOC_IMImageOutputControl extends StructuredField {
     this.constantData22_23 = constantData22_23;
   }
 
-  public static enum ImageMapping {
+  public enum ImageMapping {
     ImagePointToOnePel(0x03E8),
     ImagePointToTwoPel(0x07D0);
     int code;

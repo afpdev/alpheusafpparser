@@ -25,6 +25,8 @@ import com.mgz.afp.parser.AFPParser;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,12 +44,14 @@ import static org.junit.Assert.assertNotNull;
 
 public class AFPParserTest {
 
+  public static final Logger LOG = LoggerFactory.getLogger("AFPParserTest");
+
   @Test
   public void testParsingAllTestFiles() throws IOException, AFPParserException, NoSuchAlgorithmException {
     AFPParserConfiguration pc = new AFPParserConfiguration();
-    for (File afpFile : Constants.afpFiles) {
+    for (File afpFile : Constants.getAfpFiles()) {
 
-      System.out.println(" --- FILE: " + afpFile.getAbsolutePath());
+      LOG.debug("--- FILE: {}", afpFile.getAbsolutePath());
 
       pc.setInputStream(new FileInputStream(afpFile));
 
@@ -57,9 +61,9 @@ public class AFPParserTest {
       do {
         sf = parser.parseNextSF();
         if (sf != null) {
+          LOG.debug("StructuredField: {}", sf);
           StructuredFieldIntroducer sfi = sf.getStructuredFieldIntroducer();
           assertNotNull(sfi);
-          // System.out.println("0x" + Integer.toHexString(sfi.getFileOffset()).toUpperCase() + ": " + sfi.getSFTypeID().name());
         }
       } while (sf != null);
 
@@ -70,7 +74,6 @@ public class AFPParserTest {
   public void processAFPFile(File afpFile) throws AFPParserException, IOException {
     AFPParserConfiguration pc = new AFPParserConfiguration();
     pc.setInputStream(new FileInputStream(afpFile));
-
 
     FileOutputStream fos = new FileOutputStream(new File("output.afp"));
 
@@ -83,7 +86,6 @@ public class AFPParserTest {
 
         // Do your thing with the SF.
         // ...
-
 
         // Finally write the SF to output stream..
         sf.writeAFP(fos, pc);
@@ -103,8 +105,7 @@ public class AFPParserTest {
     MessageDigest mdIs = MessageDigest.getInstance("MD5");
     MessageDigest mdOs = MessageDigest.getInstance("MD5");
 
-    for (File afpFile : Constants.afpFiles) {
-
+    for (File afpFile : Constants.getAfpFiles()) {
 
       DigestInputStream dis = new DigestInputStream(new FileInputStream(afpFile), mdIs);
       pc.setInputStream(dis);
@@ -144,8 +145,7 @@ public class AFPParserTest {
     MessageDigest mdIs = MessageDigest.getInstance("MD5");
     MessageDigest mdOs = MessageDigest.getInstance("MD5");
 
-    for (File afpFile : Constants.afpFiles) {
-
+    for (File afpFile : Constants.getAfpFiles()) {
 
       DigestInputStream dis = new DigestInputStream(new FileInputStream(afpFile), mdIs);
       pc.setInputStream(dis);
@@ -154,7 +154,7 @@ public class AFPParserTest {
 
       AFPParser parser = new AFPParser(pc);
 
-      StructuredField sf = null;
+      StructuredField sf;
       do {
         sf = parser.parseNextSF();
         if (sf != null) {

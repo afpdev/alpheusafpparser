@@ -29,12 +29,19 @@ public enum AFPUnitBase {
   }
 
   public static AFPUnitBase valueOf(byte unitBaseCode) {
-    for (AFPUnitBase ub : values()) if (ub.code == unitBaseCode) return ub;
+    for (AFPUnitBase ub : values()) {
+      if (ub.code == unitBaseCode) {
+        return ub;
+      }
+    }
     return null;
   }
 
   public byte toByte() {
-    if (this == Inches10) return 0x00;
-    else return 0x01;
+    if (this == Inches10) {
+      return 0x00;
+    } else {
+      return 0x01;
+    }
   }
 }

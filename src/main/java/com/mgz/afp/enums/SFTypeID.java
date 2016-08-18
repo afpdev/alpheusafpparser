@@ -166,15 +166,15 @@ public enum SFTypeID {
 
 
   /**
-   * SFTypeID[2]
+   * SFTypeID[2].
    */
   SFClass sfClass;
   /**
-   * SFTypeID[3]
+   * SFTypeID[3].
    */
   SFType sfType;
   /**
-   * SFTypeID[4]
+   * SFTypeID[4].
    */
   SFCategory sfCategory;
 

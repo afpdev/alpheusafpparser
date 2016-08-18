@@ -330,7 +330,7 @@ public class RCD_RecordDescriptor extends StructuredFieldBaseTriplets {
     this.reserved57_69 = reserved57_69;
   }
 
-  public static enum RCD_Flag {
+  public enum RCD_Flag {
     // (0) 0x800000 reserved.
     // (1) 0x400000 reserved.
     GenerateInlinePosition_CurrentPosition(2),

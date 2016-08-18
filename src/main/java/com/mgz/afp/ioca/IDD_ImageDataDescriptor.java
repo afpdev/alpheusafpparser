@@ -39,7 +39,6 @@ public class IDD_ImageDataDescriptor extends StructuredField {
   short heightOfImageInImagePoints;
   List<IDD_SelfDefiningField> selfDefiningFields;
 
-
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     checkDataLength(sfData, offset, length, 9);
@@ -83,7 +82,9 @@ public class IDD_ImageDataDescriptor extends StructuredField {
     baos.write(UtilBinaryDecoding.shortToByteArray(heightOfImageInImagePoints, 2));
 
     if (selfDefiningFields != null) {
-      for (IDD_SelfDefiningField sdf : selfDefiningFields) sdf.writeAFP(baos, config);
+      for (IDD_SelfDefiningField sdf : selfDefiningFields) {
+        sdf.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());
@@ -138,13 +139,16 @@ public class IDD_ImageDataDescriptor extends StructuredField {
   }
 
   public void addSelfDefiningFields(IDD_SelfDefiningField selfDefiningField) {
-    if (this.selfDefiningFields == null)
+    if (selfDefiningFields == null) {
       selfDefiningFields = new ArrayList<IDD_SelfDefiningField>();
+    }
     selfDefiningFields.add(selfDefiningField);
   }
 
   public void removeSelfDefiningFields(IDD_SelfDefiningField selfDefiningField) {
-    if (this.selfDefiningFields == null) return;
+    if (selfDefiningFields == null) {
+      return;
+    }
     selfDefiningFields.remove(selfDefiningField);
   }
 }

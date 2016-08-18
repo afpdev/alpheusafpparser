@@ -39,15 +39,18 @@ public abstract class StructuredFieldBaseRepeatingGroups extends StructuredField
 
   @Override
   public final void addRepeatingGroup(IRepeatingGroup rg) {
-    if (rg == null) return;
-    if (repeatingGroups == null) repeatingGroups = new ArrayList<IRepeatingGroup>();
-    repeatingGroups.add(rg);
-
+    if (rg != null) {
+      if (repeatingGroups == null) {
+        repeatingGroups = new ArrayList<IRepeatingGroup>();
+      }
+      repeatingGroups.add(rg);
+    }
   }
 
   @Override
   public final void removeRepeatingGroup(IRepeatingGroup rg) {
-    if (repeatingGroups == null) return;
-    else repeatingGroups.remove(rg);
+    if (repeatingGroups != null) {
+      repeatingGroups.remove(rg);
+    }
   }
 }

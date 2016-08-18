@@ -136,7 +136,7 @@ public class BDA_BarCodeData extends StructuredField {
     this.yOffset = yOffset;
   }
 
-  public static enum BarCodeFlag {
+  public enum BarCodeFlag {
     HRINotPresent, // bit 7
     // PositionDefault, // bit 6,5 B00
     PositionHRIBelow, // B01
@@ -224,7 +224,7 @@ public class BDA_BarCodeData extends StructuredField {
       else this.controlFlags.remove(controlFlag);
     }
 
-    public static enum ControlFlag {
+    public enum ControlFlag {
       ConvertEBCDICToASCII,
       IgnoreAllEscapeSequences;
 
@@ -358,7 +358,7 @@ public class BDA_BarCodeData extends StructuredField {
       else specialFunctionFlags.remove(specialFunctionFlag);
     }
 
-    public static enum SpecialFunctionFlag {
+    public enum SpecialFunctionFlag {
       SymbolConfirmsToGS1Standard,
       SymbolConfirmsToIndustryStandard,
       SymbolEncodesAMessage,
@@ -432,7 +432,7 @@ public class BDA_BarCodeData extends StructuredField {
       os.write(specialFunctionFlag.toByte());
     }
 
-    public static enum SymbolMode {
+    public enum SymbolMode {
       Mode2, Mode3, Mode4, Mode5, Mode6;
 
       public static SymbolMode valueOf(byte symbolModeCode) {
@@ -454,7 +454,7 @@ public class BDA_BarCodeData extends StructuredField {
       }
     }
 
-    public static enum SpecialFunctionFlag {
+    public enum SpecialFunctionFlag {
       NoZipperPattern,
       VerticalZipperPatternOnRight;
 
@@ -537,7 +537,7 @@ public class BDA_BarCodeData extends StructuredField {
       os.write(applicationIndicator);
     }
 
-    public static enum Conversion {
+    public enum Conversion {
       NoConversion(0x00),
       SBCS_EBCDIC_CodePage500(0x01),
       SBCS_EBCDIC_CodePage290(0x02),
@@ -566,7 +566,7 @@ public class BDA_BarCodeData extends StructuredField {
     }
 
 
-    public static enum ErrorCorrectionLevel {
+    public enum ErrorCorrectionLevel {
       LevelL, LevelM, LevelQ, LevelH;
 
       public static ErrorCorrectionLevel valueOf(byte leveCode) {
@@ -580,7 +580,7 @@ public class BDA_BarCodeData extends StructuredField {
       }
     }
 
-    public static enum SpecialFunctionFlag {
+    public enum SpecialFunctionFlag {
       symbolConformsToUCC_EANCode,
       symbolConformsToIndustriyStandard;
 

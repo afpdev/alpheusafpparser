@@ -53,20 +53,24 @@ public class RepeatingGroupWithTriplets extends RepeatingGroupBase implements IH
     if (triplets != null) for (Triplet t : triplets) t.writeAFP(os, config);
   }
 
+  @Override
   public List<Triplet> getTriplets() {
     return triplets;
   }
 
+  @Override
   public void setTriplets(List<Triplet> triplets) {
     this.triplets = triplets;
   }
 
+  @Override
   public void addTriplet(Triplet triplet) {
     if (triplet == null) return;
     if (triplets == null) triplets = new ArrayList<Triplet>();
     triplets.add(triplet);
   }
 
+  @Override
   public void removeTriplet(Triplet triplet) {
     if (triplets == null) return;
     else triplets.add(triplet);

@@ -23,6 +23,8 @@ import com.mgz.afp.triplets.Triplet;
 import com.mgz.afp.triplets.Triplet.TripletID;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,17 +32,17 @@ import static org.junit.Assert.assertNotNull;
 
 public class TripletTest {
 
+  public static final Logger LOG = LoggerFactory.getLogger("TripletTest");
+
   @Test
   public void testTripletInstanciation() {
-    System.out.println("Defined MODCA Triplets:");
+    LOG.debug("Defined MODCA Triplets:");
     for (TripletID tID : TripletID.values()) {
       Triplet t = TripletParser.createTripletInstance(tID);
-
       assertNotNull(t);
-      System.out.println(t.getClass().getSimpleName());
+      LOG.debug(t.getClass().getSimpleName());
       assertEquals(tID.name(), t.getClass().getSimpleName());
     }
   }
-
 
 }

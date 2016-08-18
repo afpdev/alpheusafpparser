@@ -1,3 +1,5 @@
+# Alpheus AFP Parser [![Build](https://travis-ci.org/quike/alpheusafpparser.svg?branch=master)](https://travis-ci.org/quike/alpheusafpparser)
+
 Alpheus AFP Parser is a library and parser for the IBM Advanced Function Presentation (AFP) 
 document/print stream format.
 

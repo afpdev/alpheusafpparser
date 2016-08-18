@@ -98,7 +98,7 @@ public class PFC_PresentationFidelityControl extends StructuredFieldBaseTriplets
     this.reserved2_3 = reserved2_3;
   }
 
-  public static enum PFC_Flag {
+  public enum PFC_Flag {
     ResetFidelityControlsToDefault,
     DoNotResetFidelityControlsToDefault;
 

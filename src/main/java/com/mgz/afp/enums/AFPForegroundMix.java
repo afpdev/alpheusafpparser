@@ -30,10 +30,13 @@ public enum AFPForegroundMix {
   }
 
   public static AFPForegroundMix valueOf(byte codeByte) throws AFPParserException {
-    if (codeByte == 0x00) return Default;
-    else if (codeByte == 0x02) return Overpaint;
-    else
+    if (codeByte == 0x00) {
+      return Default;
+    } else if (codeByte == 0x02) {
+      return Overpaint;
+    } else {
       throw new AFPParserException("The foreground mixing code 0x" + Integer.toHexString(codeByte) + " is undefined.");
+    }
   }
 
   public int toByte() {

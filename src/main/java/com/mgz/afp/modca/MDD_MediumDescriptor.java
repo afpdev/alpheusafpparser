@@ -132,7 +132,7 @@ public class MDD_MediumDescriptor extends StructuredFieldBaseTriplets {
     this.flag = flag;
   }
 
-  public static enum MDD_Flag {
+  public enum MDD_Flag {
     DoNotPassMediumOrientationToCutsheetPrinter,
     PassMediumOrientationToCutsheetPrinter;
 

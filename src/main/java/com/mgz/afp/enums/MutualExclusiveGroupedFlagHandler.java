@@ -33,7 +33,9 @@ public class MutualExclusiveGroupedFlagHandler<E extends Enum<E>> {
     int flagGroup = ((IMutualExclusiveGroupedFlag) flag).getGroup();
     for (E unsetFlag : allFlags) {
       int unsetGroup = ((IMutualExclusiveGroupedFlag) unsetFlag).getGroup();
-      if (flagGroup == unsetGroup && unsetFlag != flag) flags.remove(flag);
+      if (flagGroup == unsetGroup && unsetFlag != flag) {
+        flags.remove(flag);
+      }
     }
     flags.add(flag);
   }

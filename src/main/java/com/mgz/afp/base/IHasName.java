@@ -24,12 +24,12 @@ public interface IHasName {
    *
    * @return name of this structured field.
    */
-  public String getName();
+  String getName();
 
   /**
    * Sets the name.
    *
    * @param name the name of this structured field
    */
-  public void setName(String name);
+  void setName(String name);
 }
