@@ -16,14 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
-package com.mgz.test;
+package com.mgz.afp.enums;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.StructuredFieldIntroducer;
-import com.mgz.afp.enums.SFCategory;
-import com.mgz.afp.enums.SFClass;
-import com.mgz.afp.enums.SFType;
-import com.mgz.afp.enums.SFTypeID;
 import com.mgz.afp.parser.AFPParser;
 
 import org.junit.Test;
