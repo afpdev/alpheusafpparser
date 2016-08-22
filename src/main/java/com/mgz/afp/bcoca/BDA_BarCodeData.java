@@ -18,11 +18,6 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.bcoca;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.EnumSet;
-
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.bcoca.BDD_BarCodeDataDescriptor.BarCodeType;
@@ -31,535 +26,574 @@ import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.EnumSet;
+
 /**
- * Bar Code Data (BDA) The BDA structured field contains parameters to position a single bar code symbol
- * within a bar code presentation space, parameters to specify special functions for
- * 2D bar codes, flags to specify attributes specific to the symbol, and the data to be
- * encoded. The data is encoded according to the parameters specified in the 
- * Bar Code Data Descriptor (BDD) structured field.
- * 
+ * Bar Code Data (BDA) The BDA structured field contains parameters to position a single bar code
+ * symbol within a bar code presentation space, parameters to specify special functions for 2D bar
+ * codes, flags to specify attributes specific to the symbol, and the data to be encoded. The data
+ * is encoded according to the parameters specified in the Bar Code Data Descriptor (BDD) structured
+ * field.
  */
 public class BDA_BarCodeData extends StructuredField {
-	@AFPField
-	EnumSet<BarCodeFlag> barCodeFlags;
-	@AFPField
-	int xOffset;
-	@AFPField
-	int yOffset;
-	@AFPField(isOptional=true)
-	ParametersData parametersData;
-	@AFPField(isOptional=true,maxSize=32759-5)
-	byte[] barCodeData;
+  @AFPField
+  EnumSet<BarCodeFlag> barCodeFlags;
+  @AFPField
+  int xOffset;
+  @AFPField
+  int yOffset;
+  @AFPField(isOptional = true)
+  ParametersData parametersData;
+  @AFPField(isOptional = true, maxSize = 32759 - 5)
+  byte[] barCodeData;
 
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException{
-		BDD_BarCodeDataDescriptor associatedBarCodeDataDescriptor = config.getCurrentBarCodeDataDescriptor();
-		
-		checkDataLength(sfData, offset, length, 5);
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    BDD_BarCodeDataDescriptor associatedBarCodeDataDescriptor = config.getCurrentBarCodeDataDescriptor();
 
-		barCodeFlags = BarCodeFlag.valueOf(sfData[0]);
-		xOffset = UtilBinaryDecoding.parseInt(sfData, 1, 2);
-		yOffset = UtilBinaryDecoding.parseInt(sfData, 3, 2);
+    checkDataLength(sfData, offset, length, 5);
 
-		int actualLength = length!=-1 ? length : sfData.length-offset; 
+    barCodeFlags = BarCodeFlag.valueOf(sfData[0]);
+    xOffset = UtilBinaryDecoding.parseInt(sfData, 1, 2);
+    yOffset = UtilBinaryDecoding.parseInt(sfData, 3, 2);
 
-		int parameterDataLength=0;
-		if(actualLength>5){
-			if(	associatedBarCodeDataDescriptor.barcodeType == BarCodeType.DataMatrix_GS1DataMatrix_2D){
-				parametersData = new ParametersDataMatrixBarcode();
-			}else if(associatedBarCodeDataDescriptor.barcodeType == BarCodeType.MaxiCode_2D){
-				parametersData = new ParametersDataMaxiCode_2D();
-			}else if(associatedBarCodeDataDescriptor.barcodeType == BarCodeType.PDF417_2D){
-				parametersData = new ParametersDataPDF417_2D();
-			}else if(associatedBarCodeDataDescriptor.barcodeType == BarCodeType.QRCode_2D){
-				parametersData = new ParametersDataQRCode_2D();
-			}else{
-				parametersData = null;
-			}
-			if(parametersData!=null) parameterDataLength = parametersData.decodeAFP(sfData, 5, -1);
-		}
+    int actualLength = length != -1 ? length : sfData.length - offset;
 
-		if(actualLength > ( 5 + parameterDataLength)){
-			barCodeData = new byte[actualLength - ( 5 + parameterDataLength)];
-			System.arraycopy(sfData, offset + ( 5 + parameterDataLength), barCodeData, 0, barCodeData.length);
-		}else{
-			barCodeData = new byte[0];
-		}
-	}
+    int parameterDataLength = 0;
+    if (actualLength > 5) {
+      if (associatedBarCodeDataDescriptor.barcodeType == BarCodeType.DataMatrix_GS1DataMatrix_2D) {
+        parametersData = new ParametersDataMatrixBarcode();
+      } else if (associatedBarCodeDataDescriptor.barcodeType == BarCodeType.MaxiCode_2D) {
+        parametersData = new ParametersDataMaxiCode_2D();
+      } else if (associatedBarCodeDataDescriptor.barcodeType == BarCodeType.PDF417_2D) {
+        parametersData = new ParametersDataPDF417_2D();
+      } else if (associatedBarCodeDataDescriptor.barcodeType == BarCodeType.QRCode_2D) {
+        parametersData = new ParametersDataQRCode_2D();
+      } else {
+        parametersData = null;
+      }
+      if (parametersData != null)
+        parameterDataLength = parametersData.decodeAFP(sfData, 5, -1);
+    }
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    if (actualLength > (5 + parameterDataLength)) {
+      barCodeData = new byte[actualLength - (5 + parameterDataLength)];
+      System.arraycopy(sfData, offset + (5 + parameterDataLength), barCodeData, 0, barCodeData.length);
+    } else {
+      barCodeData = new byte[0];
+    }
+  }
 
-		baos.write(BarCodeFlag.toByte(barCodeFlags));
-		baos.write(UtilBinaryDecoding.intToByteArray(xOffset, 2));
-		baos.write(UtilBinaryDecoding.intToByteArray(yOffset, 2));
-		parametersData.writeAFP(baos, config);
-		baos.write(barCodeData);
-		
-		writeFullStructuredField(os, baos.toByteArray());
-	}
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-	public static enum BarCodeFlag {
-		HRINotPresent, // bit 7
-		// PositionDefault, // bit 6,5 B00
-		PositionHRIBelow, // B01 
-		PositionHRIAbove, // B10
-		// Reserved bit 4
-		SSCASTAsteriskIsPresent, // bit 3
+    baos.write(BarCodeFlag.toByte(barCodeFlags));
+    baos.write(UtilBinaryDecoding.intToByteArray(xOffset, 2));
+    baos.write(UtilBinaryDecoding.intToByteArray(yOffset, 2));
+    parametersData.writeAFP(baos, config);
+    baos.write(barCodeData);
 
-		SuppressBarCodeSymbol, // bit 2
+    writeFullStructuredField(os, baos.toByteArray());
+  }
 
-		SuppressAndAdjustBlanks // bit 1
-		// Reserved bit 0
-		;
+  public EnumSet<BarCodeFlag> getBarCodeFlags() {
+    return barCodeFlags;
+  }
 
-		public static EnumSet<BarCodeFlag> valueOf(int flagByte){
-			EnumSet<BarCodeFlag> result = EnumSet.noneOf(BarCodeFlag.class); 
+  public void setBarCodeFlags(EnumSet<BarCodeFlag> barCodeFlags) {
+    this.barCodeFlags = barCodeFlags;
+  }
 
-			if((flagByte & 0x80) != 0) result.add(HRINotPresent);
-			if((flagByte & 0x40) != 0) result.add(PositionHRIBelow);
-			else if((flagByte & 0x20) != 0) result.add(PositionHRIAbove);
-			if((flagByte & 0x08) != 0) result.add(SSCASTAsteriskIsPresent);
-			if((flagByte & 0x04) != 0) result.add(SuppressBarCodeSymbol);
-			if((flagByte & 0x02) != 0) result.add(SuppressAndAdjustBlanks);
+  /**
+   * Adds the given {@link BarCodeFlag} to the set of {@link BarCodeFlag}. Takes care of mutual
+   * exclusive {@link BarCodeFlag}.
+   */
+  public void addBarCodeFlag(BarCodeFlag barCodeFlag) {
+    if (barCodeFlags == null) barCodeFlags = EnumSet.noneOf(BarCodeFlag.class);
+    if (barCodeFlag == BarCodeFlag.PositionHRIBelow)
+      barCodeFlags.remove(BarCodeFlag.PositionHRIAbove);
+    else if (barCodeFlag == BarCodeFlag.PositionHRIAbove)
+      barCodeFlags.remove(BarCodeFlag.PositionHRIBelow);
+    barCodeFlags.add(barCodeFlag);
+  }
 
-			return result;
-		}
+  public int getxOffset() {
+    return xOffset;
+  }
 
-		/**
-		 * Converts the {@link SFFlag} in given {@link EnumSet} to AFP SF FlagByte.
-		 * @param flags
-		 * @return
-		 */
-		public static int toByte(EnumSet<BarCodeFlag> flags){
-			int result = 0;
+  public void setxOffset(int xOffset) {
+    this.xOffset = xOffset;
+  }
 
-			if(flags.contains(HRINotPresent)) result+=0x80;
-			if(flags.contains(PositionHRIBelow)) result+=0x40;
-			else if(flags.contains(PositionHRIAbove)) result+=0x20;
-			if(flags.contains(SSCASTAsteriskIsPresent)) result+=0x08;
-			if(flags.contains(SuppressBarCodeSymbol)) result+=0x04;
-			if(flags.contains(SuppressAndAdjustBlanks)) result+=0x02;
+  public int getyOffset() {
+    return yOffset;
+  }
 
-			return result;
-		}
-	}
+  public void setyOffset(int yOffset) {
+    this.yOffset = yOffset;
+  }
 
-	public EnumSet<BarCodeFlag> getBarCodeFlags() {
-		return barCodeFlags;
-	}
+  public enum BarCodeFlag {
+    HRINotPresent, // bit 7
+    // PositionDefault, // bit 6,5 B00
+    PositionHRIBelow, // B01
+    PositionHRIAbove, // B10
+    // Reserved bit 4
+    SSCASTAsteriskIsPresent, // bit 3
 
-	public void setBarCodeFlags(EnumSet<BarCodeFlag> barCodeFlags) {
-		this.barCodeFlags = barCodeFlags;
-	}
+    SuppressBarCodeSymbol, // bit 2
 
-	/**
-	 * Adds the given {@link BarCodeFlag} to the set of {@link BarCodeFlag}.
-	 * Takes care of mutual exclusive {@link BarCodeFlag}.
-	 * @param barCodeFlag
-	 */
-	public void addBarCodeFlag(BarCodeFlag barCodeFlag){
-		if(barCodeFlags==null) barCodeFlags= EnumSet.noneOf(BarCodeFlag.class);
-		if(barCodeFlag==BarCodeFlag.PositionHRIBelow) barCodeFlags.remove(BarCodeFlag.PositionHRIAbove);
-		else if(barCodeFlag==BarCodeFlag.PositionHRIAbove) barCodeFlags.remove(BarCodeFlag.PositionHRIBelow);
-		barCodeFlags.add(barCodeFlag);
-	}
-	
-	public int getxOffset() {
-		return xOffset;
-	}
+    SuppressAndAdjustBlanks // bit 1
+    // Reserved bit 0
+    ;
 
-	public void setxOffset(int xOffset) {
-		this.xOffset = xOffset;
-	}
+    public static EnumSet<BarCodeFlag> valueOf(int flagByte) {
+      EnumSet<BarCodeFlag> result = EnumSet.noneOf(BarCodeFlag.class);
 
-	public int getyOffset() {
-		return yOffset;
-	}
+      if ((flagByte & 0x80) != 0) result.add(HRINotPresent);
+      if ((flagByte & 0x40) != 0) result.add(PositionHRIBelow);
+      else if ((flagByte & 0x20) != 0) result.add(PositionHRIAbove);
+      if ((flagByte & 0x08) != 0) result.add(SSCASTAsteriskIsPresent);
+      if ((flagByte & 0x04) != 0) result.add(SuppressBarCodeSymbol);
+      if ((flagByte & 0x02) != 0) result.add(SuppressAndAdjustBlanks);
 
-	public void setyOffset(int yOffset) {
-		this.yOffset = yOffset;
-	}
+      return result;
+    }
 
-	// Base class for all "Special-Function Parameter Data".
-	public static abstract class ParametersData{
-		public static enum ControlFlag{
-			ConvertEBCDICToASCII,
-			IgnoreAllEscapeSequences;
+    /**
+     * Converts the {@link SFFlag} in given {@link EnumSet} to AFP SF FlagByte.
+     */
+    public static int toByte(EnumSet<BarCodeFlag> flags) {
+      int result = 0;
 
-			public static EnumSet<ControlFlag> valueOf(int flagByte){
-				EnumSet<ControlFlag> result = EnumSet.noneOf(ControlFlag.class);
-				if((flagByte & 0x80) != 0); result.add(ConvertEBCDICToASCII); 
-				if((flagByte & 0x40) != 0); result.add(IgnoreAllEscapeSequences);
-				return result;
-			}
-			public static int toByte(EnumSet<ControlFlag> controlFlags){
-				int result = 0;
-				if(controlFlags.contains(ConvertEBCDICToASCII)) result+=0x80;
-				if(controlFlags.contains(IgnoreAllEscapeSequences)) result+=0x40;
-				return result;
-			}
-		}
-		EnumSet<ControlFlag> controlFlags;
-		byte sequenceIndicator;
-		byte totalNumberOfSymbols;
+      if (flags.contains(HRINotPresent)) result += 0x80;
+      if (flags.contains(PositionHRIBelow)) result += 0x40;
+      else if (flags.contains(PositionHRIAbove)) result += 0x20;
+      if (flags.contains(SSCASTAsteriskIsPresent)) result += 0x08;
+      if (flags.contains(SuppressBarCodeSymbol)) result += 0x04;
+      if (flags.contains(SuppressAndAdjustBlanks)) result += 0x02;
 
-		public abstract int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException;
-		public abstract void writeAFP(OutputStream os, AFPParserConfiguration config)throws IOException;
+      return result;
+    }
+  }
 
-		public byte getSequenceIndicator() {
-			return sequenceIndicator;
-		}
+  // Base class for all "Special-Function Parameter Data".
+  public static abstract class ParametersData {
+    EnumSet<ControlFlag> controlFlags;
+    byte sequenceIndicator;
+    byte totalNumberOfSymbols;
 
-		public void setSequenceIndicator(byte sequenceIndicator) {
-			this.sequenceIndicator = sequenceIndicator;
-		}
+    public abstract int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException;
 
-		public byte getTotalNumberOfSymbols() {
-			return totalNumberOfSymbols;
-		}
+    public abstract void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException;
 
-		public void setTotalNumberOfSymbols(byte totalNumberOfSymbols) {
-			this.totalNumberOfSymbols = totalNumberOfSymbols;
-		}		
+    public byte getSequenceIndicator() {
+      return sequenceIndicator;
+    }
 
-		public EnumSet<ControlFlag> getControlFlags() {
-			return controlFlags;
-		}
+    public void setSequenceIndicator(byte sequenceIndicator) {
+      this.sequenceIndicator = sequenceIndicator;
+    }
 
-		public void setControlFlags(EnumSet<ControlFlag> controlFlags) {
-			this.controlFlags = controlFlags;
-		}
+    public byte getTotalNumberOfSymbols() {
+      return totalNumberOfSymbols;
+    }
 
-		public void addControlFlag(ControlFlag controlFlag) {
-			if(this.controlFlags==null) controlFlags=EnumSet.noneOf(ControlFlag.class);
-			controlFlags.add(controlFlag);
-		}
+    public void setTotalNumberOfSymbols(byte totalNumberOfSymbols) {
+      this.totalNumberOfSymbols = totalNumberOfSymbols;
+    }
 
-		public void removeControlFlag(ControlFlag controlFlag) {
-			if(this.controlFlags==null) return;
-			else this.controlFlags.remove(controlFlag);
-		}
-	} 
+    public EnumSet<ControlFlag> getControlFlags() {
+      return controlFlags;
+    }
 
-	public static class ParametersDataMatrixBarcode extends ParametersData{
-		public static enum SpecialFunctionFlag{
-			SymbolConfirmsToGS1Standard,
-			SymbolConfirmsToIndustryStandard,
-			SymbolEncodesAMessage,
-			UseMacro05HeaderTrailer,
-			UseMacro06HeaderTrailer,
-			EncodationSchemeASCII,
-			EncodationSchemeC40,
-			EncodationSchemeText,
-			EncodationSchemeX12,
-			EncodationSchemeEDIFACT,
-			EncodationSchemeBase256,
-			EncodationSchemeAutoEncoding;
+    public void setControlFlags(EnumSet<ControlFlag> controlFlags) {
+      this.controlFlags = controlFlags;
+    }
 
-			public static EnumSet<SpecialFunctionFlag> valueOf(int flagByte){
-				EnumSet<SpecialFunctionFlag> result=EnumSet.noneOf(SpecialFunctionFlag.class);
-				if((flagByte & 0x80)!= 0) result.add(SymbolConfirmsToGS1Standard);
-				if((flagByte & 0x40)!= 0) result.add(SymbolConfirmsToIndustryStandard);
-				if((flagByte & 0x20)!= 0) result.add(SymbolEncodesAMessage);
-				if((flagByte & 0x10)!= 0) result.add(UseMacro06HeaderTrailer);
-				if((flagByte & 0x08)!= 0) result.add(UseMacro05HeaderTrailer);
-				if((flagByte & 0x07)!= 0) result.add(EncodationSchemeAutoEncoding);
-				if((flagByte & 0x06)!= 0) result.add(EncodationSchemeBase256);
-				if((flagByte & 0x05)!= 0) result.add(EncodationSchemeEDIFACT);
-				if((flagByte & 0x04)!= 0) result.add(EncodationSchemeX12);
-				if((flagByte & 0x03)!= 0) result.add(EncodationSchemeText);
-				if((flagByte & 0x02)!= 0) result.add(EncodationSchemeC40);
-				if((flagByte & 0x01)!= 0) result.add(EncodationSchemeASCII);
-				return result;
-			}
-			public static int toByte(EnumSet<SpecialFunctionFlag> specialFunctionFlags){
-				int result=0;
-				if(specialFunctionFlags.contains(SymbolConfirmsToGS1Standard)) result |= 0x80;
-				if(specialFunctionFlags.contains(SymbolConfirmsToIndustryStandard)) result |= 0x40;
-				if(specialFunctionFlags.contains(SymbolEncodesAMessage)) result |= 0x20;
-				if(specialFunctionFlags.contains(UseMacro06HeaderTrailer)) result |= 0x10;
-				else if(specialFunctionFlags.contains(UseMacro05HeaderTrailer)) result |= 0x08;
-				if(specialFunctionFlags.contains(EncodationSchemeAutoEncoding)) result |= 0x07;
-				else if(specialFunctionFlags.contains(EncodationSchemeBase256)) result |= 0x06;
-				else if(specialFunctionFlags.contains(EncodationSchemeEDIFACT)) result |= 0x05;
-				else if(specialFunctionFlags.contains(EncodationSchemeX12)) result |= 0x04;
-				else if(specialFunctionFlags.contains(EncodationSchemeText)) result |= 0x03;
-				else if(specialFunctionFlags.contains(EncodationSchemeC40)) result |= 0x02;
-				else if(specialFunctionFlags.contains(EncodationSchemeASCII)) result |= 0x01;
-				return result;
-			}
-		}
+    public void addControlFlag(ControlFlag controlFlag) {
+      if (this.controlFlags == null) controlFlags = EnumSet.noneOf(ControlFlag.class);
+      controlFlags.add(controlFlag);
+    }
 
-		int desiredRowSize;
-		int desiredNumberOfRows;
-		short fileIDFirstByte;
-		short fileIDSecondByte;
-		EnumSet<SpecialFunctionFlag> specialFunctionFlags;
+    public void removeControlFlag(ControlFlag controlFlag) {
+      if (this.controlFlags == null) return;
+      else this.controlFlags.remove(controlFlag);
+    }
 
-		@Override
-		public int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException{
-			BDA_BarCodeData.checkDataLength(sfData, offset, length, 10);
-			controlFlags = ControlFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset, 1));
-			desiredRowSize = UtilBinaryDecoding.parseInt(sfData, offset + 1, 2);
-			desiredNumberOfRows = UtilBinaryDecoding.parseInt(sfData, offset + 3, 2);
-			sequenceIndicator = sfData[offset + 5];
-			totalNumberOfSymbols = sfData[offset + 6];
-			fileIDFirstByte = UtilBinaryDecoding.parseShort(sfData, offset + 7, 1);
-			fileIDSecondByte = UtilBinaryDecoding.parseShort(sfData, offset + 8, 1);
-			specialFunctionFlags = SpecialFunctionFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 9, 1));
+    public enum ControlFlag {
+      ConvertEBCDICToASCII,
+      IgnoreAllEscapeSequences;
 
-			return 10;
-		}
+      public static EnumSet<ControlFlag> valueOf(int flagByte) {
+        EnumSet<ControlFlag> result = EnumSet.noneOf(ControlFlag.class);
+        if ((flagByte & 0x80) != 0) ;
+        result.add(ConvertEBCDICToASCII);
+        if ((flagByte & 0x40) != 0) ;
+        result.add(IgnoreAllEscapeSequences);
+        return result;
+      }
 
-		@Override
-		public void writeAFP(OutputStream os, AFPParserConfiguration config)throws IOException {
-			os.write(ControlFlag.toByte(controlFlags));
-			os.write(UtilBinaryDecoding.intToByteArray(desiredRowSize, 2));
-			os.write(UtilBinaryDecoding.intToByteArray(desiredNumberOfRows, 2));
-			os.write(sequenceIndicator);
-			os.write(totalNumberOfSymbols);
-			os.write(fileIDFirstByte);
-			os.write(fileIDSecondByte);
-			os.write(SpecialFunctionFlag.toByte(specialFunctionFlags));
-		}
+      public static int toByte(EnumSet<ControlFlag> controlFlags) {
+        int result = 0;
+        if (controlFlags.contains(ConvertEBCDICToASCII)) result += 0x80;
+        if (controlFlags.contains(IgnoreAllEscapeSequences)) result += 0x40;
+        return result;
+      }
+    }
+  }
 
-		public int getDesiredRowSize() {
-			return desiredRowSize;
-		}
+  public static class ParametersDataMatrixBarcode extends ParametersData {
+    int desiredRowSize;
+    int desiredNumberOfRows;
+    short fileIDFirstByte;
+    short fileIDSecondByte;
+    EnumSet<SpecialFunctionFlag> specialFunctionFlags;
 
-		public void setDesiredRowSize(int desiredRowSize) {
-			this.desiredRowSize = desiredRowSize;
-		}
+    @Override
+    public int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException {
+      BDA_BarCodeData.checkDataLength(sfData, offset, length, 10);
+      controlFlags = ControlFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset, 1));
+      desiredRowSize = UtilBinaryDecoding.parseInt(sfData, offset + 1, 2);
+      desiredNumberOfRows = UtilBinaryDecoding.parseInt(sfData, offset + 3, 2);
+      sequenceIndicator = sfData[offset + 5];
+      totalNumberOfSymbols = sfData[offset + 6];
+      fileIDFirstByte = UtilBinaryDecoding.parseShort(sfData, offset + 7, 1);
+      fileIDSecondByte = UtilBinaryDecoding.parseShort(sfData, offset + 8, 1);
+      specialFunctionFlags = SpecialFunctionFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 9, 1));
 
-		public int getDesiredNumberOfRows() {
-			return desiredNumberOfRows;
-		}
+      return 10;
+    }
 
-		public void setDesiredNumberOfRows(int desiredNumberOfRows) {
-			this.desiredNumberOfRows = desiredNumberOfRows;
-		}
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(ControlFlag.toByte(controlFlags));
+      os.write(UtilBinaryDecoding.intToByteArray(desiredRowSize, 2));
+      os.write(UtilBinaryDecoding.intToByteArray(desiredNumberOfRows, 2));
+      os.write(sequenceIndicator);
+      os.write(totalNumberOfSymbols);
+      os.write(fileIDFirstByte);
+      os.write(fileIDSecondByte);
+      os.write(SpecialFunctionFlag.toByte(specialFunctionFlags));
+    }
 
-		public short getFileIDFirstByte() {
-			return fileIDFirstByte;
-		}
+    public int getDesiredRowSize() {
+      return desiredRowSize;
+    }
 
-		public void setFileIDFirstByte(short fileIDFirstByte) {
-			this.fileIDFirstByte = fileIDFirstByte;
-		}
+    public void setDesiredRowSize(int desiredRowSize) {
+      this.desiredRowSize = desiredRowSize;
+    }
 
-		public short getFileIDSecondByte() {
-			return fileIDSecondByte;
-		}
+    public int getDesiredNumberOfRows() {
+      return desiredNumberOfRows;
+    }
 
-		public void setFileIDSecondByte(short fileIDSecondByte) {
-			this.fileIDSecondByte = fileIDSecondByte;
-		}
+    public void setDesiredNumberOfRows(int desiredNumberOfRows) {
+      this.desiredNumberOfRows = desiredNumberOfRows;
+    }
 
-		public EnumSet<SpecialFunctionFlag> getSpecialFunctionFlags() {
-			return specialFunctionFlags;
-		}
+    public short getFileIDFirstByte() {
+      return fileIDFirstByte;
+    }
 
-		public void setSpecialFunctionFlags(EnumSet<SpecialFunctionFlag> specialFunctionFlags) {
-			this.specialFunctionFlags = specialFunctionFlags;
-		}	
+    public void setFileIDFirstByte(short fileIDFirstByte) {
+      this.fileIDFirstByte = fileIDFirstByte;
+    }
 
-		/**
-		 * This method adds the given flag.
-		 * It takes care of mutual exclusive flags.
-		 * @param specialFunctionFlag flag to set.
-		 */
-		public void addSpecialFunctionFlag(SpecialFunctionFlag specialFunctionFlag){
-			if(specialFunctionFlags==null) specialFunctionFlags = EnumSet.noneOf(SpecialFunctionFlag.class);
+    public short getFileIDSecondByte() {
+      return fileIDSecondByte;
+    }
 
-			if(specialFunctionFlag==SpecialFunctionFlag.UseMacro06HeaderTrailer) specialFunctionFlags.remove(SpecialFunctionFlag.UseMacro05HeaderTrailer);
-			else if(specialFunctionFlag==SpecialFunctionFlag.UseMacro05HeaderTrailer) specialFunctionFlags.remove(SpecialFunctionFlag.UseMacro06HeaderTrailer);
-			if(specialFunctionFlag==SpecialFunctionFlag.EncodationSchemeAutoEncoding
-					|| specialFunctionFlag==SpecialFunctionFlag.EncodationSchemeBase256
-					|| specialFunctionFlag==SpecialFunctionFlag.EncodationSchemeEDIFACT
-					|| specialFunctionFlag==SpecialFunctionFlag.EncodationSchemeX12
-					|| specialFunctionFlag==SpecialFunctionFlag.EncodationSchemeText
-					|| specialFunctionFlag==SpecialFunctionFlag.EncodationSchemeC40
-					|| specialFunctionFlag==SpecialFunctionFlag.EncodationSchemeASCII
-					){
-				specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeAutoEncoding);
-				specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeBase256);
-				specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeEDIFACT);
-				specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeX12);
-				specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeText);
-				specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeC40);
-				specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeASCII);
-			}
+    public void setFileIDSecondByte(short fileIDSecondByte) {
+      this.fileIDSecondByte = fileIDSecondByte;
+    }
 
-			specialFunctionFlags.add(specialFunctionFlag);
-		}
+    public EnumSet<SpecialFunctionFlag> getSpecialFunctionFlags() {
+      return specialFunctionFlags;
+    }
 
-		public void removeSpecialFunctionFlag(SpecialFunctionFlag specialFunctionFlag){
-			if(specialFunctionFlags==null) return;
-			else specialFunctionFlags.remove(specialFunctionFlag);
-		}
-	}
+    public void setSpecialFunctionFlags(EnumSet<SpecialFunctionFlag> specialFunctionFlags) {
+      this.specialFunctionFlags = specialFunctionFlags;
+    }
 
-	public static class ParametersDataMaxiCode_2D extends ParametersData{
-		public static enum SymbolMode{
-			Mode2,Mode3,Mode4,Mode5,Mode6;
-			public static SymbolMode valueOf(byte symbolModeCode){
-				if(symbolModeCode==0x02) return Mode2;
-				else if(symbolModeCode==0x03) return Mode3;
-				else if(symbolModeCode==0x04) return Mode4;
-				else if(symbolModeCode==0x05) return Mode5;
-				else if(symbolModeCode==0x06) return Mode6;
-				return null;
-			}
-			public int toByte(){
-				if(this==Mode2) return 0x02;
-				else if(this==Mode3) return 0x03;
-				else if(this==Mode4) return 0x04;
-				else if(this==Mode5) return 0x05;
-				else if(this==Mode6) return 0x06;
-				else return 0x00;
-			}
-		}
-		public static enum SpecialFunctionFlag{
-			NoZipperPattern,
-			VerticalZipperPatternOnRight;
-			public static SpecialFunctionFlag valueOf(byte code){
-				if(code==0x00) return NoZipperPattern;
-				else return VerticalZipperPatternOnRight;
-			}
-			public int toByte(){
-				if(this==NoZipperPattern) return 0x00;
-				else return 0x80;
-			}
-		}
+    /**
+     * This method adds the given flag. It takes care of mutual exclusive flags.
+     *
+     * @param specialFunctionFlag flag to set.
+     */
+    public void addSpecialFunctionFlag(SpecialFunctionFlag specialFunctionFlag) {
+      if (specialFunctionFlags == null)
+        specialFunctionFlags = EnumSet.noneOf(SpecialFunctionFlag.class);
 
-		SymbolMode symbolMode = SymbolMode.Mode2;
-		SpecialFunctionFlag specialFunctionFlag=SpecialFunctionFlag.NoZipperPattern;
+      if (specialFunctionFlag == SpecialFunctionFlag.UseMacro06HeaderTrailer)
+        specialFunctionFlags.remove(SpecialFunctionFlag.UseMacro05HeaderTrailer);
+      else if (specialFunctionFlag == SpecialFunctionFlag.UseMacro05HeaderTrailer)
+        specialFunctionFlags.remove(SpecialFunctionFlag.UseMacro06HeaderTrailer);
+      if (specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeAutoEncoding
+              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeBase256
+              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeEDIFACT
+              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeX12
+              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeText
+              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeC40
+              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeASCII
+              ) {
+        specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeAutoEncoding);
+        specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeBase256);
+        specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeEDIFACT);
+        specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeX12);
+        specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeText);
+        specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeC40);
+        specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeASCII);
+      }
 
-		@Override
-		public int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException {
-			BDA_BarCodeData.checkDataLength(sfData, offset, length, 5);
-			controlFlags = ControlFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset, 1));
-			symbolMode = SymbolMode.valueOf(sfData[offset+1]);
-			sequenceIndicator = sfData[offset + 2]; 
-			totalNumberOfSymbols = sfData[offset + 3];
-			specialFunctionFlag = SpecialFunctionFlag.valueOf(sfData[offset + 4]);
-			return 5;
-		}
-		@Override
-		public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-			os.write(ControlFlag.toByte(controlFlags));
-			os.write(symbolMode.toByte());
-			os.write(sequenceIndicator);
-			os.write(totalNumberOfSymbols);
-			os.write(specialFunctionFlag.toByte());
-		}
-	}
+      specialFunctionFlags.add(specialFunctionFlag);
+    }
 
-	public static class ParametersDataPDF417_2D extends ParametersData{
-		byte numberOfDataSymbolCharactersPerRow;
-		byte desiredNumberOfRows;
-		byte securityLevel;
-		short lengthOfMacroPDF417ControlBlock;
-		byte[] macroPDF417ControlBlock;
+    public void removeSpecialFunctionFlag(SpecialFunctionFlag specialFunctionFlag) {
+      if (specialFunctionFlags == null) return;
+      else specialFunctionFlags.remove(specialFunctionFlag);
+    }
 
-		@Override
-		public int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException {
-			checkDataLength(sfData, offset, length, 6);
-			controlFlags = ControlFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset, 1));
-			numberOfDataSymbolCharactersPerRow = sfData[offset + 1];
-			desiredNumberOfRows = sfData[offset + 2];
-			securityLevel = sfData[offset + 3];
-			lengthOfMacroPDF417ControlBlock = UtilBinaryDecoding.parseShort(sfData, offset + 4, 2);
-			macroPDF417ControlBlock = new byte[lengthOfMacroPDF417ControlBlock];
-			System.arraycopy(sfData, offset, macroPDF417ControlBlock, 0, lengthOfMacroPDF417ControlBlock);
-			return 6 + lengthOfMacroPDF417ControlBlock;
-		}
-		@Override
-		public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-			os.write(ControlFlag.toByte(controlFlags));
-			os.write(numberOfDataSymbolCharactersPerRow);
-			os.write(desiredNumberOfRows);
-			os.write(securityLevel);
-			os.write(UtilBinaryDecoding.shortToByteArray(lengthOfMacroPDF417ControlBlock,2));
-			os.write(macroPDF417ControlBlock);
-		}
-	}
+    public enum SpecialFunctionFlag {
+      SymbolConfirmsToGS1Standard,
+      SymbolConfirmsToIndustryStandard,
+      SymbolEncodesAMessage,
+      UseMacro05HeaderTrailer,
+      UseMacro06HeaderTrailer,
+      EncodationSchemeASCII,
+      EncodationSchemeC40,
+      EncodationSchemeText,
+      EncodationSchemeX12,
+      EncodationSchemeEDIFACT,
+      EncodationSchemeBase256,
+      EncodationSchemeAutoEncoding;
 
-	public static class ParametersDataQRCode_2D extends ParametersData{
-		public static enum Conversion {
-			NoConversion(0x00),
-			SBCS_EBCDIC_CodePage500(0x01),
-			SBCS_EBCDIC_CodePage290(0x02),
-			SBCS_EBCDIC_CodePage1027(0x03),
-			AFPLineDataSOSIData_CCSID1390_CCSID943(0x04),
-			AFPLineDataSOSIData_CCSID1399_CCSID943(0x05),
-			AFPLineDataSOSIData_CCSID1390_CCSID932(0x06),
-			AFPLineDataSOSIData_CCSID1399_CCSID932(0x07),
-			AFPLineDataSOSIData_CCSID1390_CCSID942(0x08),
-			AFPLineDataSOSIData_CCSID1399_CCSID942(0x09);
-			int code;
-			Conversion(int conversionCode){ this.code = conversionCode; }
-			public static Conversion valueOf(byte conversionCode){
-				for(Conversion conversion : values()) if (conversion.code == conversionCode) return conversion;
-				return NoConversion;
-			}
-			public int toByte(){ return code; }
-		}
-		public static enum ErrorCorrectionLevel {
-			LevelL,LevelM,LevelQ,LevelH;
-			public static ErrorCorrectionLevel valueOf(byte leveCode){
-				for(ErrorCorrectionLevel level : values()) if(level.ordinal()==leveCode) return level;
-				return null;
-			}
-			public int toByte(){ return this.ordinal(); }
-		}
-		public static enum SpecialFunctionFlag{
-			symbolConformsToUCC_EANCode,
-			symbolConformsToIndustriyStandard;
-			public static SpecialFunctionFlag valueOf(short code){
-				if(code==0x80) return symbolConformsToUCC_EANCode;
-				else return symbolConformsToIndustriyStandard;
-			}
-			public int toByte(){
-				if(this==symbolConformsToUCC_EANCode) return 0x80;
-				else return 0x40;
+      public static EnumSet<SpecialFunctionFlag> valueOf(int flagByte) {
+        EnumSet<SpecialFunctionFlag> result = EnumSet.noneOf(SpecialFunctionFlag.class);
+        if ((flagByte & 0x80) != 0) result.add(SymbolConfirmsToGS1Standard);
+        if ((flagByte & 0x40) != 0) result.add(SymbolConfirmsToIndustryStandard);
+        if ((flagByte & 0x20) != 0) result.add(SymbolEncodesAMessage);
+        if ((flagByte & 0x10) != 0) result.add(UseMacro06HeaderTrailer);
+        if ((flagByte & 0x08) != 0) result.add(UseMacro05HeaderTrailer);
+        if ((flagByte & 0x07) != 0) result.add(EncodationSchemeAutoEncoding);
+        if ((flagByte & 0x06) != 0) result.add(EncodationSchemeBase256);
+        if ((flagByte & 0x05) != 0) result.add(EncodationSchemeEDIFACT);
+        if ((flagByte & 0x04) != 0) result.add(EncodationSchemeX12);
+        if ((flagByte & 0x03) != 0) result.add(EncodationSchemeText);
+        if ((flagByte & 0x02) != 0) result.add(EncodationSchemeC40);
+        if ((flagByte & 0x01) != 0) result.add(EncodationSchemeASCII);
+        return result;
+      }
 
-			}
-		}
-		Conversion conversion;
-		byte versionOfSymbol;
-		ErrorCorrectionLevel errorCorrectionLevel;
-		short parityData;
-		SpecialFunctionFlag specialFunctionFlag;
-		short applicationIndicator;
+      public static int toByte(EnumSet<SpecialFunctionFlag> specialFunctionFlags) {
+        int result = 0;
+        if (specialFunctionFlags.contains(SymbolConfirmsToGS1Standard)) result |= 0x80;
+        if (specialFunctionFlags.contains(SymbolConfirmsToIndustryStandard)) result |= 0x40;
+        if (specialFunctionFlags.contains(SymbolEncodesAMessage)) result |= 0x20;
+        if (specialFunctionFlags.contains(UseMacro06HeaderTrailer)) result |= 0x10;
+        else if (specialFunctionFlags.contains(UseMacro05HeaderTrailer)) result |= 0x08;
+        if (specialFunctionFlags.contains(EncodationSchemeAutoEncoding)) result |= 0x07;
+        else if (specialFunctionFlags.contains(EncodationSchemeBase256)) result |= 0x06;
+        else if (specialFunctionFlags.contains(EncodationSchemeEDIFACT)) result |= 0x05;
+        else if (specialFunctionFlags.contains(EncodationSchemeX12)) result |= 0x04;
+        else if (specialFunctionFlags.contains(EncodationSchemeText)) result |= 0x03;
+        else if (specialFunctionFlags.contains(EncodationSchemeC40)) result |= 0x02;
+        else if (specialFunctionFlags.contains(EncodationSchemeASCII)) result |= 0x01;
+        return result;
+      }
+    }
+  }
+
+  public static class ParametersDataMaxiCode_2D extends ParametersData {
+    SymbolMode symbolMode = SymbolMode.Mode2;
+    SpecialFunctionFlag specialFunctionFlag = SpecialFunctionFlag.NoZipperPattern;
+
+    @Override
+    public int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException {
+      BDA_BarCodeData.checkDataLength(sfData, offset, length, 5);
+      controlFlags = ControlFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset, 1));
+      symbolMode = SymbolMode.valueOf(sfData[offset + 1]);
+      sequenceIndicator = sfData[offset + 2];
+      totalNumberOfSymbols = sfData[offset + 3];
+      specialFunctionFlag = SpecialFunctionFlag.valueOf(sfData[offset + 4]);
+      return 5;
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(ControlFlag.toByte(controlFlags));
+      os.write(symbolMode.toByte());
+      os.write(sequenceIndicator);
+      os.write(totalNumberOfSymbols);
+      os.write(specialFunctionFlag.toByte());
+    }
+
+    public enum SymbolMode {
+      Mode2, Mode3, Mode4, Mode5, Mode6;
+
+      public static SymbolMode valueOf(byte symbolModeCode) {
+        if (symbolModeCode == 0x02) return Mode2;
+        else if (symbolModeCode == 0x03) return Mode3;
+        else if (symbolModeCode == 0x04) return Mode4;
+        else if (symbolModeCode == 0x05) return Mode5;
+        else if (symbolModeCode == 0x06) return Mode6;
+        return null;
+      }
+
+      public int toByte() {
+        if (this == Mode2) return 0x02;
+        else if (this == Mode3) return 0x03;
+        else if (this == Mode4) return 0x04;
+        else if (this == Mode5) return 0x05;
+        else if (this == Mode6) return 0x06;
+        else return 0x00;
+      }
+    }
+
+    public enum SpecialFunctionFlag {
+      NoZipperPattern,
+      VerticalZipperPatternOnRight;
+
+      public static SpecialFunctionFlag valueOf(byte code) {
+        if (code == 0x00) return NoZipperPattern;
+        else return VerticalZipperPatternOnRight;
+      }
+
+      public int toByte() {
+        if (this == NoZipperPattern) return 0x00;
+        else return 0x80;
+      }
+    }
+  }
+
+  public static class ParametersDataPDF417_2D extends ParametersData {
+    byte numberOfDataSymbolCharactersPerRow;
+    byte desiredNumberOfRows;
+    byte securityLevel;
+    short lengthOfMacroPDF417ControlBlock;
+    byte[] macroPDF417ControlBlock;
+
+    @Override
+    public int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException {
+      checkDataLength(sfData, offset, length, 6);
+      controlFlags = ControlFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset, 1));
+      numberOfDataSymbolCharactersPerRow = sfData[offset + 1];
+      desiredNumberOfRows = sfData[offset + 2];
+      securityLevel = sfData[offset + 3];
+      lengthOfMacroPDF417ControlBlock = UtilBinaryDecoding.parseShort(sfData, offset + 4, 2);
+      macroPDF417ControlBlock = new byte[lengthOfMacroPDF417ControlBlock];
+      System.arraycopy(sfData, offset, macroPDF417ControlBlock, 0, lengthOfMacroPDF417ControlBlock);
+      return 6 + lengthOfMacroPDF417ControlBlock;
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(ControlFlag.toByte(controlFlags));
+      os.write(numberOfDataSymbolCharactersPerRow);
+      os.write(desiredNumberOfRows);
+      os.write(securityLevel);
+      os.write(UtilBinaryDecoding.shortToByteArray(lengthOfMacroPDF417ControlBlock, 2));
+      os.write(macroPDF417ControlBlock);
+    }
+  }
+
+  public static class ParametersDataQRCode_2D extends ParametersData {
+    Conversion conversion;
+    byte versionOfSymbol;
+    ErrorCorrectionLevel errorCorrectionLevel;
+    short parityData;
+    SpecialFunctionFlag specialFunctionFlag;
+    short applicationIndicator;
+
+    @Override
+    public int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException {
+      checkDataLength(sfData, offset, length, 9);
+      controlFlags = ControlFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset, 1));
+      conversion = Conversion.valueOf(sfData[offset + 1]);
+      versionOfSymbol = sfData[offset + 2];
+      errorCorrectionLevel = ErrorCorrectionLevel.valueOf(sfData[offset + 3]);
+      sequenceIndicator = sfData[offset + 4];
+      totalNumberOfSymbols = sfData[offset + 5];
+      parityData = UtilBinaryDecoding.parseShort(sfData, offset + 6, 1);
+      specialFunctionFlag = SpecialFunctionFlag.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 7, 1));
+      applicationIndicator = UtilBinaryDecoding.parseShort(sfData, offset + 8, 1);
+      return 9;
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(ControlFlag.toByte(controlFlags));
+      os.write(conversion.toByte());
+      os.write(versionOfSymbol);
+      os.write(errorCorrectionLevel.toByte());
+      os.write(sequenceIndicator);
+      os.write(totalNumberOfSymbols);
+      os.write(parityData);
+      os.write(specialFunctionFlag.toByte());
+      os.write(applicationIndicator);
+    }
+
+    public enum Conversion {
+      NoConversion(0x00),
+      SBCS_EBCDIC_CodePage500(0x01),
+      SBCS_EBCDIC_CodePage290(0x02),
+      SBCS_EBCDIC_CodePage1027(0x03),
+      AFPLineDataSOSIData_CCSID1390_CCSID943(0x04),
+      AFPLineDataSOSIData_CCSID1399_CCSID943(0x05),
+      AFPLineDataSOSIData_CCSID1390_CCSID932(0x06),
+      AFPLineDataSOSIData_CCSID1399_CCSID932(0x07),
+      AFPLineDataSOSIData_CCSID1390_CCSID942(0x08),
+      AFPLineDataSOSIData_CCSID1399_CCSID942(0x09);
+      int code;
+
+      Conversion(int conversionCode) {
+        this.code = conversionCode;
+      }
+
+      public static Conversion valueOf(byte conversionCode) {
+        for (Conversion conversion : values())
+          if (conversion.code == conversionCode) return conversion;
+        return NoConversion;
+      }
+
+      public int toByte() {
+        return code;
+      }
+    }
 
 
-		@Override
-		public int decodeAFP(byte[] sfData, int offset, int length) throws AFPParserException {
-			checkDataLength(sfData, offset, length, 9);
-			controlFlags = ControlFlag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset, 1));
-			conversion = Conversion.valueOf(sfData[offset+1]);
-			versionOfSymbol = sfData[offset+2];
-			errorCorrectionLevel = ErrorCorrectionLevel.valueOf(sfData[offset+3]);
-			sequenceIndicator = sfData[offset + 4];
-			totalNumberOfSymbols = sfData[offset + 5];
-			parityData = UtilBinaryDecoding.parseShort(sfData, offset + 6, 1);
-			specialFunctionFlag = SpecialFunctionFlag.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 7, 1));
-			applicationIndicator = UtilBinaryDecoding.parseShort(sfData,offset + 8,1);
-			return 9;
-		}
-		@Override
-		public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-			os.write(ControlFlag.toByte(controlFlags));
-			os.write(conversion.toByte());
-			os.write(versionOfSymbol);
-			os.write(errorCorrectionLevel.toByte());
-			os.write(sequenceIndicator);
-			os.write(totalNumberOfSymbols);
-			os.write(parityData);
-			os.write(specialFunctionFlag.toByte());
-			os.write(applicationIndicator);
-		}
-	}
+    public enum ErrorCorrectionLevel {
+      LevelL, LevelM, LevelQ, LevelH;
+
+      public static ErrorCorrectionLevel valueOf(byte leveCode) {
+        for (ErrorCorrectionLevel level : values())
+          if (level.ordinal() == leveCode) return level;
+        return null;
+      }
+
+      public int toByte() {
+        return this.ordinal();
+      }
+    }
+
+    public enum SpecialFunctionFlag {
+      symbolConformsToUCC_EANCode,
+      symbolConformsToIndustriyStandard;
+
+      public static SpecialFunctionFlag valueOf(short code) {
+        if (code == 0x80) return symbolConformsToUCC_EANCode;
+        else return symbolConformsToIndustriyStandard;
+      }
+
+      public int toByte() {
+        if (this == symbolConformsToUCC_EANCode) return 0x80;
+        else return 0x40;
+
+      }
+    }
+  }
 }

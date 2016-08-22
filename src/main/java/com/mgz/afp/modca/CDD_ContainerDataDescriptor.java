@@ -18,12 +18,6 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mgz.afp.base.IHasTriplets;
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.exceptions.AFPParserException;
@@ -31,52 +25,57 @@ import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.afp.parser.TripletParser;
 import com.mgz.afp.triplets.Triplet;
 
-public class CDD_ContainerDataDescriptor extends StructuredField implements IHasTriplets{
-	byte retiredParameters[];
-	List<Triplet> triplets;
-	
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException{
-		checkDataLength(sfData, offset, length, -1);
-
-		retiredParameters = new byte[12];
-		System.arraycopy(sfData, 0, retiredParameters, 0, 12);
-		
-		triplets = TripletParser.parseTriplets(sfData, 12, -1, config);
-	}
-	
+public class CDD_ContainerDataDescriptor extends StructuredField implements IHasTriplets {
+  byte retiredParameters[];
+  List<Triplet> triplets;
 
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException{
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		
-		baos.write(retiredParameters);
-		if(triplets!=null){
-			for(Triplet triplet : triplets){
-				triplet.writeAFP(baos, config);
-			}
-		}
-		
-		writeFullStructuredField(os, baos.toByteArray());
-	}
-	
-	public List<Triplet> getTriplets() {
-		return triplets;
-	}
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    checkDataLength(sfData, offset, length, -1);
 
-	public void setTriplets(List<Triplet> triplets) {
-		this.triplets = triplets;
-	}
-	
-	public void addTriplet(Triplet triplet){
-		if(triplet==null) return;
-		if(triplets==null) triplets = new ArrayList<Triplet>();
-		triplets.add(triplet);
-	}
+    retiredParameters = new byte[12];
+    System.arraycopy(sfData, 0, retiredParameters, 0, 12);
 
-	public void removeTriplet(Triplet triplet){
-		if(triplets==null) return;
-		triplets.remove(triplet);
-	}		
+    triplets = TripletParser.parseTriplets(sfData, 12, -1, config);
+  }
+
+
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    baos.write(retiredParameters);
+    if (triplets != null) {
+      for (Triplet triplet : triplets) {
+        triplet.writeAFP(baos, config);
+      }
+    }
+
+    writeFullStructuredField(os, baos.toByteArray());
+  }
+
+  public List<Triplet> getTriplets() {
+    return triplets;
+  }
+
+  public void setTriplets(List<Triplet> triplets) {
+    this.triplets = triplets;
+  }
+
+  public void addTriplet(Triplet triplet) {
+    if (triplet == null) return;
+    if (triplets == null) triplets = new ArrayList<Triplet>();
+    triplets.add(triplet);
+  }
+
+  public void removeTriplet(Triplet triplet) {
+    if (triplets == null) return;
+    triplets.remove(triplet);
+  }
 }

@@ -21,8 +21,11 @@ package com.mgz.afp.base;
 import java.util.List;
 
 public interface IHasRepeatingGroups {
-	List<IRepeatingGroup> getRepeatingGroups();
-	void setRepeatingGroups(List<IRepeatingGroup> repeatingGroups);
-	void addRepeatingGroup(IRepeatingGroup rg);
-	void removeRepeatingGroup(IRepeatingGroup rg);
+  List<IRepeatingGroup> getRepeatingGroups();
+
+  void setRepeatingGroups(List<IRepeatingGroup> repeatingGroups);
+
+  void addRepeatingGroup(IRepeatingGroup rg);
+
+  void removeRepeatingGroup(IRepeatingGroup rg);
 }

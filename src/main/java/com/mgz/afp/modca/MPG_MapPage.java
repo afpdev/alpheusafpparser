@@ -18,45 +18,42 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.mgz.afp.base.IRepeatingGroup;
 import com.mgz.afp.base.RepeatingGroupWithTriplets;
 import com.mgz.afp.base.StructuredFieldBaseRepeatingGroups;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
- * MO:DCA, page 291.<br>
- * <br> 
-The Map Page structured field identifies a page that is to be merged with data
-specified for the current page by using an Include Page (IPG) structured field.
+ * MO:DCA, page 291.<br> <br> The Map Page structured field identifies a page that is to be merged
+ * with data specified for the current page by using an Include Page (IPG) structured field.
  */
 public class MPG_MapPage extends StructuredFieldBaseRepeatingGroups {
 
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		int actualLength = getActualLength(sfData, offset, length);
-		int pos = 0;
-		while(pos<actualLength){
-			MPG_RepeatinGroup rg = new MPG_RepeatinGroup();
-			rg.decodeAFP(sfData, offset +pos, actualLength -pos, config);
-			addRepeatingGroup(rg);
-			pos+=rg.getRepeatingGroupLength();
-		}
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    int actualLength = getActualLength(sfData, offset, length);
+    int pos = 0;
+    while (pos < actualLength) {
+      MPG_RepeatinGroup rg = new MPG_RepeatinGroup();
+      rg.decodeAFP(sfData, offset + pos, actualLength - pos, config);
+      addRepeatingGroup(rg);
+      pos += rg.getRepeatingGroupLength();
+    }
+  }
 
 
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    writeFullStructuredField(os, baos.toByteArray());
+  }
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for(IRepeatingGroup rg :repeatingGroups) rg.writeAFP(baos, config);
-		writeFullStructuredField(os, baos.toByteArray());
-	}
-
-	public static class MPG_RepeatinGroup extends RepeatingGroupWithTriplets{
-	}
+  public static class MPG_RepeatinGroup extends RepeatingGroupWithTriplets {
+  }
 }

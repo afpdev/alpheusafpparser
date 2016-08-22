@@ -18,68 +18,64 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.mgz.afp.base.StructuredFieldBaseTriplets;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.afp.triplets.Triplet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
- * MO:DCA, page 327.
- * <br><br>
-The Page Modification Control structured field specifies modifications to be
-applied to a page presented on a physical medium.
-If the ID of a specific PMC is selected in the PGP structured field of the active
-medium map in N-up mode, only the modifications specified by that PMC are
-applied to pages placed on the medium. If a specific PMC is not selected in N-up
-mode, all modifications specified by all PMCs in the active medium map are
-applied to pages placed on the medium.
+ * MO:DCA, page 327. <br><br> The Page Modification Control structured field specifies modifications
+ * to be applied to a page presented on a physical medium. If the ID of a specific PMC is selected
+ * in the PGP structured field of the active medium map in N-up mode, only the modifications
+ * specified by that PMC are applied to pages placed on the medium. If a specific PMC is not
+ * selected in N-up mode, all modifications specified by all PMCs in the active medium map are
+ * applied to pages placed on the medium.
  */
 public class PMC_PageModificationControl extends StructuredFieldBaseTriplets {
-	byte pageModificationControlID;
-	byte reserved1 = 0x00;
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		pageModificationControlID = sfData[offset];
-		reserved1 = sfData[offset +1];
-		int actualLenth = getActualLength(sfData, offset, length);
-		if(actualLenth>2){
-			super.decodeAFP(sfData, offset +2, actualLenth-2, config);
-		}
-	}
+  byte pageModificationControlID;
+  byte reserved1 = 0x00;
+
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    pageModificationControlID = sfData[offset];
+    reserved1 = sfData[offset + 1];
+    int actualLenth = getActualLength(sfData, offset, length);
+    if (actualLenth > 2) {
+      super.decodeAFP(sfData, offset + 2, actualLenth - 2, config);
+    }
+  }
 
 
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    baos.write(pageModificationControlID);
+    baos.write(reserved1);
+    if (triplets != null) {
+      for (Triplet t : triplets) t.writeAFP(baos, config);
+    }
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		baos.write(pageModificationControlID);
-		baos.write(reserved1);
-		if(triplets!=null){
-			for(Triplet t : triplets) t.writeAFP(baos, config);
-		}
-		
-		writeFullStructuredField(os, baos.toByteArray());
-	}
+    writeFullStructuredField(os, baos.toByteArray());
+  }
 
-	public byte getPageModificationControlID() {
-		return pageModificationControlID;
-	}
+  public byte getPageModificationControlID() {
+    return pageModificationControlID;
+  }
 
-	public void setPageModificationControlID(byte pageModificationControlID) {
-		this.pageModificationControlID = pageModificationControlID;
-	}
+  public void setPageModificationControlID(byte pageModificationControlID) {
+    this.pageModificationControlID = pageModificationControlID;
+  }
 
-	public byte getReserved1() {
-		return reserved1;
-	}
+  public byte getReserved1() {
+    return reserved1;
+  }
 
-	public void setReserved1(byte reserved1) {
-		this.reserved1 = reserved1;
-	}
+  public void setReserved1(byte reserved1) {
+    this.reserved1 = reserved1;
+  }
 
 }

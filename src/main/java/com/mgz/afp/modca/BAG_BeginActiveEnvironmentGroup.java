@@ -22,5 +22,5 @@ import com.mgz.afp.base.StructuredFieldBaseNameAndTriplets;
 
 
 public class BAG_BeginActiveEnvironmentGroup extends StructuredFieldBaseNameAndTriplets {
-	
+
 }

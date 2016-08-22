@@ -19,5 +19,5 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 package com.mgz.afp.enums;
 
 public interface IMutualExclusiveGroupedFlag {
-	public int getGroup();
+  int getGroup();
 }

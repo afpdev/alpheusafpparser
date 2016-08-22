@@ -24,26 +24,26 @@ import com.mgz.afp.parser.AFPParserConfiguration;
 
 
 /**
- * If an exception happens the parser builds a structured field of type {@link StructuredFieldErrornouslyBuilt}.<br>
- * <br>
- * Note that {@link AFPParserConfiguration#setEscalateParsingErrors(boolean)} has to be set to true for this behavior.
- * Otherwise the parser escalates the occurring {@link AFPParserException} to {@link AFPParser#error(AFPParserException)}.<br>  
- * <br>
- * Note that the {@link StructuredFieldErrornouslyBuilt#getData()} returns the gross payload, this is the SF's data, <i>including</i> padding data.
- * The {@link StructuredFieldErrornouslyBuilt#getPadding()} returns null.<br>
+ * If an exception happens the parser builds a structured field of type {@link
+ * StructuredFieldErrornouslyBuilt}.<br> <br> Note that {@link AFPParserConfiguration#setEscalateParsingErrors(boolean)}
+ * has to be set to true for this behavior. Otherwise the parser escalates the occurring {@link
+ * AFPParserException} to {@link AFPParser#error(AFPParserException)}.<br> <br> Note that the {@link
+ * StructuredFieldErrornouslyBuilt#getData()} returns the gross payload, this is the SF's data,
+ * <i>including</i> padding data. The {@link StructuredFieldErrornouslyBuilt#getPadding()} returns
+ * null.<br>
  */
 public class StructuredFieldErrornouslyBuilt extends StructuredFieldBaseData {
-	Throwable causingException;
+  Throwable causingException;
 
-	/**
-	 * Returns the exception that happened when the parser tried to build this {@link StructuredFieldErrornouslyBuilt}
-	 * @return
-	 */
-	public Throwable getCausingException() {
-		return causingException;
-	}
+  /**
+   * Returns the exception that happened when the parser tried to build this {@link
+   * StructuredFieldErrornouslyBuilt}
+   */
+  public Throwable getCausingException() {
+    return causingException;
+  }
 
-	public void setCausingException(Throwable causingException) {
-		this.causingException = causingException;
-	}
+  public void setCausingException(Throwable causingException) {
+    this.causingException = causingException;
+  }
 }

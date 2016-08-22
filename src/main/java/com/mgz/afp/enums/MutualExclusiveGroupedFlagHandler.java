@@ -21,21 +21,23 @@ package com.mgz.afp.enums;
 import java.util.EnumSet;
 
 public class MutualExclusiveGroupedFlagHandler<E extends Enum<E>> {
-	/** 
-	 * Sets the given flag and unsets mutual exclusive flags. 
-	 * 
-	 * @param flags {@link EnumSet} containing flags that are set.
-	 * @param flag flag to set.
-	 */
-	public void setFlag(EnumSet<E> flags, E flag) {
-		@SuppressWarnings("static-access")
-		EnumSet<E> allFlags = flags.allOf(flag.getDeclaringClass());
-		int flagGroup = ((IMutualExclusiveGroupedFlag)flag).getGroup();
-		for(E unsetFlag : allFlags){
-			int unsetGroup = ((IMutualExclusiveGroupedFlag)unsetFlag).getGroup();
-			if(flagGroup==unsetGroup && unsetFlag!=flag) flags.remove(flag);
-		}
-		flags.add(flag);
-	}
+  /**
+   * Sets the given flag and unsets mutual exclusive flags.
+   *
+   * @param flags {@link EnumSet} containing flags that are set.
+   * @param flag  flag to set.
+   */
+  public void setFlag(EnumSet<E> flags, E flag) {
+    @SuppressWarnings("static-access")
+    EnumSet<E> allFlags = flags.allOf(flag.getDeclaringClass());
+    int flagGroup = ((IMutualExclusiveGroupedFlag) flag).getGroup();
+    for (E unsetFlag : allFlags) {
+      int unsetGroup = ((IMutualExclusiveGroupedFlag) unsetFlag).getGroup();
+      if (flagGroup == unsetGroup && unsetFlag != flag) {
+        flags.remove(flag);
+      }
+    }
+    flags.add(flag);
+  }
 
 }

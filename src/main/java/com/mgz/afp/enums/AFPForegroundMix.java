@@ -21,19 +21,25 @@ package com.mgz.afp.enums;
 import com.mgz.afp.exceptions.AFPParserException;
 
 public enum AFPForegroundMix {
-	Default(0x00),
-	Overpaint(0x02);
-	int code;
-	AFPForegroundMix(int code){
-		this.code = code;
-	}
-	public static AFPForegroundMix valueOf(byte codeByte) throws AFPParserException{
-		if(codeByte==0x00) return Default;
-		else if(codeByte==0x02) return Overpaint;
-		else throw new AFPParserException("The foreground mixing code 0x" + Integer.toHexString(codeByte) +" is undefined.");
-	}
-	
-	public int toByte(){
-		return code;
-	}
+  Default(0x00),
+  Overpaint(0x02);
+  int code;
+
+  AFPForegroundMix(int code) {
+    this.code = code;
+  }
+
+  public static AFPForegroundMix valueOf(byte codeByte) throws AFPParserException {
+    if (codeByte == 0x00) {
+      return Default;
+    } else if (codeByte == 0x02) {
+      return Overpaint;
+    } else {
+      throw new AFPParserException("The foreground mixing code 0x" + Integer.toHexString(codeByte) + " is undefined.");
+    }
+  }
+
+  public int toByte() {
+    return code;
+  }
 }

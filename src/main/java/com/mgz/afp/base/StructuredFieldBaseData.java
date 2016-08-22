@@ -18,44 +18,43 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.base;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Base class for {@link StructuredField}s that consists only of opaque data.
  */
 public class StructuredFieldBaseData extends StructuredField {
-	@AFPField(maxSize=32759)
-	protected byte[] data;
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-		int actualLength = getActualLength(sfData, offset, length);
-		if(actualLength>0){
-			data = new byte[actualLength];
-			System.arraycopy(sfData, offset, data, 0, actualLength);
-		}else{
-			data = null;
-		}
-	}
+  @AFPField(maxSize = 32759)
+  protected byte[] data;
+
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    int actualLength = getActualLength(sfData, offset, length);
+    if (actualLength > 0) {
+      data = new byte[actualLength];
+      System.arraycopy(sfData, offset, data, 0, actualLength);
+    } else {
+      data = null;
+    }
+  }
 
 
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    writeFullStructuredField(os, data);
+  }
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-		writeFullStructuredField(os,data);
-	}
+  public byte[] getData() {
+    return data;
+  }
 
-	public byte[] getData() {
-		return data;
-	}
-
-	public void setData(byte[] data) {
-		this.data = data;
-	}
+  public void setData(byte[] data) {
+    this.data = data;
+  }
 
 }

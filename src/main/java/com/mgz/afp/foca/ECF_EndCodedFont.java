@@ -22,5 +22,5 @@ import com.mgz.afp.base.StructuredFieldBaseName;
 
 
 public class ECF_EndCodedFont extends StructuredFieldBaseName {
-	
+
 }

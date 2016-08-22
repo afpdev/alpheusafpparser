@@ -21,21 +21,27 @@ package com.mgz.afp.enums;
 import com.mgz.util.UtilBinaryDecoding;
 
 public enum AFPOrientation {
-	ori0(0x0000),
-	ori90(0x2D00),
-	ori180(0x5A00),
-	ori270(0x8700),
-	AsDefined(0xFFFF); 
-	int code;
-	AFPOrientation(int orientationCode){
-		this.code = orientationCode;
-	}
-	public static AFPOrientation valueOf(int orientationCode){
-		for(AFPOrientation ori : values()) if(ori.code == orientationCode) return ori;
-		return null;
-	}
-	
-	public byte[] toBytes(){
-		return UtilBinaryDecoding.intToByteArray(code, 2);
-	}
+  ori0(0x0000),
+  ori90(0x2D00),
+  ori180(0x5A00),
+  ori270(0x8700),
+  AsDefined(0xFFFF);
+  int code;
+
+  AFPOrientation(int orientationCode) {
+    this.code = orientationCode;
+  }
+
+  public static AFPOrientation valueOf(int orientationCode) {
+    for (AFPOrientation ori : values()) {
+      if (ori.code == orientationCode) {
+        return ori;
+      }
+    }
+    return null;
+  }
+
+  public byte[] toBytes() {
+    return UtilBinaryDecoding.intToByteArray(code, 2);
+  }
 }

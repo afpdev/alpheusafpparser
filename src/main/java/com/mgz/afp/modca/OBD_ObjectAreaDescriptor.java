@@ -21,10 +21,8 @@ package com.mgz.afp.modca;
 import com.mgz.afp.base.StructuredFieldBaseTriplets;
 
 /**
- * MO:DCA, page 298.<br>
- * <br>
-The Object Area Descriptor structured field specifies the size and attributes of an
-object area presentation space.
+ * MO:DCA, page 298.<br> <br> The Object Area Descriptor structured field specifies the size and
+ * attributes of an object area presentation space.
  */
 public class OBD_ObjectAreaDescriptor extends StructuredFieldBaseTriplets {
 }

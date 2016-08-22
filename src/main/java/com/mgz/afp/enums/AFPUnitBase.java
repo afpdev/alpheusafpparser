@@ -18,18 +18,30 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.enums;
 
-public enum AFPUnitBase{
-	Inches10(0x00),
-	Centimeter10(0x01),
-	Logical_ResolutionRatio(0x02);
-	int code;
-	AFPUnitBase(int code){ this.code=code;}
-	public static AFPUnitBase valueOf(byte unitBaseCode){
-		for(AFPUnitBase ub: values()) if(ub.code==unitBaseCode) return ub;
-		return null;
-	}
-	public byte toByte(){
-		if(this==Inches10) return 0x00;
-		else return 0x01;
-	}
+public enum AFPUnitBase {
+  Inches10(0x00),
+  Centimeter10(0x01),
+  Logical_ResolutionRatio(0x02);
+  int code;
+
+  AFPUnitBase(int code) {
+    this.code = code;
+  }
+
+  public static AFPUnitBase valueOf(byte unitBaseCode) {
+    for (AFPUnitBase ub : values()) {
+      if (ub.code == unitBaseCode) {
+        return ub;
+      }
+    }
+    return null;
+  }
+
+  public byte toByte() {
+    if (this == Inches10) {
+      return 0x00;
+    } else {
+      return 0x01;
+    }
+  }
 }

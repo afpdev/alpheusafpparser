@@ -18,14 +18,7 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.base;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mgz.afp.base.annotations.AFPField;
-import com.mgz.afp.enums.SFTypeID;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.afp.parser.TripletParser;
@@ -33,53 +26,67 @@ import com.mgz.afp.triplets.Triplet;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilCharacterEncoding;
 
-public abstract class StructuredFieldBaseNameAndTriplets extends StructuredFieldBaseName implements IHasTriplets{
-	@AFPField
-	protected List<Triplet> triplets;
-	
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException{
-		super.decodeAFP(sfData, offset, length, config);
-		int actualLength = getActualLength(sfData, offset, length);
-		if(actualLength>8){
-			triplets = TripletParser.parseTriplets(sfData, 8, sfData.length-8, config);
-		}else{
-			triplets=null;
-		}
-	}
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException{
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		if(name!=null) {
-			baos.write(UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
-		}
-		if(triplets!=null){
-			for(Triplet triplet : triplets){
-				triplet.writeAFP(baos, config);
-			}
-		}
-		writeFullStructuredField(os, baos.toByteArray());
-	}	
+public abstract class StructuredFieldBaseNameAndTriplets extends StructuredFieldBaseName implements IHasTriplets {
+  @AFPField
+  protected List<Triplet> triplets;
 
-	public final List<Triplet> getTriplets() {
-		return triplets;
-	}
 
-	public final void setTriplets(List<Triplet> triplets) {
-		this.triplets = triplets;
-	}
-	
-	public final void addTriplet(Triplet triplet){
-		if(triplet==null) return;
-		if(triplets==null) triplets = new ArrayList<Triplet>();
-		triplets.add(triplet);
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    super.decodeAFP(sfData, offset, length, config);
+    int actualLength = getActualLength(sfData, offset, length);
+    if (actualLength > 8) {
+      triplets = TripletParser.parseTriplets(sfData, 8, sfData.length - 8, config);
+    } else {
+      triplets = null;
+    }
+  }
 
-	public final void removeTriplet(Triplet triplet){
-		if(triplet==null || triplets==null) return;
-		triplets.remove(triplet);
-	}	
-	
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    if (name != null) {
+      baos.write(UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
+    }
+    if (triplets != null) {
+      for (Triplet triplet : triplets) {
+        triplet.writeAFP(baos, config);
+      }
+    }
+    writeFullStructuredField(os, baos.toByteArray());
+  }
+
+  @Override
+  public final List<Triplet> getTriplets() {
+    return triplets;
+  }
+
+  @Override
+  public final void setTriplets(List<Triplet> triplets) {
+    this.triplets = triplets;
+  }
+
+  @Override
+  public final void addTriplet(Triplet triplet) {
+    if (triplet != null) {
+      if (triplets == null) {
+        triplets = new ArrayList<Triplet>();
+      }
+      triplets.add(triplet);
+    }
+  }
+
+  @Override
+  public final void removeTriplet(Triplet triplet) {
+    if (triplet != null && triplets != null) {
+      triplets.remove(triplet);
+    }
+  }
+
 }

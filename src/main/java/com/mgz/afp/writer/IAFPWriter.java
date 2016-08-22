@@ -21,5 +21,5 @@ package com.mgz.afp.writer;
 import com.mgz.afp.base.StructuredField;
 
 public interface IAFPWriter {
-	String writeSF(StructuredField sf);
+  String writeSF(StructuredField sf);
 }

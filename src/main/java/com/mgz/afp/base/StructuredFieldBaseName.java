@@ -18,47 +18,50 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.base;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilCharacterEncoding;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+
 /**
- * The {@link Charset} used for de/encoding of the name is provided by {@link AFPParserConfiguration#getAfpCharSet()}.
+ * The {@link Charset} used for de/encoding of the name is provided by {@link
+ * AFPParserConfiguration#getAfpCharSet()}.
  */
-public abstract class StructuredFieldBaseName extends StructuredField implements IHasName{
-	@AFPField(maxSize=8)
-	protected String name;
-	
-	@Override
-	public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException{
-		int actualLength = getActualLength(sfData, offset, length);
-		if(actualLength>=8){
-			name = new String(sfData,0,8,config.getAfpCharSet());
-		}else{
-			name = null;
-		}
-	}
-	
+public abstract class StructuredFieldBaseName extends StructuredField implements IHasName {
+  @AFPField(maxSize = 8)
+  protected String name;
 
-	@Override
-	public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException{
-		if(name!=null) writeFullStructuredField(os, 
-				UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER)
-			);
-		else writeFullStructuredField(os, null);
-	}
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    int actualLength = getActualLength(sfData, offset, length);
+    if (actualLength >= 8) {
+      name = new String(sfData, 0, 8, config.getAfpCharSet());
+    } else {
+      name = null;
+    }
+  }
 
-	public final void setName(String name){
-		this.name=name;
-	}
 
-	public final String getName(){
-		return name;
-	}
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    if (name != null) writeFullStructuredField(os,
+            UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER)
+    );
+    else writeFullStructuredField(os, null);
+  }
+
+  @Override
+  public final String getName() {
+    return name;
+  }
+
+  @Override
+  public final void setName(String name) {
+    this.name = name;
+  }
 }

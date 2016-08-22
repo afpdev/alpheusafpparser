@@ -21,5 +21,5 @@ package com.mgz.afp.modca;
 import com.mgz.afp.base.StructuredFieldBaseNameAndTriplets;
 
 
-public class BIM_BeginImageObject extends StructuredFieldBaseNameAndTriplets{
+public class BIM_BeginImageObject extends StructuredFieldBaseNameAndTriplets {
 }

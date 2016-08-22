@@ -20,21 +20,24 @@ package com.mgz.afp.exceptions;
 
 import com.mgz.afp.base.StructuredField;
 
-public class AFPParserException extends AFPException{
-	private static final long serialVersionUID = 1L;
-	
-	StructuredField errornouslyBuiltStructuredField;
-	
-	public AFPParserException(String msg, Throwable e) {
-		super(msg, e);
-	}
-	public AFPParserException(String msg) {
-		super(msg);
-	}
-	public void setErrornouslyBuiltStructuredField(StructuredField errSf) {
-		errornouslyBuiltStructuredField=errSf;
-	}
-	public StructuredField getErrornouslyBuiltStructuredField() {
-		return errornouslyBuiltStructuredField;
-	}
+public class AFPParserException extends AFPException {
+  private static final long serialVersionUID = 1L;
+
+  StructuredField errornouslyBuiltStructuredField;
+
+  public AFPParserException(String msg, Throwable e) {
+    super(msg, e);
+  }
+
+  public AFPParserException(String msg) {
+    super(msg);
+  }
+
+  public StructuredField getErrornouslyBuiltStructuredField() {
+    return errornouslyBuiltStructuredField;
+  }
+
+  public void setErrornouslyBuiltStructuredField(StructuredField errSf) {
+    errornouslyBuiltStructuredField = errSf;
+  }
 }
