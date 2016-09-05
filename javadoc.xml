@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="javadoc">
-    <target name="javadoc">
-        <javadoc access="public" author="true" classpath="/home/rf/development/ide/eclipse-jee-mars-R/plugins/org.junit_4.12.0.v201504281640/junit.jar:/home/rf/development/ide/eclipse-jee-mars-R/plugins/org.hamcrest.core_1.3.0.v201303031735.jar" destdir="deployment/javadoc" doctitle="Alpheus AFP Parser" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="com.mgz.afp.exceptions,com.mgz.afp.base.annotations,com.mgz.afp.writer,com.mgz.afp.goca,com.mgz.afp.ptoca,com.mgz.afp.bcoca,com.mgz.afp.enums,com.mgz.afp.cmoca,com.mgz.xml,com.mgz.afp.ptoca.controlSequence,com.mgz.afp.foca,com.mgz.afp.triplets,com.mgz.afp.modca_L,com.mgz.afp.ioca,com.mgz.afp.modca,com.mgz.util,com.mgz.afp.parser,com.mgz.afp.base,com.mgz.afp.lineData" source="1.6" sourcepath="examples:test:generator:src" splitindex="true" use="true" version="true"/>
-    </target>
-</project>

@@ -1,0 +1,58 @@
+group 'com.mgz'
+version '0.2'
+
+apply plugin: 'java'
+apply plugin: 'checkstyle'
+
+sourceCompatibility = 1.7
+println 'Source Compatibility:' + sourceCompatibility
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+clean.doFirst {
+    delete "${rootDir}/output/"
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+configurations {
+    checkstyleConfig
+}
+
+dependencies {
+    checkstyleConfig ("com.puppycrawl.tools:checkstyle:7.1") {
+        transitive = false
+    }
+}
+
+checkstyle {
+    toolVersion = '7.1'
+    config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
+}
+
