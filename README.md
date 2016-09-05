@@ -8,7 +8,7 @@ It is a complete implementation. Every Structured Field, Repeating Group, and Tr
 Alpheus AFP Parser was written from scratch in Java 1.6 and has no external dependencies.
 
 Thank you for using this software!
-Please support this project by sending your highly appreciated critique, questions, and feedback directly to the author rf@afpexpert.com.
+Please support this project by sending your highly appreciated critique, questions, and feedback to afpdev@mogozine.com.
 
 
 Copyright 2015 Rudolf Fiala, 
