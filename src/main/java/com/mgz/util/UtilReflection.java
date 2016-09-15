@@ -21,9 +21,6 @@ package com.mgz.util;
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.base.annotations.AFPType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -35,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 public class UtilReflection {
-
-  public static final Logger LOG = LoggerFactory.getLogger("UtilReflection");
 
   public static Comparator<Field> comparatorFields = new FieldComparator();
 
@@ -54,7 +49,7 @@ public class UtilReflection {
       field.setAccessible(isAccessable);
       return val;
     } catch (IllegalArgumentException | IllegalAccessException e1) {
-      LOG.error("Exception: {}", e1.getLocalizedMessage());
+      // Ignore... go on....
     }
 
     // If this failed go for getter method.
@@ -62,28 +57,25 @@ public class UtilReflection {
     Class<?> clazz = instance.getClass();
     for (Method method : clazz.getMethods()) {
       if (methodName.equalsIgnoreCase(method.getName())) {
-        Object returnValue = null;
         try {
-          returnValue = method.invoke(instance);
+          return method.invoke(instance);
         } catch (Throwable e) {
-          LOG.error("Exception: {}", e.getLocalizedMessage());
+          return null;
         }
-        return returnValue;
       }
     }
 
     return null;
   }
 
-  public static void setFieldValue(Field field, Object instance, Object value) {
+  public static void setFieldValue(Field field, Object instance, Object value) throws IllegalArgumentException, IllegalAccessException {
     // Try to set value by accessing the field.
+    boolean isAccessable = field.isAccessible();
+    field.setAccessible(true);
     try {
-      boolean isAccessable = field.isAccessible();
-      field.setAccessible(true);
       field.set(instance, value);
+    } finally {
       field.setAccessible(isAccessable);
-    } catch (IllegalArgumentException | IllegalAccessException e1) {
-      LOG.error("Exception: {}", e1.getLocalizedMessage());
     }
   }
 

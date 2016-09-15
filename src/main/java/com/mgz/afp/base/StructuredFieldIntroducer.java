@@ -24,9 +24,6 @@ import com.mgz.afp.enums.SFTypeID;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,8 +35,6 @@ import java.util.EnumSet;
  * identifies type and length of the structured field.
  */
 public class StructuredFieldIntroducer {
-
-  public static final Logger LOG = LoggerFactory.getLogger("StructuredFieldIntroducer");
 
   /**
    * SFLength[0,1]
@@ -98,31 +93,26 @@ public class StructuredFieldIntroducer {
     return sfi;
   }
 
-  public byte[] toBytes() {
+  public byte[] toBytes() throws IOException {
     ByteArrayOutputStream b;
     if (flagByte == null || !flagByte.contains(SFFlag.hasExtension))
       b = new ByteArrayOutputStream(8);
     else b = new ByteArrayOutputStream(8 + extenstionLength);
 
-    try {
-      b.write(UtilBinaryDecoding.intToByteArray(sfLength, 2));
-      if (sfTypeID != null) b.write(sfTypeID.toBytes());
-      else {
-        b.write(new byte[]{0, 0, 0});
-      }
-      if (flagByte != null) {
-        b.write(SFFlag.toByte(flagByte));
-      } else {
-        b.write(0);
-      }
-      b.write(UtilBinaryDecoding.intToByteArray(reserved, 2));
-      if (flagByte != null && flagByte.contains(SFFlag.hasExtension)) {
-        b.write(UtilBinaryDecoding.shortToByteArray(extenstionLength, 1));
-        b.write(extenstion);
-      }
-
-    } catch (IOException e) {
-      LOG.error("Exception: {}", e.getLocalizedMessage());
+    b.write(UtilBinaryDecoding.intToByteArray(sfLength, 2));
+    if (sfTypeID != null) b.write(sfTypeID.toBytes());
+    else {
+      b.write(new byte[]{0, 0, 0});
+    }
+    if (flagByte != null) {
+      b.write(SFFlag.toByte(flagByte));
+    } else {
+      b.write(0);
+    }
+    b.write(UtilBinaryDecoding.intToByteArray(reserved, 2));
+    if (flagByte != null && flagByte.contains(SFFlag.hasExtension)) {
+      b.write(UtilBinaryDecoding.shortToByteArray(extenstionLength, 1));
+      b.write(extenstion);
     }
     return b.toByteArray();
   }
