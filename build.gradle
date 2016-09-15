@@ -3,16 +3,22 @@ version '0.2'
 
 apply plugin: 'java'
 apply plugin: 'checkstyle'
-
-sourceCompatibility = 1.7
-println 'Source Compatibility:' + sourceCompatibility
+apply plugin: 'eclipse'
 
 repositories {
     mavenCentral()
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    sourceCompatibility = '1.7'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
 dependencies {
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
@@ -55,4 +61,3 @@ checkstyle {
     toolVersion = '7.1'
     config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
 }
-
