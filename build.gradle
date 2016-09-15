@@ -12,6 +12,7 @@ repositories {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     sourceCompatibility = '1.7'
+    targetCompatibility = '1.7'
 }
 
 javadoc {
@@ -52,12 +53,15 @@ configurations {
 }
 
 dependencies {
-    checkstyleConfig ("com.puppycrawl.tools:checkstyle:7.1") {
+    // Use Checkstyle 6.19 because this is the latest version that is compatible with
+    // Java 1.7. Since we set sourceCompatibility to 1.7 we should also allow a developer
+    // to use Java 1.7 to build and check.....
+    checkstyleConfig ("com.puppycrawl.tools:checkstyle:6.19") {
         transitive = false
     }
 }
 
 checkstyle {
-    toolVersion = '7.1'
+    toolVersion = '6.19'
     config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
 }
