@@ -3,7 +3,10 @@ version '0.2'
 
 apply plugin: 'java'
 apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
 apply plugin: 'eclipse'
+
+check.dependsOn jacocoTestReport
 
 repositories {
     mavenCentral()
@@ -64,4 +67,11 @@ dependencies {
 checkstyle {
     toolVersion = '6.19'
     config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
+}
+
+jacocoTestReport {
+  reports {
+    xml.enabled = true
+    html.enabled = true
+  }
 }
