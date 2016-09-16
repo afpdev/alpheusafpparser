@@ -52,7 +52,7 @@ public class IPG_IncludePage extends StructuredFieldBaseTriplets {
     baos.write(UtilCharacterEncoding.stringToByteArray(pageName, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
     baos.write(reserved8_15);
     baos.write(flags.toByte());
-    for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (this.getTriplets() != null) for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
     writeFullStructuredField(os, baos.toByteArray());
   }
 

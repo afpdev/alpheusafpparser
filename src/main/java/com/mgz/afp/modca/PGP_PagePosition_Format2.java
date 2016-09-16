@@ -56,7 +56,7 @@ import java.util.EnumSet;
  * one for each page on the sheet. </ul>
  */
 public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups {
-  byte constant0;
+  private byte constant0;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -76,7 +76,9 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(constant0);
-    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    if (this.getRepeatingGroups() != null) {
+      for (IRepeatingGroup rg : this.getRepeatingGroups()) rg.writeAFP(baos, config);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }

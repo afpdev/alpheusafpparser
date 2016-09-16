@@ -42,12 +42,12 @@ public class MCF_MapCodedFont_Format2 extends StructuredFieldBaseRepeatingGroups
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     int actualLength = getActualLength(sfData, offset, length);
-    repeatingGroups = new ArrayList<IRepeatingGroup>();
+    this.setRepeatingGroups(new ArrayList<IRepeatingGroup>());
     int pos = 0;
     while (pos < actualLength) {
       MCF_RepeatingGroup rg = new MCF_RepeatingGroup();
       rg.decodeAFP(sfData, offset + pos, -1, config);
-      repeatingGroups.add(rg);
+      this.addRepeatingGroup(rg);
       pos += rg.getRepeatingGroupLength();
     }
   }
@@ -56,7 +56,7 @@ public class MCF_MapCodedFont_Format2 extends StructuredFieldBaseRepeatingGroups
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    for (IRepeatingGroup rg : this.getRepeatingGroups()) rg.writeAFP(baos, config);
 
     writeFullStructuredField(os, baos.toByteArray());
   }

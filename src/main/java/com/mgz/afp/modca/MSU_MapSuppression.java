@@ -49,7 +49,7 @@ public class MSU_MapSuppression extends StructuredFieldBaseRepeatingGroups {
         pos += 10;
       }
     } else {
-      repeatingGroups = null;
+      this.setRepeatingGroups(null);
     }
   }
 
@@ -57,8 +57,8 @@ public class MSU_MapSuppression extends StructuredFieldBaseRepeatingGroups {
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    if (repeatingGroups != null) {
-      for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    if (this.getRepeatingGroups() != null) {
+      for (IRepeatingGroup rg : this.getRepeatingGroups()) rg.writeAFP(baos, config);
     }
 
     writeFullStructuredField(os, baos.toByteArray());

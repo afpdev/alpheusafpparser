@@ -34,7 +34,7 @@ import java.nio.charset.Charset;
  */
 public abstract class StructuredFieldBaseName extends StructuredField implements IHasName {
   @AFPField(maxSize = 8)
-  protected String name;
+  private String name;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {

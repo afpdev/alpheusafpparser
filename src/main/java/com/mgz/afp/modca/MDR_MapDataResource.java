@@ -40,14 +40,14 @@ import java.util.ArrayList;
 public class MDR_MapDataResource extends StructuredFieldBaseRepeatingGroups {
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    repeatingGroups = new ArrayList<IRepeatingGroup>();
+    this.setRepeatingGroups(new ArrayList<IRepeatingGroup>());
 
     int acualLength = getActualLength(sfData, offset, length);
     int pos = 0;
     while (pos < acualLength) {
       MDR_RepeatingGroup rg = new MDR_RepeatingGroup();
       rg.decodeAFP(sfData, offset + pos, acualLength - pos, config);
-      repeatingGroups.add(rg);
+      this.addRepeatingGroup(rg);
       pos += rg.getRepeatingGroupLength();
     }
   }
@@ -56,7 +56,7 @@ public class MDR_MapDataResource extends StructuredFieldBaseRepeatingGroups {
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    for (IRepeatingGroup rg : this.getRepeatingGroups()) rg.writeAFP(baos, config);
     writeFullStructuredField(os, baos.toByteArray());
   }
 

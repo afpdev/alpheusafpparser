@@ -43,17 +43,17 @@ public class BDM_BeginDataMap extends StructuredFieldBaseTriplets implements IHa
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     int actualLength = getActualLength(sfData, offset, length);
 
-    name = new String(sfData, offset, 8, config.getAfpCharSet());
+    this.name = new String(sfData, offset, 8, config.getAfpCharSet());
     if (actualLength > 8) {
-      dataFormat = BDM_DataFormat.valueOf(sfData[offset + 8]);
+      this.dataFormat = BDM_DataFormat.valueOf(sfData[offset + 8]);
       if (actualLength > 9) {
         super.decodeAFP(sfData, offset + 9, actualLength - 9, config);
       } else {
-        triplets = null;
+        this.setTriplets(null);
       }
     } else {
-      dataFormat = null;
-      triplets = null;
+      this.dataFormat = null;
+      this.setTriplets(null);
     }
   }
 
@@ -63,8 +63,8 @@ public class BDM_BeginDataMap extends StructuredFieldBaseTriplets implements IHa
     baos.write(UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
     if (dataFormat != null) {
       baos.write(dataFormat.toByte());
-      if (triplets != null) {
-        for (Triplet t : triplets) t.writeAFP(baos, config);
+      if (this.getTriplets() != null) {
+        for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
       }
     }
 

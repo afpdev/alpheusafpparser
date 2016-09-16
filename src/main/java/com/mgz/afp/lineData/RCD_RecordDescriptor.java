@@ -101,7 +101,7 @@ public class RCD_RecordDescriptor extends StructuredFieldBaseTriplets {
     if (actualLength > 71) {
       super.decodeAFP(sfData, offset + 70, actualLength - 70, config);
     } else {
-      triplets = null;
+      this.setTriplets(null);
     }
   }
 
@@ -132,7 +132,7 @@ public class RCD_RecordDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(fieldNumber, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(additionalBaselineIncrement, 2));
     baos.write(reserved57_69);
-    if (triplets != null) for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (this.getTriplets() != null) for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
 
     writeFullStructuredField(os, baos.toByteArray());
   }

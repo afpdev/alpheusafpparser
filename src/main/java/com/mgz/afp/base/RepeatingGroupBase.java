@@ -20,8 +20,6 @@ package com.mgz.afp.base;
 
 import com.mgz.afp.base.annotations.AFPType;
 import com.mgz.afp.exceptions.AFPParserException;
-import com.mgz.afp.exceptions.AFPValidationException;
-import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
@@ -35,10 +33,6 @@ public class RepeatingGroupBase implements IRepeatingGroup {
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     repeatingGroupLength = UtilBinaryDecoding.parseInt(sfData, offset, 2);
-  }
-
-  public void validate() throws AFPValidationException {
-    // TODO: validate.
   }
 
   @Override

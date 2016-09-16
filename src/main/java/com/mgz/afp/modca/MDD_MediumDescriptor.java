@@ -57,7 +57,7 @@ public class MDD_MediumDescriptor extends StructuredFieldBaseTriplets {
     if (actualLength > 13) {
       super.decodeAFP(sfData, offset + 13, actualLength - 13, config);
     } else {
-      triplets = null;
+      this.setTriplets(null);
     }
   }
 
@@ -71,7 +71,7 @@ public class MDD_MediumDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(xMediumExtent, 3));
     baos.write(UtilBinaryDecoding.intToByteArray(yMediumExtent, 3));
     baos.write(flag.toByte());
-    if (triplets != null) for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (this.getTriplets() != null) for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
 
     writeFullStructuredField(os, baos.toByteArray());
   }

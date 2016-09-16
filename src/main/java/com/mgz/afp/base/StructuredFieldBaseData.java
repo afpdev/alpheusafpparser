@@ -30,7 +30,7 @@ import java.io.OutputStream;
  */
 public class StructuredFieldBaseData extends StructuredField {
   @AFPField(maxSize = 32759)
-  protected byte[] data;
+  private byte[] data;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {

@@ -62,7 +62,7 @@ public class PGD_PageDescriptor extends StructuredFieldBaseTriplets {
     if (actualLength > 15) {
       super.decodeAFP(sfData, offset + 15, actualLength - 15, config);
     } else {
-      triplets = null;
+      this.setTriplets(null);
     }
   }
 
@@ -77,8 +77,8 @@ public class PGD_PageDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(xSize, 3));
     baos.write(UtilBinaryDecoding.intToByteArray(ySize, 3));
     baos.write(reserved12_14);
-    if (triplets != null) {
-      for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (this.getTriplets() != null) {
+      for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
     }
 
     writeFullStructuredField(os, baos.toByteArray());
