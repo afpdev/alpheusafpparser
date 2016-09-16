@@ -235,7 +235,9 @@ public class AFPParser {
             errSf.setStructuredFieldIntroducer(sfi);
             errSf.setData(grossPayload);
             if (parserConf.isEscalateParsingErrors()) {
-              throw th;
+              throw new AFPParserException(
+                  "Error parsing record " + (nrOfSFBuilt + 1) + ": " + th.getLocalizedMessage(),
+                  th);
             }
           }
 
