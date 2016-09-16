@@ -20,7 +20,6 @@ package com.mgz.afp.parser;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.StructuredFieldBaseData;
-import com.mgz.afp.base.StructuredFieldBaseUndefined;
 import com.mgz.afp.base.StructuredFieldErrornouslyBuilt;
 import com.mgz.afp.base.StructuredFieldIntroducer;
 import com.mgz.afp.bcoca.BDD_BarCodeDataDescriptor;
@@ -77,7 +76,7 @@ public class AFPParser {
       }
     }
 
-    if (sf == null) sf = new StructuredFieldBaseUndefined();
+    if (sf == null) sf = new com.mgz.afp.base.Undefined();
     sf.setStructuredFieldIntroducer(sfi);
     return sf;
   }

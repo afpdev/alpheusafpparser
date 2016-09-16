@@ -25,7 +25,7 @@ import com.mgz.afp.parser.AFPParserConfiguration;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class StructuredFieldBaseUndefined extends StructuredField {
+public abstract class StructuredFieldBaseUndefined extends StructuredField {
   @AFPField(maxSize = 32759)
   byte[] payload;
 
