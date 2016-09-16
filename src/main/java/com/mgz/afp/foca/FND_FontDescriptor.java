@@ -84,7 +84,10 @@ public class FND_FontDescriptor extends StructuredField {
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    checkDataLength(sfData, offset, length, 80);
+    // According to the current MO:DCA specification the FND structured field has a length of 80 bytes.
+    // Several years ago this structured field had a length of 79 bytes (this historical version is documented
+    // at least in IBM manual S544-3289-01 (Copyright IBM, 1991).
+    checkDataLength(sfData, offset, length, 79);
 
     typefaceDescription = new String(sfData, offset, 32, cpIBM500);
 
@@ -112,8 +115,9 @@ public class FND_FontDescriptor extends StructuredField {
     reserved66_75 = new byte[10];
     System.arraycopy(sfData, offset + 66, reserved66_75, 0, 10);
 
-    GCSGID_FontGraphicCharacterSetGlobalID = UtilBinaryDecoding.parseInt(sfData, offset + 76, 2);
-    FGID_FontTypefaceGlobalID = UtilBinaryDecoding.parseInt(sfData, offset + 78, 2);
+    // According to IBM manual S544-3289-01 the bytes 76-76 have been reveserd (value of 0x00).
+    GCSGID_FontGraphicCharacterSetGlobalID = length >= 80 ? UtilBinaryDecoding.parseInt(sfData, offset + 76, 2) : 0;
+    FGID_FontTypefaceGlobalID = length >= 80 ? UtilBinaryDecoding.parseInt(sfData, offset + 78, 2) : 0;
 
     int actualLength = getActualLength(sfData, offset, length);
     if (actualLength > 80) {
