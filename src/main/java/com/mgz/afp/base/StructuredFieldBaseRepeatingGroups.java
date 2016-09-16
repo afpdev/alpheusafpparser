@@ -53,4 +53,9 @@ public abstract class StructuredFieldBaseRepeatingGroups extends StructuredField
       repeatingGroups.remove(rg);
     }
   }
+
+  @Override
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
+  }
 }

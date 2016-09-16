@@ -83,4 +83,8 @@ public abstract class StructuredFieldBaseTriplets extends StructuredField implem
     }
   }
 
+  @Override
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
+  }
 }

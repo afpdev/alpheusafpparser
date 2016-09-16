@@ -58,4 +58,9 @@ public class StructuredFieldBaseUndefined extends StructuredField {
   public void setPayload(byte[] payload) {
     this.payload = payload;
   }
+
+  @Override
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
+  }
 }

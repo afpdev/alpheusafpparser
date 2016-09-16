@@ -57,4 +57,8 @@ public class StructuredFieldBaseData extends StructuredField {
     this.data = data;
   }
 
+  @Override
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
+  }
 }

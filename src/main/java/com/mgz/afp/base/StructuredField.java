@@ -196,4 +196,12 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
   public String toString() {
     return "StructuredField{" + structuredFieldIntroducer + '}';
   }
+
+  /**
+   * Accept method for the {@link StructuredFieldVisitor}.
+   */
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
+  }
+
 }

@@ -64,4 +64,9 @@ public abstract class StructuredFieldBaseName extends StructuredField implements
   public final void setName(String name) {
     this.name = name;
   }
+
+  @Override
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
+  }
 }
