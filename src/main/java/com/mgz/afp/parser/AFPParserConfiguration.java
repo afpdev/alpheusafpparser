@@ -42,7 +42,15 @@ import java.security.DigestInputStream;
 public class AFPParserConfiguration implements Serializable, Cloneable {
   private static final long serialVersionUID = 1L;
   protected boolean isParserOwnsInputStream;
+
+  // The default code page is CP500. See MO:DOC documentation, chapter "Resource Groups"
+  // paragraph "External Resource Naming Conventions": MO:DCA-P object names are encoded 
+  // using the code page and character set specified in a Coded Graphic Character Set Global
+  // ID X'01' triplet.... To ensure portability across older versions of print servers that
+  // do not support encoding definitions in the X'01' triplet, names use only the recommended
+  // characters and are encoded in EBCDIC using code page 500
   Charset afpCharSet = Charset.forName("cp500");
+
   int bufferSize = 100 * 1024;
   InputStream inputStream;
   boolean isParseToStructuredFieldsBaseData;
