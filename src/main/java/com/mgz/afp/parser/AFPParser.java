@@ -292,6 +292,13 @@ public class AFPParser {
     throw afpExc;
   }
 
+  /**
+   * Returns the number of successfully built structured fields.
+   */
+  public long getCountBuiltStructuredFields() {
+    return nrOfSFBuilt;
+  }
+
   public long getCountReadByte() {
     return nrOfBytesRead;
   }
