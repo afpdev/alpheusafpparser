@@ -54,11 +54,6 @@ public interface StructuredFieldVisitor {
   public void handle(final StructuredFieldBaseTriplets sf);
 
   /**
-   * Handles instances of {@link StructuredFieldBaseUndefined}.
-   */
-  public void handle(final StructuredFieldBaseUndefined sf);
-
-  /**
    * Handles instances of {@link StructuredFieldErrornouslyBuilt}.
    */
   public void handle(final StructuredFieldErrornouslyBuilt sf);
