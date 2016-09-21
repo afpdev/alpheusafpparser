@@ -25,8 +25,6 @@ import com.mgz.afp.parser.AFPParserConfiguration;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,11 +36,10 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 
 public class AFPParserTest {
-
-  public static final Logger LOG = LoggerFactory.getLogger("AFPParserTest");
 
   private static File[] filesSuite = {};
 
@@ -59,8 +56,6 @@ public class AFPParserTest {
       AFPParserConfiguration pc = new AFPParserConfiguration();
       for (File afpFile : filesSuite) {
 
-        LOG.debug("--- FILE: {}", afpFile.getAbsolutePath());
-
         pc.setInputStream(new FileInputStream(afpFile));
 
         AFPParser parser = new AFPParser(pc);
@@ -69,7 +64,6 @@ public class AFPParserTest {
         do {
           sf = parser.parseNextSF();
           if (sf != null) {
-            LOG.debug("StructuredField: {}", sf);
             StructuredFieldIntroducer sfi = sf.getStructuredFieldIntroducer();
             assertNotNull(sfi);
           }
@@ -78,7 +72,7 @@ public class AFPParserTest {
         pc.getInputStream().close();
       }
     } catch (Exception exception) {
-      LOG.error("Unable to testParsingAllTestFiles SF: {}", exception.getLocalizedMessage());
+      fail("Unable to testParsingAllTestFiles SF: " + exception.getLocalizedMessage());
     }
   }
 
@@ -105,7 +99,6 @@ public class AFPParserTest {
         do {
           sf = parser.parseNextSF();
           if (sf != null) {
-            LOG.debug("StructuredField: {}", sf);
             sf.writeAFP(dos, pc);
 
             assertArrayEquals(afpFile.getName() + " 0x" + Long.toHexString(sf.getStructuredFieldIntroducer().getFileOffset()) + " " + sf.getClass().getSimpleName(),
@@ -122,7 +115,7 @@ public class AFPParserTest {
         tmpFile.delete();
       }
     } catch (Exception exception) {
-      LOG.error("Unable to testParsingAllTestFiles SF: {}", exception.getLocalizedMessage());
+      fail("Unable to testParsingAllTestFiles SF: " + exception.getLocalizedMessage());
     }
   }
 
@@ -149,7 +142,6 @@ public class AFPParserTest {
         do {
           sf = parser.parseNextSF();
           if (sf != null) {
-            LOG.debug("StructuredField: {}", sf);
             sf.writeAFP(dos, pc);
             if (!Arrays.equals(mdIs.digest(), mdOs.digest())) {
 
@@ -169,7 +161,7 @@ public class AFPParserTest {
         tmpFile.delete();
       }
     } catch (Exception exception) {
-      LOG.error("Unable to testAFPSerializationStructuredFieldBase SF: {}", exception.getLocalizedMessage());
+      fail("Unable to testAFPSerializationStructuredFieldBase SF: " + exception.getLocalizedMessage());
     }
   }
 }

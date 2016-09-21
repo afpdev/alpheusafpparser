@@ -26,8 +26,8 @@ import com.mgz.afp.writer.IAFPWriter;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +37,6 @@ import java.io.OutputStream;
 
 public class AFPWriterTest {
 
-  public static final Logger LOG = LoggerFactory.getLogger("AFPWriterTest");
   private static File[] filesSuite = {};
 
   @BeforeClass
@@ -56,7 +55,6 @@ public class AFPWriterTest {
         OutputStream os = new FileOutputStream("./output/" + AFPWriterTest.class.getSimpleName() + ".tmp");
 
         for (File afpFile : filesSuite) {
-          LOG.debug("File: {}", afpFile.getAbsolutePath());
           pc.setInputStream(new FileInputStream(afpFile));
 
           AFPParser parser = new AFPParser(pc);
@@ -74,7 +72,7 @@ public class AFPWriterTest {
         os.close();
       }
     } catch (Exception exception) {
-      LOG.error("Unable to write SF: {}", exception.getLocalizedMessage());
+      fail("Unable to write SF: " + exception.getLocalizedMessage());
     }
   }
 

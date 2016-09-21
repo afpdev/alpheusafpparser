@@ -25,7 +25,7 @@ import java.util.List;
 
 public abstract class StructuredFieldBaseRepeatingGroups extends StructuredField implements IHasRepeatingGroups {
   @AFPField
-  protected List<IRepeatingGroup> repeatingGroups;
+  private List<IRepeatingGroup> repeatingGroups;
 
   @Override
   public final List<IRepeatingGroup> getRepeatingGroups() {
@@ -52,5 +52,10 @@ public abstract class StructuredFieldBaseRepeatingGroups extends StructuredField
     if (repeatingGroups != null) {
       repeatingGroups.remove(rg);
     }
+  }
+
+  @Override
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
   }
 }

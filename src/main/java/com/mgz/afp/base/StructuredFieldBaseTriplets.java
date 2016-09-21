@@ -32,7 +32,7 @@ import java.util.List;
 
 public abstract class StructuredFieldBaseTriplets extends StructuredField implements IHasTriplets {
   @AFPField
-  protected List<Triplet> triplets;
+  private List<Triplet> triplets;
 
 
   @Override
@@ -83,4 +83,8 @@ public abstract class StructuredFieldBaseTriplets extends StructuredField implem
     }
   }
 
+  @Override
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
+  }
 }

@@ -58,7 +58,7 @@ public class MFC_MediumFinishingControl extends StructuredFieldBaseTriplets {
     baos.write(reserved1);
     baos.write(boundaryConditionForSheetCollection.toByte());
     baos.write(scope.toByte());
-    for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (this.getTriplets() != null) for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
 
     writeFullStructuredField(os, baos.toByteArray());
   }

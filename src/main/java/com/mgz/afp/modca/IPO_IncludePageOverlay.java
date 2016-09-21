@@ -62,7 +62,7 @@ public class IPO_IncludePageOverlay extends StructuredFieldBaseTriplets {
       if (actualLength > 16) {
         super.decodeAFP(sfData, offset + 16, actualLength - 16, config);
       } else {
-        triplets = null;
+        this.setTriplets(null);
       }
     } else {
       xRotation = null;
@@ -78,8 +78,8 @@ public class IPO_IncludePageOverlay extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(yOrigin, 3));
     if (xRotation != null) {
       baos.write(xRotation.toBytes());
-      if (triplets != null) {
-        for (Triplet t : triplets) t.writeAFP(baos, config);
+      if (this.getTriplets() != null) {
+        for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
       }
     }
     writeFullStructuredField(os, baos.toByteArray());

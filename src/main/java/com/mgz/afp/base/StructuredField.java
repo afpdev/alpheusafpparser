@@ -43,7 +43,7 @@ import java.io.OutputStream;
 public abstract class StructuredField implements IAFPDecodeableWriteable {
 
   @AFPField
-  StructuredFieldIntroducer structuredFieldIntroducer;
+  private StructuredFieldIntroducer structuredFieldIntroducer;
   /**
    * The structured field's padding data. Contains null if this structured field has no padding
    * data.
@@ -196,4 +196,12 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
   public String toString() {
     return "StructuredField{" + structuredFieldIntroducer + '}';
   }
+
+  /**
+   * Accept method for the {@link StructuredFieldVisitor}.
+   */
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
+  }
+
 }

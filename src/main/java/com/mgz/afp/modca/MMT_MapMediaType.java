@@ -30,7 +30,7 @@ import java.io.OutputStream;
 
 /**
  * MO:DCA, page 288.<br> <br> The Map Media Type structured field maps a media type local ID to the
- * name or OID of a media type. See “Media Type Identifiers” on page 639 for a list of media types
+ * name or OID of a media type. See Media Type Identifiers on page 639 for a list of media types
  * registered by their name and their OID.
  */
 public class MMT_MapMediaType extends StructuredFieldBaseRepeatingGroups {
@@ -51,7 +51,9 @@ public class MMT_MapMediaType extends StructuredFieldBaseRepeatingGroups {
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    if (this.getRepeatingGroups() != null) {
+      for (IRepeatingGroup rg : this.getRepeatingGroups()) rg.writeAFP(baos, config);
+    }
     writeFullStructuredField(os, baos.toByteArray());
   }
 

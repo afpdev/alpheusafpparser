@@ -31,15 +31,10 @@ import com.mgz.afp.foca.FNC_FontControl;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 
 public class AFPParser {
-
-  public static final Logger LOG = LoggerFactory.getLogger("AFPParser");
 
   private static String afpPackagePrefix = "com.mgz.afp.";
   private static String[] afpPackages = {
@@ -86,7 +81,7 @@ public class AFPParser {
     return sf;
   }
 
-  public static void reload(StructuredField sf) throws AFPParserException {
+  public static void reload(StructuredField sf) throws AFPParserException, IOException {
     if (sf == null || sf.getStructuredFieldIntroducer() == null) return;
 
     StructuredFieldIntroducer sfi = sf.getStructuredFieldIntroducer();
@@ -141,16 +136,14 @@ public class AFPParser {
           sf.setPadding(padding);
           sf.decodeAFP(sfData, 0, -1, conf);
         }
-
-      } catch (Throwable th) {
-        LOG.error("Exception: {}", th.getLocalizedMessage());
       } finally {
         if (is != null) {
           try {
             is.close();
-            conf.setInputStream(null);
           } catch (IOException e) {
-            LOG.error("Exception: {}", e.getLocalizedMessage());
+            // Ignore failured on close...
+          } finally {
+            conf.setInputStream(null);
           }
         }
       }
@@ -159,7 +152,7 @@ public class AFPParser {
 
   /**
    * Call this method to perform the parsing. Blocks until the parsing finished, either by end of
-   * input stream, the occurrence of an {@link AFPParserException}, or .
+   * input stream or the occurrence of an {@link AFPParserException}.
    */
   public final StructuredField parseNextSF() throws AFPParserException {
     StructuredFieldIntroducer sfi = null;
@@ -187,8 +180,6 @@ public class AFPParser {
         } else {
           sf = createSFInstance(sfi);
         }
-
-        LOG.debug("Token: {}", sf);
 
         int lenOfGrossPayload = sfi.getSFLength() - sfi.getLengthOfStructuredFieldIntroducerIncludingExtension();
 
@@ -239,13 +230,14 @@ public class AFPParser {
               sf.decodeAFP(sfData, 0, -1, parserConf);
             }
           } catch (Throwable th) {
-            LOG.error("Throwable: {}", th.getLocalizedMessage());
             sf = errSf = new StructuredFieldErrornouslyBuilt();
             errSf.setCausingException(th);
             errSf.setStructuredFieldIntroducer(sfi);
             errSf.setData(grossPayload);
             if (parserConf.isEscalateParsingErrors()) {
-              throw th;
+              throw new AFPParserException(
+                  "Error parsing record " + (nrOfSFBuilt + 1) + ": " + th.getLocalizedMessage(),
+                  th);
             }
           }
 
@@ -298,6 +290,13 @@ public class AFPParser {
    */
   public void error(AFPParserException afpExc) throws AFPParserException {
     throw afpExc;
+  }
+
+  /**
+   * Returns the number of successfully built structured fields.
+   */
+  public long getCountBuiltStructuredFields() {
+    return nrOfSFBuilt;
   }
 
   public long getCountReadByte() {

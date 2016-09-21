@@ -121,7 +121,7 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(fieldNumber, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(additionalBaselineIncrement, 2));
     baos.write(reserved49_61);
-    if (triplets != null) for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (this.getTriplets() != null) for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
 
     writeFullStructuredField(os, baos.toByteArray());
   }

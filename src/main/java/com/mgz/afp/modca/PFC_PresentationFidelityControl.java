@@ -56,7 +56,7 @@ public class PFC_PresentationFidelityControl extends StructuredFieldBaseTriplets
     if (actualLength > 4) {
       super.decodeAFP(sfData, offset + 4, actualLength - 4, config);
     } else {
-      triplets = null;
+      this.setTriplets(null);
     }
   }
 
@@ -67,8 +67,8 @@ public class PFC_PresentationFidelityControl extends StructuredFieldBaseTriplets
     baos.write(reserved0);
     baos.write(flag.toByte());
     baos.write(reserved2_3);
-    if (triplets != null) {
-      for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (this.getTriplets() != null) {
+      for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
     }
 
     writeFullStructuredField(os, baos.toByteArray());

@@ -54,7 +54,7 @@ public class MMO_MapMediumOverlay extends StructuredFieldBaseRepeatingGroups {
         pos += lengtOfEachRepeatingGroup;
       }
     } else {
-      repeatingGroups = null;
+      this.setRepeatingGroups(null);
     }
   }
 
@@ -64,8 +64,8 @@ public class MMO_MapMediumOverlay extends StructuredFieldBaseRepeatingGroups {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(lengtOfEachRepeatingGroup);
     baos.write(reserved1_3);
-    if (repeatingGroups != null) {
-      for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    if (this.getRepeatingGroups() != null) {
+      for (IRepeatingGroup rg : this.getRepeatingGroups()) rg.writeAFP(baos, config);
     }
 
     writeFullStructuredField(os, baos.toByteArray());

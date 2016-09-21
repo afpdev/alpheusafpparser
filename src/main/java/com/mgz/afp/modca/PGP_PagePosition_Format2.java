@@ -56,7 +56,7 @@ import java.util.EnumSet;
  * one for each page on the sheet. </ul>
  */
 public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups {
-  byte constant0;
+  private byte constant0;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -76,7 +76,9 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(constant0);
-    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    if (this.getRepeatingGroups() != null) {
+      for (IRepeatingGroup rg : this.getRepeatingGroups()) rg.writeAFP(baos, config);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -106,8 +108,10 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
       yOrigin = UtilBinaryDecoding.parseInt(sfData, offset + 4, 3);
       xRotation = AFPOrientation.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 7, 2));
       sheetSideAndPartitionSelection = PGP_SheetSideAndPartitionSelection.valueOf(sfData[offset + 9]);
-      flags = PGP_RGFlag.valueOf(sfData[offset + 10]);
-      pageModififationControlID = sfData[offset + 11];
+
+      // bytes 10 and 11 are optional....
+      flags = PGP_RGFlag.valueOf(length > 10 ? sfData[offset + 10] : (byte) 0);
+      pageModififationControlID = length > 11 ? sfData[offset + 11] : (byte) 0xFF;
     }
 
 

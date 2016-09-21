@@ -20,8 +20,10 @@ package com.mgz.afp.parser;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.StructuredFieldBaseData;
+import com.mgz.afp.base.StructuredFieldErrornouslyBuilt;
 import com.mgz.afp.base.StructuredFieldIntroducer;
 import com.mgz.afp.bcoca.BDD_BarCodeDataDescriptor;
+import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.foca.CPC_CodePageControl;
 import com.mgz.afp.foca.CPD_CodePageDescriptor;
 import com.mgz.afp.foca.FNC_FontControl;
@@ -42,7 +44,15 @@ import java.security.DigestInputStream;
 public class AFPParserConfiguration implements Serializable, Cloneable {
   private static final long serialVersionUID = 1L;
   protected boolean isParserOwnsInputStream;
-  Charset afpCharSet = Charset.forName("cp273");
+
+  // The default code page is CP500. See MO:DOC documentation, chapter "Resource Groups"
+  // paragraph "External Resource Naming Conventions": MO:DCA-P object names are encoded
+  // using the code page and character set specified in a Coded Graphic Character Set Global
+  // ID X'01' triplet.... To ensure portability across older versions of print servers that
+  // do not support encoding definitions in the X'01' triplet, names use only the recommended
+  // characters and are encoded in EBCDIC using code page 500
+  Charset afpCharSet = Charset.forName("cp500");
+
   int bufferSize = 100 * 1024;
   InputStream inputStream;
   boolean isParseToStructuredFieldsBaseData;
@@ -183,6 +193,15 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
     return escalateParsingErrors;
   }
 
+  /**
+   * If set to true (default) and a parsing error occurs, an {@link AFPParserException}
+   * is thrown that carries the erroneous structured field as an
+   * {@link StructuredFieldErrornouslyBuilt}.
+   * <p>
+   * If set to false and a parsing error occurs, {@link AFPParser#parseNextSF()} returns a
+   * {@link StructuredField} of type {@link StructuredFieldErrornouslyBuilt} without throwing
+   * an exception and continues parsing the rest of the AFP stream.
+   */
   public void setEscalateParsingErrors(boolean escalateParsingErrors) {
     this.escalateParsingErrors = escalateParsingErrors;
   }

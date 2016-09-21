@@ -88,7 +88,7 @@ public class LND_LineDescriptor extends StructuredFieldBaseTriplets {
     if (getActualLength(sfData, offset, length) > 40) {
       super.decodeAFP(sfData, offset + 40, -1, config);
     } else {
-      triplets = null;
+      this.setTriplets(null);
     }
   }
 
@@ -115,7 +115,7 @@ public class LND_LineDescriptor extends StructuredFieldBaseTriplets {
     baos.write(subpageID);
     baos.write(UtilBinaryDecoding.intToByteArray(ccpIdentifier, 2));
 
-    if (triplets != null) for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (this.getTriplets() != null) for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
 
     writeFullStructuredField(os, baos.toByteArray());
   }

@@ -58,7 +58,7 @@ public class IPS_IncludePageSegment extends StructuredFieldBaseTriplets {
     if (actualLength > 14) {
       super.decodeAFP(sfData, offset + 16, actualLength - 16, config);
     } else {
-      triplets = null;
+      this.setTriplets(null);
     }
   }
 
@@ -69,8 +69,8 @@ public class IPS_IncludePageSegment extends StructuredFieldBaseTriplets {
     baos.write(UtilCharacterEncoding.stringToByteArray(pageSegmentName, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
     baos.write(UtilBinaryDecoding.intToByteArray(xOrigin, 3));
     baos.write(UtilBinaryDecoding.intToByteArray(yOrigin, 3));
-    if (triplets != null) {
-      for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (this.getTriplets() != null) {
+      for (Triplet t : this.getTriplets()) t.writeAFP(baos, config);
     }
     writeFullStructuredField(os, baos.toByteArray());
   }

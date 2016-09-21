@@ -46,4 +46,9 @@ public class StructuredFieldErrornouslyBuilt extends StructuredFieldBaseData {
   public void setCausingException(Throwable causingException) {
     this.causingException = causingException;
   }
+
+  @Override
+  public void accept(final StructuredFieldVisitor visitor) {
+    visitor.handle(this);
+  }
 }
