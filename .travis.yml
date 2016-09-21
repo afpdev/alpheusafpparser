@@ -6,5 +6,11 @@ jdk:
 os:
   - linux
 
+before_script:
+  - pip install --user codecov
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
 notifications:
   email: false
