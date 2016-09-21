@@ -27,7 +27,7 @@ public final class CountPageGroupsAndPagesInPageGroup {
     }
 
     if (!new File(args[0]).exists()) {
-      System.err.println("The file" + args[0] + " does not exist.");
+      System.err.println("The file " + args[0] + " does not exist.");
       System.exit(1);
     }
 
