@@ -21,9 +21,6 @@ package com.mgz.xml;
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.OutputStream;
 
 import javax.xml.bind.JAXBContext;
@@ -31,19 +28,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 public class AFP2XMLWriter {
-  public static final Logger LOG = LoggerFactory.getLogger("AFP2XMLWriter");
 
-  public static void writeXML(OutputStream osw, StructuredField sf, AFPParserConfiguration conf) {
-    try {
+  public static void writeXML(OutputStream osw, StructuredField sf, AFPParserConfiguration conf) throws JAXBException {
       JAXBContext jaxbContext = JAXBContext.newInstance(sf.getClass());
       Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
       // output pretty printed
       jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
       jaxbMarshaller.marshal(sf, osw);
-
-    } catch (JAXBException e) {
-      LOG.error("Exception: {}", e.getLocalizedMessage());
-    }
   }
 }
