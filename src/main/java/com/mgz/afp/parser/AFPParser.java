@@ -30,16 +30,10 @@ import com.mgz.afp.foca.CPD_CodePageDescriptor;
 import com.mgz.afp.foca.FNC_FontControl;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 
 public class AFPParser {
-
-  public static final Logger LOG = LoggerFactory.getLogger("AFPParser");
 
   private static String afpPackagePrefix = "com.mgz.afp.";
   private static String[] afpPackages = {
@@ -68,10 +62,10 @@ public class AFPParser {
     parserConf = parserConfiguration;
   }
 
-  public static final StructuredField createSFInstance(StructuredFieldIntroducer sfi) {
+  public static StructuredField createSFInstance(StructuredFieldIntroducer sfi) {
     StructuredField sf = null;
     for (String afpPackage : afpPackages) {
-      Class<?> clazz = null;
+      Class<?> clazz;
       try {
         String className = afpPackage + sfi.getSFTypeID().name();
         clazz = Class.forName(className);
@@ -91,15 +85,19 @@ public class AFPParser {
 
     StructuredFieldIntroducer sfi = sf.getStructuredFieldIntroducer();
     AFPParserConfiguration conf = sfi.getActualConfig();
-    if (conf.getAFPFile() == null)
+    if (conf.getAFPFile() == null) {
       throw new AFPParserException("The file from whitch the structured field has been loaded is unknown.");
+    }
 
     synchronized (conf) {
-      conf.setInputStream(null);
       InputStream is = null;
       try {
+        conf.setInputStream(null);
         is = conf.getInputStream();
-        is.skip(sfi.getFileOffset() + 1 + sfi.getLengthOfStructuredFieldIntroducerIncludingExtension());
+        long lenSFI = sfi.getFileOffset() + 1 + sfi.getLengthOfStructuredFieldIntroducerIncludingExtension();
+        if(is.skip(lenSFI)<lenSFI){
+          throw new AFPParserException("Failed to skip over SF Introducer.");
+        }
 
         int lenOfGrossPayload = sfi.getSFLength() - sfi.getLengthOfStructuredFieldIntroducerIncludingExtension();
         byte[] grossPayload = new byte[lenOfGrossPayload];
@@ -143,14 +141,18 @@ public class AFPParser {
         }
 
       } catch (Throwable th) {
-        LOG.error("Exception: {}", th.getLocalizedMessage());
+        if(th instanceof AFPParserException){
+          throw (AFPParserException)th;
+        }else{
+          throw new AFPParserException("Reload failed.",th);
+        }
       } finally {
         if (is != null) {
           try {
             is.close();
             conf.setInputStream(null);
           } catch (IOException e) {
-            LOG.error("Exception: {}", e.getLocalizedMessage());
+            throw new AFPParserException("Failed to close input stream.",e);
           }
         }
       }
@@ -180,7 +182,7 @@ public class AFPParser {
         sfi = StructuredFieldIntroducer.parse(is);
         sfi.setFileOffset(nrOfBytesRead - 1);
 
-        StructuredField sf = null;
+        StructuredField sf;
         if (parserConf.isParseToStructuredFieldsBaseData) {
           sf = new StructuredFieldBaseData();
           sf.setStructuredFieldIntroducer(sfi);
@@ -188,15 +190,15 @@ public class AFPParser {
           sf = createSFInstance(sfi);
         }
 
-        LOG.debug("Token: {}", sf);
-
         int lenOfGrossPayload = sfi.getSFLength() - sfi.getLengthOfStructuredFieldIntroducerIncludingExtension();
 
         if (parserConf.isBuildShallow()) {
           AFPParserConfiguration actualConf = parserConf.clone();
           actualConf.setInputStream(null);
           sfi.setActualConfig(actualConf);
-          is.skip(lenOfGrossPayload);
+          if(is.skip(lenOfGrossPayload)<lenOfGrossPayload){
+            throw new AFPParserException("Failed to skipp payload while building shallow objects.");
+          }
 
         } else {
 
@@ -239,7 +241,6 @@ public class AFPParser {
               sf.decodeAFP(sfData, 0, -1, parserConf);
             }
           } catch (Throwable th) {
-            LOG.error("Throwable: {}", th.getLocalizedMessage());
             sf = errSf = new StructuredFieldErrornouslyBuilt();
             errSf.setCausingException(th);
             errSf.setStructuredFieldIntroducer(sfi);
@@ -304,13 +305,14 @@ public class AFPParser {
     return nrOfBytesRead;
   }
 
-  public void quitParsing() {
+  public void quitParsing() throws AFPParserException {
     parserConf.resetCurrentAFPObjects();
 
     if (parserConf.isParserOwnsInputStream && parserConf.inputStream != null) {
       try {
         parserConf.inputStream.close();
       } catch (IOException e) {
+        throw new AFPParserException("Failed to close input stream.",e);
       }
     }
   }
