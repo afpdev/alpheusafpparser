@@ -7,20 +7,18 @@ import com.mgz.afp.modca.BPG_BeginPage;
 import com.mgz.afp.parser.AFPParser;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Logger;
 
 public class CountPageGroupsAndPagesInPageGroup {
 
-  public static final Logger LOG = LoggerFactory.getLogger("CountPageGroupsAndPagesInPageGroup");
-
   public static void main(String[] args) throws AFPParserException, IOException {
+    Logger LOG = Logger.getLogger(CountPageGroupsAndPagesInPageGroup.class.getSimpleName());
+
 
     InputStream is = new BufferedInputStream(new FileInputStream(new File(args[0])), 1024 * 1024);
     AFPParserConfiguration pc = new AFPParserConfiguration();
