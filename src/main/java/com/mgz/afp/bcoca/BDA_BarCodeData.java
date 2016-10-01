@@ -230,17 +230,23 @@ public class BDA_BarCodeData extends StructuredField {
 
       public static EnumSet<ControlFlag> valueOf(int flagByte) {
         EnumSet<ControlFlag> result = EnumSet.noneOf(ControlFlag.class);
-        if ((flagByte & 0x80) != 0) ;
-        result.add(ConvertEBCDICToASCII);
-        if ((flagByte & 0x40) != 0) ;
-        result.add(IgnoreAllEscapeSequences);
+        if ((flagByte & 0x80) != 0) {
+          result.add(ConvertEBCDICToASCII);
+        }
+        if ((flagByte & 0x40) != 0) {
+          result.add(IgnoreAllEscapeSequences);
+        }
         return result;
       }
 
       public static int toByte(EnumSet<ControlFlag> controlFlags) {
         int result = 0;
-        if (controlFlags.contains(ConvertEBCDICToASCII)) result += 0x80;
-        if (controlFlags.contains(IgnoreAllEscapeSequences)) result += 0x40;
+        if (controlFlags.contains(ConvertEBCDICToASCII)){
+          result += 0x80;
+        }
+        if (controlFlags.contains(IgnoreAllEscapeSequences)){
+          result += 0x40;
+        }
         return result;
       }
     }
