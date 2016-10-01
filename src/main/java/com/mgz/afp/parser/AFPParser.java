@@ -49,6 +49,7 @@ public class AFPParser {
   AFPParserConfiguration parserConf;
   long nrOfBytesRead;
   long nrOfSFBuilt;
+  long nrOfErrSFBuilt;
 
 
   /**
@@ -59,6 +60,7 @@ public class AFPParser {
   public AFPParser(AFPParserConfiguration parserConfiguration) {
     nrOfBytesRead = 0;
     nrOfSFBuilt = 0;
+    nrOfErrSFBuilt =0;
     parserConf = parserConfiguration;
   }
 
@@ -281,6 +283,10 @@ public class AFPParser {
         errSf.setStructuredFieldIntroducer(sfi);
       }
 
+      nrOfBytesRead += errSf.getStructuredFieldIntroducer().getSFLength();
+      nrOfSFBuilt++;
+      nrOfErrSFBuilt++;
+
       // Call error() which may or may not re-throw the given exception
       if (e instanceof AFPParserException) {
         ((AFPParserException) e).setErrornouslyBuiltStructuredField(errSf);
@@ -318,5 +324,19 @@ public class AFPParser {
         throw new AFPParserException("Failed to close input stream.",e);
       }
     }
+  }
+
+  /**
+   * Returns the total number of structured fields that has been built so far.
+   */
+  public long getNrOfSFBuilt() {
+    return nrOfSFBuilt;
+  }
+
+  /**
+   * Returns the number of structured fields that has been built with errrors so far.
+   */
+  public long getNrOfSFBuiltWithErrors() {
+    return nrOfErrSFBuilt;
   }
 }
