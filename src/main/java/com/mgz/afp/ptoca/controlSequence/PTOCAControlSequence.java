@@ -102,10 +102,10 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     NoBypass;
 
     public static PTOCA_BypassFlag valueOf(byte flagByte) {
-      if ((flagByte & 0x08) == 1) return BypassRelativeMoveInline;
-      else if ((flagByte & 0x04) == 1) return BypassAbsoluteMoveInline;
-      else if ((flagByte & 0x02) == 1) return BypassSpaceCharactersVariableSpaceCharacters;
-      else if ((flagByte & 0x01) == 1) return NoBypass;
+      if ((flagByte & 0x08) == 0x08) return BypassRelativeMoveInline;
+      else if ((flagByte & 0x04) == 0x04) return BypassAbsoluteMoveInline;
+      else if ((flagByte & 0x02) == 0x02) return BypassSpaceCharactersVariableSpaceCharacters;
+      else if ((flagByte & 0x01) == 0x01) return NoBypass;
       else return null;
     }
 
