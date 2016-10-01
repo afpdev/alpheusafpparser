@@ -49,7 +49,7 @@ public class RepeatingGroupWithTriplets extends RepeatingGroupBase implements IH
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-    os.write(UtilBinaryDecoding.intToByteArray(repeatingGroupLength, 2));
+    super.writeAFP(os,config);
     if (triplets != null) for (Triplet t : triplets) t.writeAFP(os, config);
   }
 
