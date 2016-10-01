@@ -3,6 +3,7 @@ version '0.2'
 
 apply plugin: 'java'
 apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
 
 sourceCompatibility = 1.7
 
@@ -64,3 +65,9 @@ checkstyle {
     config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
 }
 
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
