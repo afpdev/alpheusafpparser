@@ -199,7 +199,7 @@ public class AFPParser {
           actualConf.setInputStream(null);
           sfi.setActualConfig(actualConf);
           if(is.skip(lenOfGrossPayload)<lenOfGrossPayload){
-            throw new AFPParserException("Failed to skipp payload while building shallow objects.");
+            throw new AFPParserException("Failed to skip payload while building shallow objects.");
           }
 
         } else {
