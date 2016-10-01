@@ -20,9 +20,8 @@ package com.mgz.util;
 
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.base.annotations.AFPType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.mgz.afp.exceptions.AFPParserException;
+import com.mgz.afp.parser.AFPParser;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,15 +35,15 @@ import java.util.Map;
 
 public class UtilReflection {
 
-  public static final Logger LOG = LoggerFactory.getLogger("UtilReflection");
-
   public static Comparator<Field> comparatorFields = new FieldComparator();
 
   private static AFPField annotationAFPField;
   public static AFPField defaultAFPFieldAnnotation = getAFPFieldDefaultAnnotation();
 
-  public static Object getFieldValue(Field field, Object instance) {
+  public static Object getFieldValue(Field field, Object instance) throws AFPParserException {
     if (instance == null) return null;
+
+    String errMsg = "";
 
     // Try to get value by accessing the field.
     try {
@@ -54,7 +53,8 @@ public class UtilReflection {
       field.setAccessible(isAccessable);
       return val;
     } catch (IllegalArgumentException | IllegalAccessException e1) {
-      LOG.error("Exception: {}", e1.getLocalizedMessage());
+      // We don't give up.
+      errMsg = e1.getMessage();
     }
 
     // If this failed go for getter method.
@@ -66,7 +66,8 @@ public class UtilReflection {
         try {
           returnValue = method.invoke(instance);
         } catch (Throwable e) {
-          LOG.error("Exception: {}", e.getLocalizedMessage());
+          throw new AFPParserException("Failed to get value of field " + field.getName()
+          + "\n" + errMsg,e);
         }
         return returnValue;
       }
@@ -75,7 +76,7 @@ public class UtilReflection {
     return null;
   }
 
-  public static void setFieldValue(Field field, Object instance, Object value) {
+  public static void setFieldValue(Field field, Object instance, Object value) throws AFPParserException{
     // Try to set value by accessing the field.
     try {
       boolean isAccessable = field.isAccessible();
@@ -83,7 +84,7 @@ public class UtilReflection {
       field.set(instance, value);
       field.setAccessible(isAccessable);
     } catch (IllegalArgumentException | IllegalAccessException e1) {
-      LOG.error("Exception: {}", e1.getLocalizedMessage());
+      throw new AFPParserException("Failed to set value.",e1);
     }
   }
 
