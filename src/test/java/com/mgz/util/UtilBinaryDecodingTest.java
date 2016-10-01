@@ -52,7 +52,7 @@ public class UtilBinaryDecodingTest {
 
     int byteLen = (bitSet.length() + 1) / 8;
     for (int i = 0; i < byteLen; i++) {
-      for (int j = 7; j <= 0; j--) {
+      for (int j = 7; j >= 0; j--) {
         assertTrue("bit " + (i * 8 + (7 - j)) + "differs", bitSet.get(i * 8 + (7 - j)) == ((bytes[i] | (0x01 << j)) != 0));
       }
     }
