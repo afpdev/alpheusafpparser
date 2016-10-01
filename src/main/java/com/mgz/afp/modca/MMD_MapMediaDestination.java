@@ -43,6 +43,7 @@ public class MMD_MapMediaDestination extends StructuredFieldBaseRepeatingGroups 
       MMD_RepeatingGroup rg = new MMD_RepeatingGroup();
       rg.decodeAFP(sfData, offset + pos, actualLength - pos, config);
       addRepeatingGroup(rg);
+      pos += rg.getRepeatingGroupLength();
     }
   }
 
