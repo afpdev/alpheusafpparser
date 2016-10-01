@@ -24,7 +24,7 @@ import java.io.FileFilter;
 
 public class FilesSuite {
 
-  private static final String[] allowedExtensions = {".afp", ".ovl", ".240", ".300", ".CDP"};
+  private static final String[] allowedExtensions = {".afp", ".ovl", ".240", ".300", ".cdp", ".psg"};
   private static File[] afpFiles;
 
   public static File[] getAfpFiles() {
