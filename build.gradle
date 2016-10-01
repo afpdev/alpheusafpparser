@@ -3,10 +3,8 @@ version '0.2'
 
 apply plugin: 'java'
 apply plugin: 'checkstyle'
-apply plugin: 'findbugs'
 
 sourceCompatibility = 1.7
-
 println 'Source Compatibility:' + sourceCompatibility
 
 repositories {
@@ -14,17 +12,8 @@ repositories {
 }
 
 dependencies {
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
     testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-    sourceCompatibility = '1.7'
-    targetCompatibility = '1.7'
-}
-
-javadoc {
-    options.encoding = 'UTF-8'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -56,14 +45,13 @@ configurations {
     checkstyleConfig
 }
 
+dependencies {
+    checkstyleConfig ("com.puppycrawl.tools:checkstyle:7.1") {
+        transitive = false
+    }
+}
+
 checkstyle {
     toolVersion = '7.1'
     config = resources.text.fromArchiveEntry(configurations.checkstyleConfig, 'google_checks.xml')
-}
-
-tasks.withType(FindBugs) {
-    reports {
-        xml.enabled = false
-        html.enabled = true
-    }
 }
