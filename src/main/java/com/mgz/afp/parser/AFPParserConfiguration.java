@@ -42,7 +42,8 @@ import java.security.DigestInputStream;
 public class AFPParserConfiguration implements Serializable, Cloneable {
   private static final long serialVersionUID = 1L;
   protected boolean isParserOwnsInputStream;
-  Charset afpCharSet = Charset.forName("cp273");
+  // Charset afpCharSet = Charset.forName("cp273"); // German.
+  Charset afpCharSet = Charset.forName("cp500"); // CP500 is the default encoding.
   int bufferSize = 100 * 1024;
   InputStream inputStream;
   boolean isParseToStructuredFieldsBaseData;
