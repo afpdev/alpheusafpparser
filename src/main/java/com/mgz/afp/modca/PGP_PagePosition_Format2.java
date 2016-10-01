@@ -96,7 +96,7 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
     AFPOrientation xRotation;
     PGP_SheetSideAndPartitionSelection sheetSideAndPartitionSelection;
     EnumSet<PGP_RGFlag> flags;
-    byte pageModififationControlID;
+    Byte pageModififationControlID;
 
 
     @Override
@@ -106,10 +106,17 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
       yOrigin = UtilBinaryDecoding.parseInt(sfData, offset + 4, 3);
       xRotation = AFPOrientation.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 7, 2));
       sheetSideAndPartitionSelection = PGP_SheetSideAndPartitionSelection.valueOf(sfData[offset + 9]);
-      flags = PGP_RGFlag.valueOf(sfData[offset + 10]);
-      pageModififationControlID = sfData[offset + 11];
+      if(repeatingGroupLength>10){
+        flags = PGP_RGFlag.valueOf(sfData[offset + 10]);
+      }else{
+        flags=null;
+      }
+      if(repeatingGroupLength>11) {
+        pageModififationControlID = sfData[offset + 11];
+      }else{
+        pageModififationControlID = null;
+      }
     }
-
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
@@ -118,8 +125,12 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
       os.write(UtilBinaryDecoding.intToByteArray(yOrigin, 3));
       os.write(xRotation.toBytes());
       os.write(sheetSideAndPartitionSelection.toByte());
-      os.write(PGP_RGFlag.toByte(flags));
-      os.write(pageModififationControlID);
+      if(flags!=null){
+        os.write(PGP_RGFlag.toByte(flags));
+      }
+      if(pageModififationControlID!=null) {
+        os.write(pageModififationControlID);
+      }
     }
 
     public int getxOrigin() {
