@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import java.util.BitSet;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -50,16 +51,14 @@ public class UtilBinaryDecodingTest {
 
     assertEquals("byte array length different", bytes.length, result.length);
 
-    int byteLen = (bitSet.length() + 1) / 8;
+    int byteLen = bitSet.length()/ 8;
     for (int i = 0; i < byteLen; i++) {
-      for (int j = 7; j >= 0; j--) {
-        assertTrue("bit " + (i * 8 + (7 - j)) + "differs", bitSet.get(i * 8 + (7 - j)) == ((bytes[i] | (0x01 << j)) != 0));
+      for (int j = 0; j <= 7; j++) {
+        assertTrue("bit " + (i * 8 + j) + "differs", bitSet.get(i * 8 + j) == ((bytes[i] & (0x01 << (7-j))) != 0));
       }
     }
 
-    for (int i = 0; i < bytes.length; i++) {
-      assertEquals("byte " + i + " differs", bytes[i], result[i]);
-    }
+    assertArrayEquals(bytes,result);
 
   }
 
