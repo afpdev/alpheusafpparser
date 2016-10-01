@@ -141,13 +141,11 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       } else {
         csi.csPrefix = UtilBinaryDecoding.parseShort(sfData, offset, 1);
         csi.csClass = UtilBinaryDecoding.parseShort(sfData, offset + 1, 1);
-        ;
         pos = 2;
       }
       csi.length = UtilBinaryDecoding.parseShort(sfData, offset + pos, 1);
       originalCSFT = UtilBinaryDecoding.parseShort(sfData, offset + pos + 1, 1);
       csi.controlSequenceFunctionType = ControlSequenceFunctionType.valueOf(originalCSFT);
-
 
       csi.isChained = isChained = (originalCSFT & 0x01) != 0;
 
@@ -156,7 +154,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
 
     public byte[] toBytes() {
       byte[] data = null;
-      if (csPrefix == -1 && csPrefix == -1) {
+      if (csPrefix == -1 && csClass == -1) {
         // Chained CSI with length of 2 bytes.
         data = new byte[2];
         data[0] = (byte) length;
