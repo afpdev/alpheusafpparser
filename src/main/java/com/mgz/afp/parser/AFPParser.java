@@ -286,8 +286,11 @@ public class AFPParser {
         ((AFPParserException) e).setErrornouslyBuiltStructuredField(errSf);
         error((AFPParserException) e);
       } else {
-        error(new AFPParserException("An exception occured when parsing structured field at file index position 0x" + Long.toHexString(nrOfBytesRead) + ".", e));
+        AFPParserException afpex = new AFPParserException("An exception occured when parsing structured field at file index position 0x" + Long.toHexString(nrOfBytesRead) + ".", e);
+        afpex.setErrornouslyBuiltStructuredField(errSf);
+        error(afpex);
       }
+
       return errSf;
     }
   }
