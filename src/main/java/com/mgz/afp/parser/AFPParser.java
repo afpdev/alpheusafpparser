@@ -161,7 +161,7 @@ public class AFPParser {
 
   /**
    * Call this method to perform the parsing. Blocks until the parsing finished, either by end of
-   * input stream, the occurrence of an {@link AFPParserException}, or .
+   * input stream or the occurrence of an {@link AFPParserException}.
    */
   public final StructuredField parseNextSF() throws AFPParserException {
     StructuredFieldIntroducer sfi = null;
