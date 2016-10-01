@@ -28,7 +28,6 @@ import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
 import com.mgz.afp.modca.BPG_BeginPage;
 import com.mgz.afp.modca.EPG_EndPage;
-import com.mgz.afp.parser.AFPParser;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
@@ -134,27 +133,25 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
    *                                       or empty array.
    * @throws IOException if writing to the given {@link OutputStream} fails.
    */
-  protected void writeFullStructuredField(OutputStream os, byte[] netPayloadWithoutSFIandPadding) throws AFPParserException {
+  protected void writeFullStructuredField(OutputStream os, byte[] netPayloadWithoutSFIandPadding) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try {
-      baos.write(this.structuredFieldIntroducer.toBytes());
 
-      if (netPayloadWithoutSFIandPadding != null && netPayloadWithoutSFIandPadding.length > 0) {
-        baos.write(netPayloadWithoutSFIandPadding);
-      }
+    baos.write(this.structuredFieldIntroducer.toBytes());
 
-      if (padding != null) baos.write(padding);
-
-      byte[] sfData = baos.toByteArray();
-      byte[] lenBytes = UtilBinaryDecoding.intToByteArray(sfData.length, 2);
-      for (int i = 0; i < lenBytes.length; i++) sfData[i] = lenBytes[i];
-      structuredFieldIntroducer.setSFLength(sfData.length);
-
-      os.write(Constants.AFPBeginByte_0xA5);
-      os.write(sfData);
-    }catch (IOException ioex){
-      throw new AFPParserException("Failed to write Structured Field to output stream.",ioex);
+    if (netPayloadWithoutSFIandPadding != null && netPayloadWithoutSFIandPadding.length > 0) {
+      baos.write(netPayloadWithoutSFIandPadding);
     }
+
+    if (padding != null) baos.write(padding);
+
+    byte[] sfData = baos.toByteArray();
+    byte[] lenBytes = UtilBinaryDecoding.intToByteArray(sfData.length, 2);
+    for (int i = 0; i < lenBytes.length; i++) sfData[i] = lenBytes[i];
+    structuredFieldIntroducer.setSFLength(sfData.length);
+
+    os.write(Constants.AFPBeginByte_0xA5);
+    os.write(sfData);
+
   }
 
   /**
@@ -175,11 +172,11 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
   }
 
   /**
-   * Returns true, if this structured field indicates the end a complex structured field that may
+   * Returns true, if this structured field indicates the end of a complex structured field that may
    * contain other structured fields. Returns false, if this structured field is not the end a
    * complex structured field.<br> Examples:<br> {@link EPG_EndPage}, {@link EBC_EndBarCodeObject},
    *
-   * @return true, if this structured field indicates the end a complex structured field, false
+   * @return true, if this structured field indicates the end of a complex structured field, false
    * otherwise.
    */
   public boolean isEndSF() {
