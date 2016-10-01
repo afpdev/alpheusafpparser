@@ -21,11 +21,9 @@ package com.mgz.afp.base;
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.enums.SFFlag;
 import com.mgz.afp.enums.SFTypeID;
+import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,8 +36,6 @@ import java.util.EnumSet;
  * identifies type and length of the structured field.
  */
 public class StructuredFieldIntroducer {
-
-  public static final Logger LOG = LoggerFactory.getLogger("StructuredFieldIntroducer");
 
   /**
    * SFLength[0,1]
@@ -78,57 +74,63 @@ public class StructuredFieldIntroducer {
   @AFPField(isHidden = true)
   private long fileOffset;
 
-  public static StructuredFieldIntroducer parse(InputStream is) throws IOException {
+  public static StructuredFieldIntroducer parse(InputStream is) throws AFPParserException {
     StructuredFieldIntroducer sfi = new StructuredFieldIntroducer();
 
-    sfi.sfLength = UtilBinaryDecoding.parseInt(is, 2);
+    try {
+      sfi.sfLength = UtilBinaryDecoding.parseInt(is, 2);
 
-    sfi.sfTypeID = SFTypeID.parse(is);
+      sfi.sfTypeID = SFTypeID.parse(is);
 
-    sfi.flagByte = SFFlag.valueOf(is.read());
+      sfi.flagByte = SFFlag.valueOf(is.read());
 
-    sfi.reserved = UtilBinaryDecoding.parseInt(is, 2);
+      sfi.reserved = UtilBinaryDecoding.parseInt(is, 2);
+    }catch (IOException ioex){
+      throw new AFPParserException("Failed to decode SFI header.",ioex);
+    }
 
-    if (sfi.flagByte.contains(SFFlag.hasExtension)) {
-      sfi.extenstionLength = (short) is.read();
-      sfi.extenstion = new byte[sfi.extenstionLength - 1];
-      is.read(sfi.extenstion, 0, sfi.extenstionLength - 1);
+    try {
+      if (sfi.isFlagSet(SFFlag.hasExtension)) {
+        sfi.extenstionLength = (short) is.read();
+        sfi.extenstion = new byte[sfi.extenstionLength - 1];
+        if (sfi.extenstionLength - 1 < is.read(sfi.extenstion, 0, sfi.extenstionLength - 1)) {
+          throw new AFPParserException("Failed to read SFI extension data.");
+        }
+      }
+    }catch (IOException ioex){
+      throw new AFPParserException("Failed to decode decode SFI extension data.",ioex);
     }
 
     return sfi;
   }
 
-  public byte[] toBytes() {
+  public byte[] toBytes() throws IOException {
     ByteArrayOutputStream b;
     if (flagByte == null || !flagByte.contains(SFFlag.hasExtension))
       b = new ByteArrayOutputStream(8);
     else b = new ByteArrayOutputStream(8 + extenstionLength);
 
-    try {
-      b.write(UtilBinaryDecoding.intToByteArray(sfLength, 2));
-      if (sfTypeID != null) b.write(sfTypeID.toBytes());
-      else {
-        b.write(new byte[]{0, 0, 0});
-      }
-      if (flagByte != null) {
-        b.write(SFFlag.toByte(flagByte));
-      } else {
-        b.write(0);
-      }
-      b.write(UtilBinaryDecoding.intToByteArray(reserved, 2));
-      if (flagByte != null && flagByte.contains(SFFlag.hasExtension)) {
-        b.write(UtilBinaryDecoding.shortToByteArray(extenstionLength, 1));
-        b.write(extenstion);
-      }
-
-    } catch (IOException e) {
-      LOG.error("Exception: {}", e.getLocalizedMessage());
+    b.write(UtilBinaryDecoding.intToByteArray(sfLength, 2));
+    if (sfTypeID != null) b.write(sfTypeID.toBytes());
+    else {
+      b.write(new byte[]{0, 0, 0});
     }
+    if (flagByte != null) {
+      b.write(SFFlag.toByte(flagByte));
+    } else {
+      b.write(0);
+    }
+    b.write(UtilBinaryDecoding.intToByteArray(reserved, 2));
+    if (flagByte != null && flagByte.contains(SFFlag.hasExtension)) {
+      b.write(UtilBinaryDecoding.shortToByteArray(extenstionLength, 1));
+      b.write(extenstion);
+    }
+
     return b.toByteArray();
   }
 
   public int getLengthOfStructuredFieldIntroducerIncludingExtension() {
-    if (flagByte == null || !flagByte.contains(SFFlag.hasExtension)) return 8;
+    if (isFlagSet(SFFlag.hasExtension)) return 8;
     else return 8 + extenstionLength;
   }
 
@@ -150,7 +152,7 @@ public class StructuredFieldIntroducer {
    * SFFlag#hasExtension} flag is revoked and size of extender data of SFI is set to zero (not
    * used).
    */
-  public void setExtendsionData(byte[] sfiExtensionData) {
+  public void setExtensionData(byte[] sfiExtensionData) {
     if (sfiExtensionData != null && sfiExtensionData.length > 254) {
       byte[] tmp = new byte[254];
       System.arraycopy(sfiExtensionData, 0, tmp, 0, 254);
@@ -192,8 +194,11 @@ public class StructuredFieldIntroducer {
   }
 
   public void removeFlag(SFFlag flag) {
-    if (flagByte == null) return;
-    else flagByte.remove(flag);
+    if (flagByte == null){
+      return;
+    } else {
+      flagByte.remove(flag);
+    }
   }
 
   public SFTypeID getSFTypeID() {
