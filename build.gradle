@@ -15,10 +15,6 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-
-    checkstyleConfig ("com.puppycrawl.tools:checkstyle:7.1") {
-        transitive = false
-    }
 }
 
 tasks.withType(JavaCompile) {
