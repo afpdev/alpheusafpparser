@@ -55,10 +55,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    length = UtilBinaryDecoding.parseShort(sfData, offset, 1);
+    this.length = UtilBinaryDecoding.parseShort(sfData, offset, 1);
     tripletID = TripletID.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 1, 1));
   }
-
 
   public short getLength() {
     return length;
