@@ -25,8 +25,6 @@ import com.mgz.afp.parser.AFPParserConfiguration;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,140 +34,127 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 
 public class AFPParserTest {
+    private static File[] filesSuite = {};
 
-  public static final Logger LOG = LoggerFactory.getLogger("AFPParserTest");
-
-  private static File[] filesSuite = {};
-
-  @BeforeClass
-  public static void onlyOnce() throws Exception {
-    if (FilesSuite.getAfpFiles() != null) {
-      filesSuite = FilesSuite.getAfpFiles();
+    @BeforeClass
+    public static void onlyOnce() throws Exception {
+        filesSuite = FilesSuite.getAfpFiles();
+        assertTrue("No AFP Testiles found", filesSuite != null && filesSuite.length > 0);
     }
-  }
 
-  @Test
-  public void testParsingAllTestFiles() throws Exception {
-    try {
-      AFPParserConfiguration pc = new AFPParserConfiguration();
-      for (File afpFile : filesSuite) {
+    @Test
+    public void testParsingAllTestFiles() throws Exception {
+        AFPParserConfiguration pc = new AFPParserConfiguration();
+        for (File afpFile : filesSuite) {
 
-        LOG.debug("--- FILE: {}", afpFile.getAbsolutePath());
+            pc.setInputStream(new FileInputStream(afpFile));
 
-        pc.setInputStream(new FileInputStream(afpFile));
+            AFPParser parser = new AFPParser(pc);
 
-        AFPParser parser = new AFPParser(pc);
+            StructuredField sf;
+            do {
+                sf = parser.parseNextSF();
+                if (sf != null) {
+                    StructuredFieldIntroducer sfi = sf.getStructuredFieldIntroducer();
+                    assertNotNull(sfi);
+                }
+            } while (sf != null);
 
-        StructuredField sf;
-        do {
-          sf = parser.parseNextSF();
-          if (sf != null) {
-            LOG.debug("StructuredField: {}", sf);
-            StructuredFieldIntroducer sfi = sf.getStructuredFieldIntroducer();
-            assertNotNull(sfi);
-          }
-        } while (sf != null);
-
-        pc.getInputStream().close();
-      }
-    } catch (Exception exception) {
-      LOG.error("Unable to testParsingAllTestFiles SF: {}", exception.getLocalizedMessage());
+            pc.getInputStream().close();
+        }
     }
-  }
 
-  @Test
-  public void testAFPSerializationActualClassType() throws Exception {
-    try {
-      AFPParserConfiguration pc = new AFPParserConfiguration();
-      pc.setParseToStructuredFieldsBaseData(false);
-      File tmpFile = new File("junit_testWritingTmp.afp");
+    @Test
+    public void testAFPSerializationActualClassType() throws Exception {
+        AFPParserConfiguration pc = new AFPParserConfiguration();
+        pc.setParseToStructuredFieldsBaseData(false);
+        File tmpFile = new File("junit_testWritingTmp.afp");
 
-      MessageDigest mdIs = MessageDigest.getInstance("MD5");
-      MessageDigest mdOs = MessageDigest.getInstance("MD5");
+        MessageDigest mdIs = MessageDigest.getInstance("MD5");
+        MessageDigest mdOs = MessageDigest.getInstance("MD5");
 
-      for (File afpFile : filesSuite) {
+        for (File afpFile : filesSuite) {
+            DigestInputStream dis = null;
+            DigestOutputStream dos = null;
+            try {
+                dis = new DigestInputStream(new FileInputStream(afpFile), mdIs);
+                pc.setInputStream(dis);
 
-        DigestInputStream dis = new DigestInputStream(new FileInputStream(afpFile), mdIs);
-        pc.setInputStream(dis);
+                dos = new DigestOutputStream(new FileOutputStream(tmpFile), mdOs);
 
-        DigestOutputStream dos = new DigestOutputStream(new FileOutputStream(tmpFile), mdOs);
+                AFPParser parser = new AFPParser(pc);
 
-        AFPParser parser = new AFPParser(pc);
+                StructuredField sf;
+                do {
+                    sf = parser.parseNextSF();
+                    if (sf != null) {
+                        sf.writeAFP(dos, pc);
 
-        StructuredField sf;
-        do {
-          sf = parser.parseNextSF();
-          if (sf != null) {
-            LOG.debug("StructuredField: {}", sf);
-            sf.writeAFP(dos, pc);
+                        assertArrayEquals(afpFile.getName() + " 0x" + Long.toHexString(sf.getStructuredFieldIntroducer().getFileOffset()) + " " + sf.getClass().getSimpleName(),
+                                dis.getMessageDigest().digest(),
+                                dos.getMessageDigest().digest()
+                        );
 
-            assertArrayEquals(afpFile.getName() + " 0x" + Long.toHexString(sf.getStructuredFieldIntroducer().getFileOffset()) + " " + sf.getClass().getSimpleName(),
-                    dis.getMessageDigest().digest(),
-                    dos.getMessageDigest().digest()
-            );
+                    }
 
-          }
-
-        } while (sf != null);
-
-        dos.close();
-        dis.close();
-        tmpFile.delete();
-      }
-    } catch (Exception exception) {
-      LOG.error("Unable to testParsingAllTestFiles SF: {}", exception.getLocalizedMessage());
-    }
-  }
-
-  @Test
-  public void testAFPSerializationStructuredFieldBase() throws Exception {
-    try {
-      AFPParserConfiguration pc = new AFPParserConfiguration();
-      pc.setParseToStructuredFieldsBaseData(true);
-      File tmpFile = new File("junit_testWritingTmp.afp");
-
-      MessageDigest mdIs = MessageDigest.getInstance("MD5");
-      MessageDigest mdOs = MessageDigest.getInstance("MD5");
-
-      for (File afpFile : filesSuite) {
-
-        DigestInputStream dis = new DigestInputStream(new FileInputStream(afpFile), mdIs);
-        pc.setInputStream(dis);
-
-        DigestOutputStream dos = new DigestOutputStream(new FileOutputStream(tmpFile), mdOs);
-
-        AFPParser parser = new AFPParser(pc);
-
-        StructuredField sf;
-        do {
-          sf = parser.parseNextSF();
-          if (sf != null) {
-            LOG.debug("StructuredField: {}", sf);
-            sf.writeAFP(dos, pc);
-            if (!Arrays.equals(mdIs.digest(), mdOs.digest())) {
-
-              sf.writeAFP(dos, pc);
-              assertArrayEquals(afpFile.getName() + " 0x" + Long.toHexString(sf.getStructuredFieldIntroducer().getFileOffset()) + " " + sf.getClass().getSimpleName(),
-                      dis.getMessageDigest().digest(),
-                      dos.getMessageDigest().digest()
-              );
+                } while (sf != null);
+            } finally {
+                if (dos != null) dos.close();
+                if (dis != null) dis.close();
+                assertTrue("Failed to delete tmp file " + tmpFile.getAbsolutePath() + " after test finished.", tmpFile.delete());
             }
-
-          }
-
-        } while (sf != null);
-
-        dos.close();
-        dis.close();
-        tmpFile.delete();
-      }
-    } catch (Exception exception) {
-      LOG.error("Unable to testAFPSerializationStructuredFieldBase SF: {}", exception.getLocalizedMessage());
+        }
     }
-  }
+
+    @Test
+    public void testAFPSerializationStructuredFieldBase() throws Exception {
+        AFPParserConfiguration pc = new AFPParserConfiguration();
+        pc.setParseToStructuredFieldsBaseData(true);
+        File tmpFile = new File("junit_testWritingTmp.afp");
+
+        MessageDigest mdIs = MessageDigest.getInstance("MD5");
+        MessageDigest mdOs = MessageDigest.getInstance("MD5");
+
+        for (File afpFile : filesSuite) {
+
+            DigestInputStream dis = null;
+            DigestOutputStream dos = null;
+            try {
+
+                dis = new DigestInputStream(new FileInputStream(afpFile), mdIs);
+                pc.setInputStream(dis);
+
+                dos = new DigestOutputStream(new FileOutputStream(tmpFile), mdOs);
+
+                AFPParser parser = new AFPParser(pc);
+
+                StructuredField sf;
+                do {
+                    sf = parser.parseNextSF();
+                    if (sf != null) {
+                        sf.writeAFP(dos, pc);
+                        if (!Arrays.equals(mdIs.digest(), mdOs.digest())) {
+
+                            sf.writeAFP(dos, pc);
+                            assertArrayEquals(afpFile.getName() + " 0x" + Long.toHexString(sf.getStructuredFieldIntroducer().getFileOffset()) + " " + sf.getClass().getSimpleName(),
+                                    dis.getMessageDigest().digest(),
+                                    dos.getMessageDigest().digest()
+                            );
+                        }
+
+                    }
+
+                } while (sf != null);
+
+            } finally {
+                if (dos != null) dos.close();
+                if (dis != null) dis.close();
+                assertTrue("Failed to delete tmp file " + tmpFile.getAbsolutePath() + " after test finished.", tmpFile.delete());
+            }
+        }
+    }
 }
