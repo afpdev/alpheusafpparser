@@ -184,6 +184,17 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
     return escalateParsingErrors;
   }
 
+  /**
+   * If set to true (default) and a parsing error occurs, an {@link com.mgz.afp.exceptions.AFPParserException}
+   * is thrown that carries the erroneous structured field as an
+   * {@link com.mgz.afp.base.StructuredFieldErrornouslyBuilt}.
+   * <p>
+   * If set to false and a parsing error occurs, {@link AFPParser#parseNextSF()} returns a
+   * {@link StructuredField} of type {@link com.mgz.afp.base.StructuredFieldErrornouslyBuilt} without throwing
+   * an exception and continues parsing the rest of the AFP stream.
+   *
+   * @param escalateParsingErrors true if parsing errors should be escalated.
+   */
   public void setEscalateParsingErrors(boolean escalateParsingErrors) {
     this.escalateParsingErrors = escalateParsingErrors;
   }
