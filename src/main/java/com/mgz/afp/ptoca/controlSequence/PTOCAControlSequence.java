@@ -147,7 +147,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       originalCSFT = UtilBinaryDecoding.parseShort(sfData, offset + pos + 1, 1);
       csi.controlSequenceFunctionType = ControlSequenceFunctionType.valueOf(originalCSFT);
 
-      csi.isChained = isChained = (originalCSFT & 0x01) != 0;
+      csi.isChained = (originalCSFT & 0x01) != 0;
 
       return csi;
     }
