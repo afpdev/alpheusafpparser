@@ -35,10 +35,10 @@ import java.util.Map;
 
 public class UtilReflection {
 
-  public static Comparator<Field> comparatorFields = new FieldComparator();
+  public static final Comparator<Field> comparatorFields = new FieldComparator();
+  public static final AFPField defaultAFPFieldAnnotation = getAFPFieldDefaultAnnotation();
 
   private static AFPField annotationAFPField;
-  public static AFPField defaultAFPFieldAnnotation = getAFPFieldDefaultAnnotation();
 
   public static Object getFieldValue(Field field, Object instance) throws AFPParserException {
     if (instance == null) return null;
