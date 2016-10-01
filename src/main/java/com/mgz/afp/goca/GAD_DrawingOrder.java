@@ -165,7 +165,7 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       lengthOfFollowingData = comment != null ? (short) comment.length : 0;
       os.write(drawingOrderType);
       os.write(lengthOfFollowingData);
-      os.write(comment);
+      if (comment != null) os.write(comment);
     }
 
     public short getLengthOfFollowingData() {
@@ -1703,6 +1703,8 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       os.write(arcCenter.toBytes());
       os.write(multiplierIntegerPortion);
       os.write(multiplierFractionalPortion);
+      os.write(UtilBinaryDecoding.longToByteArray(startAngle,4));
+      os.write(UtilBinaryDecoding.longToByteArray(sweepAngle,4));
     }
 
     public short getLengthOfFollowingData() {
