@@ -18,11 +18,14 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca;
 
+import com.mgz.afp.base.IRepeatingGroup;
+import com.mgz.afp.base.RepeatingGroupBase;
 import com.mgz.afp.base.RepeatingGroupWithTriplets;
 import com.mgz.afp.base.StructuredFieldBaseRepeatingGroups;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -39,14 +42,14 @@ public class MIO_MapImageObject extends StructuredFieldBaseRepeatingGroups {
     addRepeatingGroup(rg);
   }
 
-
   @Override
-  public void writeAFP(OutputStream os, AFPParserConfiguration config)
-          throws IOException {
-    // TODO Auto-generated method stub
-
+  public void writeAFP(OutputStream os, AFPParserConfiguration config)throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    for(IRepeatingGroup rg : this.getRepeatingGroups()){
+      rg.writeAFP(baos,config);
+    }
+    super.writeFullStructuredField(os,baos.toByteArray());
   }
-
 
   public static class MIO_RepeatinGroup extends RepeatingGroupWithTriplets {
   }
