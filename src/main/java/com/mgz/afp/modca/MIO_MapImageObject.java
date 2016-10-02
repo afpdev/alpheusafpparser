@@ -19,7 +19,6 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 package com.mgz.afp.modca;
 
 import com.mgz.afp.base.IRepeatingGroup;
-import com.mgz.afp.base.RepeatingGroupBase;
 import com.mgz.afp.base.RepeatingGroupWithTriplets;
 import com.mgz.afp.base.StructuredFieldBaseRepeatingGroups;
 import com.mgz.afp.exceptions.AFPParserException;
@@ -37,7 +36,7 @@ public class MIO_MapImageObject extends StructuredFieldBaseRepeatingGroups {
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    MIO_RepeatinGroup rg = new MIO_RepeatinGroup();
+    MIO_RepeatingGroup rg = new MIO_RepeatingGroup();
     rg.decodeAFP(sfData, offset, length, config);
     addRepeatingGroup(rg);
   }
@@ -51,7 +50,7 @@ public class MIO_MapImageObject extends StructuredFieldBaseRepeatingGroups {
     super.writeFullStructuredField(os,baos.toByteArray());
   }
 
-  public static class MIO_RepeatinGroup extends RepeatingGroupWithTriplets {
+  public static class MIO_RepeatingGroup extends RepeatingGroupWithTriplets {
   }
 
 }
