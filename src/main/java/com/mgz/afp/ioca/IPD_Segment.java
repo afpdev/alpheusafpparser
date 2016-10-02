@@ -249,10 +249,15 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
       os.write(segmentType.toBytes());
-      if (name != null) lengthOfFollowingData = (short) name.length;
-      else lengthOfFollowingData = 0;
+      if (name != null) {
+        lengthOfFollowingData = (short) name.length;
+      }else{
+        lengthOfFollowingData = 0;
+      }
       os.write(lengthOfFollowingData);
-      os.write(name);
+      if(name!=null){
+        os.write(name);
+      }
     }
 
     public byte[] getName() {
