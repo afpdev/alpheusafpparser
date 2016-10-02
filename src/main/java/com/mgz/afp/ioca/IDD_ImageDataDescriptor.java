@@ -48,10 +48,10 @@ public class IDD_ImageDataDescriptor extends StructuredField {
     yImagePointsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 3, 2);
     widthOfImageInImagePoints = UtilBinaryDecoding.parseShort(sfData, offset + 5, 2);
     heightOfImageInImagePoints = UtilBinaryDecoding.parseShort(sfData, offset + 7, 2);
-    selfDefiningFields = new ArrayList<IDD_SelfDefiningField>();
 
-    int actualLength = length != -1 ? length : sfData.length - offset;
-    if (actualLength > 10) {
+    int actualLength = this.getActualLength(sfData, offset, length);// length != -1 ? length : sfData.length - offset;
+    if (actualLength > 9) {
+      selfDefiningFields = new ArrayList<IDD_SelfDefiningField>();
       int pos = 9;
       while (pos < actualLength) {
         IDD_SelfDefiningField sdf = null;
@@ -60,12 +60,13 @@ public class IDD_ImageDataDescriptor extends StructuredField {
           sdf = new IDD_SelfDefiningField.SetBilevelImageColor();
         } else if (fieldType == SelfDefiningFieldType.SetExtendedBilevelImageColor) {
           sdf = new IDD_SelfDefiningField.SetExtendedBilevelImageColor();
-        } else if (fieldType == SelfDefiningFieldType.SetExtendedBilevelImageColor) {
+        } else if (fieldType == SelfDefiningFieldType.IOCAFunctionSetIdentification) {
           sdf = new IDD_SelfDefiningField.IOCAFunctionSetIdentification();
         } else {
           sdf = new IDD_SelfDefiningField.UnknownSelfDefiningField();
         }
         sdf.decodeAFP(sfData, offset + pos, -1, config);
+        selfDefiningFields.add(sdf);
         pos += (sdf.lengthOfFollowingData + 2);
       }
     }
