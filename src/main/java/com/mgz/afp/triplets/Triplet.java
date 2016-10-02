@@ -423,14 +423,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      baos.write(tripletID.toByte());
-
-      baos.write(dataObjecMapingOption.toByte());
-
-      length = (short) (baos.size() + 1);
       os.write(UtilBinaryDecoding.shortToByteArray(length, 1));
-      os.write(baos.toByteArray());
+      os.write(tripletID.toByte());
+      os.write(dataObjecMapingOption.toByte());
     }
 
     public enum DataObjecMapingOption {
