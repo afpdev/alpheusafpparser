@@ -29,6 +29,7 @@ import com.mgz.util.UtilBinaryDecoding;
 import java.io.IOException;
 import java.io.OutputStream;
 
+
 public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
 
   SelfDefiningFieldType fieldType;
@@ -235,7 +236,7 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-      StructuredField.checkDataLength(sfData, offset, length, 6);
+      StructuredField.checkDataLength(sfData, offset, length, 4);
       fieldType = SelfDefiningFieldType.valueOf(UtilBinaryDecoding.parseShort(sfData, offset, 1));
       lengthOfFollowingData = UtilBinaryDecoding.parseShort(sfData, offset + 1, 1);
       functionSetCategory = UtilBinaryDecoding.parseShort(sfData, offset + 2, 1);
