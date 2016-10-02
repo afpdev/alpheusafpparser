@@ -18,7 +18,6 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.afp.modca;
 
-import com.mgz.afp.base.RepeatingGroupBase;
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.enums.AFPOrientation;
 import com.mgz.afp.enums.AFPReferenceCoordinateSystem;
@@ -71,7 +70,8 @@ public class OBP_ObjectAreaPosition extends StructuredField {
     this.repeatingGroup = repeatingGroup;
   }
 
-  public static class OBP_RepeatingGroup extends RepeatingGroupBase {
+  public static class OBP_RepeatingGroup {
+    byte repeatingGroupLength;
     int xOrigin;
     int yOrigin;
     AFPOrientation xRotation;
@@ -83,9 +83,8 @@ public class OBP_ObjectAreaPosition extends StructuredField {
     AFPOrientation yRotationOfContent;
     AFPReferenceCoordinateSystem referenceCoordinateSystem;
 
-    @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-      super.decodeAFP(sfData, offset, length, config); // Decode RG length.
+      repeatingGroupLength = sfData[offset];
       xOrigin = UtilBinaryDecoding.parseInt(sfData, offset + 1, 3);
       yOrigin = UtilBinaryDecoding.parseInt(sfData, offset + 4, 3);
       xRotation = AFPOrientation.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 7, 2));
@@ -98,10 +97,8 @@ public class OBP_ObjectAreaPosition extends StructuredField {
       referenceCoordinateSystem = AFPReferenceCoordinateSystem.valueOf(sfData[offset + 22]);
     }
 
-
-    @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      super.writeAFP(os, config); // Writes RG length.
+      os.write(repeatingGroupLength);
       os.write(UtilBinaryDecoding.intToByteArray(xOrigin, 3));
       os.write(UtilBinaryDecoding.intToByteArray(yOrigin, 3));
       os.write(xRotation.toBytes());
@@ -112,6 +109,14 @@ public class OBP_ObjectAreaPosition extends StructuredField {
       os.write(xRotationOfContent.toBytes());
       os.write(yRotationOfContent.toBytes());
       os.write(referenceCoordinateSystem.toByte());
+    }
+
+    public byte getRepeatingGroupLength() {
+      return repeatingGroupLength;
+    }
+
+    public void setRepeatingGroupLength(byte repeatingGroupLength) {
+      this.repeatingGroupLength = repeatingGroupLength;
     }
 
     public int getxOrigin() {
