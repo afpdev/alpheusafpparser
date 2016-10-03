@@ -36,10 +36,6 @@ public class RepeatingGroupBase implements IRepeatingGroup {
     repeatingGroupLength = UtilBinaryDecoding.parseInt(sfData, offset, 2);
   }
 
-  public void validate() throws AFPValidationException {
-    // TODO: validate.
-  }
-
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     os.write(UtilBinaryDecoding.intToByteArray(repeatingGroupLength, 2));

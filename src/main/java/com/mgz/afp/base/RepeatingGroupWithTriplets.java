@@ -41,12 +41,6 @@ public class RepeatingGroupWithTriplets extends RepeatingGroupBase implements IH
   }
 
   @Override
-  public void validate() throws AFPValidationException {
-    // TODO: validate.
-
-  }
-
-  @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     super.writeAFP(os, config);
     if (triplets != null) {
