@@ -21,7 +21,6 @@ package com.mgz.afp.base;
 import com.mgz.afp.base.annotations.AFPType;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.exceptions.AFPValidationException;
-import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 

@@ -30,6 +30,7 @@ import com.mgz.afp.foca.CPD_CodePageDescriptor;
 import com.mgz.afp.foca.FNC_FontControl;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
+
 import java.io.IOException;
 import java.io.InputStream;
 

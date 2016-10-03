@@ -20,12 +20,7 @@ package com.mgz.afp.goca;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.annotations.AFPField;
-import com.mgz.afp.enums.AFPBackgroundMix;
-import com.mgz.afp.enums.AFPColorValue;
-import com.mgz.afp.enums.AFPForegroundMix;
-import com.mgz.afp.enums.AFPUnitBase;
-import com.mgz.afp.enums.IMutualExclusiveGroupedFlag;
-import com.mgz.afp.enums.MutualExclusiveGroupedFlagHandler;
+import com.mgz.afp.enums.*;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
 import com.mgz.afp.goca.GAD_DrawingOrder.GSLE_SetLineEnd.LineEnd;

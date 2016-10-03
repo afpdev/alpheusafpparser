@@ -23,7 +23,6 @@ import com.mgz.afp.exceptions.AFPValidationException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.afp.parser.TripletParser;
 import com.mgz.afp.triplets.Triplet;
-import com.mgz.util.UtilBinaryDecoding;
 
 import java.io.IOException;
 import java.io.OutputStream;

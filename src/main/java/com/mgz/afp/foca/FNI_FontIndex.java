@@ -31,11 +31,7 @@ import com.mgz.util.UtilCharacterEncoding;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 
 public class FNI_FontIndex extends StructuredField {
