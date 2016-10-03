@@ -7,9 +7,15 @@ Alpheus covers all AFP specifications: MO:DCA, BCOCA, CMOCA, FOCA, GOCA, IOCA, a
 It is a complete implementation. Every Structured Field, Repeating Group, and Triplet is fully implemented as Java class.
 Alpheus AFP Parser was written from scratch and has no external dependencies.
 
-Thank you for using this software!
-Please support this project by sending your highly appreciated critique, questions, and feedback to afpdev@mogozine.com.
+To use Alpheus in your project add the following dependency:
 
+    <dependency>
+      <groupId>com.github.afpdev</groupId>
+      <artifactId>alpheusafpparser</artifactId>
+      <version>0.2.2</version>
+    </dependency>
+
+For support contact afpdev@mogozine.com
 
 Copyright 2015 Rudolf Fiala, 
 
