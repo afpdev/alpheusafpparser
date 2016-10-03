@@ -94,7 +94,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         }
 
         public byte[] toBytes() {
-            if (type > 0xFF) return UtilBinaryDecoding.intToByteArray(type, 2); // Extended Segment.
+            if (type >= 0xFE00) return UtilBinaryDecoding.intToByteArray(type, 2); // Extended Segment.
             else return UtilBinaryDecoding.shortToByteArray((short) type, 1); // Long Segment.
         }
     }
@@ -199,10 +199,15 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         @Override
         public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
             os.write(segmentType.toBytes());
-            if (data != null) lengthOfFollowingData = (short) data.length;
-            else lengthOfFollowingData = 0;
-            os.write(lengthOfFollowingData);
-            os.write(data);
+            if (data != null){
+                lengthOfFollowingData = (short) data.length;
+            }else{
+                lengthOfFollowingData = 0;
+            }
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,1));
+            if(data!=null){
+                os.write(data);
+            }
         }
     }
 
@@ -224,10 +229,15 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         @Override
         public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
             os.write(segmentType.toBytes());
-            if (data != null) lengthOfFollowingData = (short) data.length;
-            else lengthOfFollowingData = 0;
-            os.write(lengthOfFollowingData);
-            os.write(data);
+            if (data != null){
+                lengthOfFollowingData = data.length;
+            }else{
+                lengthOfFollowingData = 0;
+            }
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,2));
+            if(data!=null){
+                os.write(data);
+            }
         }
     }
 
@@ -250,11 +260,11 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
             os.write(segmentType.toBytes());
             if (name != null) {
-                lengthOfFollowingData = (short) name.length;
+                lengthOfFollowingData = name.length;
             } else {
                 lengthOfFollowingData = 0;
             }
-            os.write(lengthOfFollowingData);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,1));
             if (name != null) {
                 os.write(name);
             }
@@ -279,7 +289,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         @Override
         public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
             os.write(segmentType.toBytes());
-            os.write(lengthOfFollowingData);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,1));
         }
     }
 
@@ -296,7 +306,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         @Override
         public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
             os.write(segmentType.toBytes());
-            os.write(lengthOfFollowingData);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,1));
             os.write(objectType);
         }
     }
@@ -311,7 +321,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         @Override
         public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
             os.write(segmentType.toBytes());
-            os.write(lengthOfFollowingData);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,1));
         }
     }
 
@@ -337,12 +347,12 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         @Override
         public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
             os.write(segmentType.toBytes());
-            os.write(lengthOfFollowingData);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,1));
             os.write(unitBase.toByte());
-            os.write(xUnitsPerUnitBase);
-            os.write(yUnitsPerUnitBase);
-            os.write(xImageSize);
-            os.write(yImageSize);
+            os.write(UtilBinaryDecoding.shortToByteArray(xUnitsPerUnitBase,2));
+            os.write(UtilBinaryDecoding.shortToByteArray(yUnitsPerUnitBase,2));
+            os.write(UtilBinaryDecoding.shortToByteArray(xImageSize,2));
+            os.write(UtilBinaryDecoding.shortToByteArray(yImageSize,2));
         }
     }
 
@@ -371,7 +381,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
             } else {
                 lengthOfFollowingData = 2;
             }
-            os.write(lengthOfFollowingData);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,1));
             os.write(compressionAlgorithm.toByte());
             os.write(recordingAlgorithm.toByte());
             if (bitOrder != null) {
@@ -394,8 +404,8 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         @Override
         public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
             os.write(segmentType.toBytes());
-            os.write(lengthOfFollowingData);
-            os.write(numberOfBitsInEachIDE);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,1));
+            os.write(UtilBinaryDecoding.shortToByteArray(numberOfBitsInEachIDE,1));
         }
     }
 
@@ -827,7 +837,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
             }
 
             os.write(segmentType.toBytes());
-            os.write(lengthOfFollowingData);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,2));
             if (fieldsData != null) {
                 os.write(fieldsData);
             }
@@ -1277,7 +1287,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
         public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
             lengthOfFollowingData = imageData.length;
             os.write(segmentType.toBytes());
-            os.write(lengthOfFollowingData);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,2));
             os.write(imageData);
         }
     }
@@ -1308,7 +1318,7 @@ abstract class IPD_Segment implements IAFPDecodeableWriteable {
             if (bandData == null) lengthOfFollowingData = 3;
             else lengthOfFollowingData = bandData.length + 3;
             os.write(segmentType.toBytes());
-            os.write(lengthOfFollowingData);
+            os.write(UtilBinaryDecoding.intToByteArray(lengthOfFollowingData,2));
             os.write(bandNumber);
             os.write(reserved5_6);
             if (bandData != null) os.write(bandData);
