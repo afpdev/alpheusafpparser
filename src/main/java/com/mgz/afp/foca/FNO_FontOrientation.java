@@ -58,7 +58,9 @@ public class FNO_FontOrientation extends StructuredField {
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream(FNC_FontControl.FNORepeatingGroupLength * repeatingGroups.size());
 
-    for (FNO_RepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    for (FNO_RepeatingGroup rg : repeatingGroups) {
+      rg.writeAFP(baos, config);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -99,45 +101,82 @@ public class FNO_FontOrientation extends StructuredField {
       EnumSet<FNO_ControlFlag> result = EnumSet.noneOf(FNO_ControlFlag.class);
 
       int fontIndexNumber = controlFlagByte >>> 5;
-      if (fontIndexNumber == 0) result.add(FontIndex_Number0);
-      else if (fontIndexNumber == 1) result.add(FontIndex_Number1);
-      else if (fontIndexNumber == 2) result.add(FontIndex_Number2);
-      else if (fontIndexNumber == 3) result.add(FontIndex_Number3);
-      else if (fontIndexNumber == 4) result.add(FontIndex_Number4);
-      else if (fontIndexNumber == 5) result.add(FontIndex_Number5);
-      else if (fontIndexNumber == 6) result.add(FontIndex_Number6);
-      else if (fontIndexNumber == 7) result.add(FontIndex_Number7);
+      if (fontIndexNumber == 0) {
+        result.add(FontIndex_Number0);
+      } else if (fontIndexNumber == 1) {
+        result.add(FontIndex_Number1);
+      } else if (fontIndexNumber == 2) {
+        result.add(FontIndex_Number2);
+      } else if (fontIndexNumber == 3) {
+        result.add(FontIndex_Number3);
+      } else if (fontIndexNumber == 4) {
+        result.add(FontIndex_Number4);
+      } else if (fontIndexNumber == 5) {
+        result.add(FontIndex_Number5);
+      } else if (fontIndexNumber == 6) {
+        result.add(FontIndex_Number6);
+      } else if (fontIndexNumber == 7) {
+        result.add(FontIndex_Number7);
+      }
 
-      if ((controlFlagByte & 0x08) == 0) result.add(KerningData_NoKerningData);
-      else result.add(KerningData_WithKerningData);
+      if ((controlFlagByte & 0x08) == 0) {
+        result.add(KerningData_NoKerningData);
+      } else {
+        result.add(KerningData_WithKerningData);
+      }
 
-      if ((controlFlagByte & 0x04) == 0) result.add(ASpace_Minimum);
-      else result.add(ASpace_Uniform);
+      if ((controlFlagByte & 0x04) == 0) {
+        result.add(ASpace_Minimum);
+      } else {
+        result.add(ASpace_Uniform);
+      }
 
-      if ((controlFlagByte & 0x02) == 0) result.add(BaselineOffset_Maximum);
-      else result.add(BaselineOffset_Uniform);
+      if ((controlFlagByte & 0x02) == 0) {
+        result.add(BaselineOffset_Maximum);
+      } else {
+        result.add(BaselineOffset_Uniform);
+      }
 
-      if ((controlFlagByte & 0x01) == 0) result.add(CharacterIncrement_Maximum);
-      else result.add(CharacterIncrement_Uniform);
+      if ((controlFlagByte & 0x01) == 0) {
+        result.add(CharacterIncrement_Maximum);
+      } else {
+        result.add(CharacterIncrement_Uniform);
+      }
 
       return result;
     }
 
     public static int toByte(EnumSet<FNO_ControlFlag> controlFlags) {
       int result = 0;
-      if (controlFlags.contains(FontIndex_Number1)) result = 1;
-      else if (controlFlags.contains(FontIndex_Number2)) result = 2;
-      else if (controlFlags.contains(FontIndex_Number3)) result = 3;
-      else if (controlFlags.contains(FontIndex_Number4)) result = 4;
-      else if (controlFlags.contains(FontIndex_Number5)) result = 5;
-      else if (controlFlags.contains(FontIndex_Number6)) result = 6;
-      else if (controlFlags.contains(FontIndex_Number7)) result = 7;
+      if (controlFlags.contains(FontIndex_Number1)) {
+        result = 1;
+      } else if (controlFlags.contains(FontIndex_Number2)) {
+        result = 2;
+      } else if (controlFlags.contains(FontIndex_Number3)) {
+        result = 3;
+      } else if (controlFlags.contains(FontIndex_Number4)) {
+        result = 4;
+      } else if (controlFlags.contains(FontIndex_Number5)) {
+        result = 5;
+      } else if (controlFlags.contains(FontIndex_Number6)) {
+        result = 6;
+      } else if (controlFlags.contains(FontIndex_Number7)) {
+        result = 7;
+      }
       result = result << 5;
 
-      if (controlFlags.contains(KerningData_WithKerningData)) result |= 0x08;
-      if (controlFlags.contains(ASpace_Uniform)) result |= 0x04;
-      if (controlFlags.contains(BaselineOffset_Uniform)) result |= 0x02;
-      if (controlFlags.contains(CharacterIncrement_Uniform)) result |= 0x01;
+      if (controlFlags.contains(KerningData_WithKerningData)) {
+        result |= 0x08;
+      }
+      if (controlFlags.contains(ASpace_Uniform)) {
+        result |= 0x04;
+      }
+      if (controlFlags.contains(BaselineOffset_Uniform)) {
+        result |= 0x02;
+      }
+      if (controlFlags.contains(CharacterIncrement_Uniform)) {
+        result |= 0x01;
+      }
 
       return result;
     }
@@ -155,11 +194,11 @@ public class FNO_FontOrientation extends StructuredField {
   public static class FNO_RepeatingGroup implements IAFPDecodeableWriteable {
     public static final int RGLENGTH = 26;
     @AFPField(size = 2)
-    public byte[] reserved0_1 = new byte[]{0x00, 0x0};
+    public byte[] reserved0_1 = new byte[] {0x00, 0x0};
     @AFPField
     public byte reserved13 = 0x00;
     @AFPField(size = 2)
-    public byte[] reserved16_17 = new byte[]{0x00, 0x0};
+    public byte[] reserved16_17 = new byte[] {0x00, 0x0};
     @AFPField
     AFPOrientation characterRotation;
     @AFPField
@@ -186,7 +225,7 @@ public class FNO_FontOrientation extends StructuredField {
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       checkDataLength(sfData, offset, length, RGLENGTH);
-      reserved0_1 = new byte[]{sfData[offset], sfData[offset + 1]};
+      reserved0_1 = new byte[] {sfData[offset], sfData[offset + 1]};
       characterRotation = AFPOrientation.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 2, 2));
       maxBaselineOffset = UtilBinaryDecoding.parseShort(sfData, offset + 4, 2);
       maxCharacterIncrement = UtilBinaryDecoding.parseShort(sfData, offset + 6, 2);
@@ -195,7 +234,7 @@ public class FNO_FontOrientation extends StructuredField {
       controlFlags = FNO_ControlFlag.valueOf(sfData[offset + 12]);
       reserved13 = sfData[offset + 13];
       emSpaceIncrement = UtilBinaryDecoding.parseShort(sfData, offset + 14, 2);
-      reserved16_17 = new byte[]{sfData[offset + 16], sfData[offset + 17]};
+      reserved16_17 = new byte[] {sfData[offset + 16], sfData[offset + 17]};
       figureSpaceIncrement = UtilBinaryDecoding.parseShort(sfData, offset + 18, 2);
       nominalCharacterIncrement = UtilBinaryDecoding.parseShort(sfData, offset + 20, 2);
       defaultBaselineIncrement = UtilBinaryDecoding.parseInt(sfData, offset + 22, 2);

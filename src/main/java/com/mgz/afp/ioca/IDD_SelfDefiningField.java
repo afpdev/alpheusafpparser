@@ -64,7 +64,11 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
     }
 
     public static SelfDefiningFieldType valueOf(short fieldTypeByte) {
-      for (SelfDefiningFieldType t : values()) if (t.fieldType == fieldTypeByte) return t;
+      for (SelfDefiningFieldType t : values()) {
+        if (t.fieldType == fieldTypeByte) {
+          return t;
+        }
+      }
       return Unknown;
     }
 
@@ -125,7 +129,7 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
   public static class SetExtendedBilevelImageColor extends IDD_SelfDefiningField {
     short reserved2 = 0x00;
     AFPColorSpace colorSpace;
-    byte[] reserved4_7 = new byte[]{0x00, 0x00};
+    byte[] reserved4_7 = new byte[] {0x00, 0x00};
     byte nrOfBitsComponent1;
     byte nrOfBitsComponent2;
     byte nrOfBitsComponent3;
@@ -280,8 +284,11 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
       }
 
       public static IOCAFunctionSetIdentification.FunctionSetIdentifier valueOf(byte fsCodeByte) {
-        for (IOCAFunctionSetIdentification.FunctionSetIdentifier fsi : values())
-          if (fsi.code == fsCodeByte) return fsi;
+        for (IOCAFunctionSetIdentification.FunctionSetIdentifier fsi : values()) {
+          if (fsi.code == fsCodeByte) {
+            return fsi;
+          }
+        }
         return null;
       }
 
@@ -309,11 +316,16 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      if (data == null) lengthOfFollowingData = 0;
-      else lengthOfFollowingData = (short) data.length;
+      if (data == null) {
+        lengthOfFollowingData = 0;
+      } else {
+        lengthOfFollowingData = (short) data.length;
+      }
       os.write(unknownFieldType);
       os.write(lengthOfFollowingData);
-      if (data != null) os.write(data);
+      if (data != null) {
+        os.write(data);
+      }
     }
   }
 

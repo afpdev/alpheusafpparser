@@ -179,12 +179,12 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
       return mask;
     }
 
-    public void setMask(byte[] mask) {
-      this.mask = UtilBinaryDecoding.parseBitSet(mask, 0, Math.min(2, mask.length));
-    }
-
     public void setMask(BitSet mask) {
       this.mask = mask;
+    }
+
+    public void setMask(byte[] mask) {
+      this.mask = UtilBinaryDecoding.parseBitSet(mask, 0, Math.min(2, mask.length));
     }
 
     public SetCurrentDefaultInstruction.Flag getFlag() {
@@ -200,13 +200,19 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
       UseValuesAsSpecified;
 
       public static SetCurrentDefaultInstruction.Flag valueOf(byte code) {
-        if (code == 0x0F) return UseStandardDefault;
-        else return UseValuesAsSpecified;
+        if (code == 0x0F) {
+          return UseStandardDefault;
+        } else {
+          return UseValuesAsSpecified;
+        }
       }
 
       public int toByte() {
-        if (this == UseStandardDefault) return 0x0F;
-        else return 0x8F;
+        if (this == UseStandardDefault) {
+          return 0x0F;
+        } else {
+          return 0x8F;
+        }
       }
     }
 
@@ -246,18 +252,23 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
         byte[] attributeData = null;
         if (flag == Flag.UseValuesAsSpecified) {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          if (mask.get(0))
+          if (mask.get(0)) {
             baos.write(color != null ? color.toByte2() : AFPColorValue.DeviceDefault_0xFF00.toByte2());
-          if (mask.get(2))
+          }
+          if (mask.get(2)) {
             baos.write(foregroundMix != null ? foregroundMix.toByte() : 0x00);
-          if (mask.get(3))
+          }
+          if (mask.get(3)) {
             baos.write(backgroundMix != null ? backgroundMix.toByte() : 0x00);
+          }
           attributeData = baos.toByteArray();
         }
         this.lengthOfFollowingData = attributeData != null ? (short) (4 + attributeData.length) : 4;
 
         super.writeAFP(os, config);
-        if (attributeData != null) os.write(attributeData);
+        if (attributeData != null) {
+          os.write(attributeData);
+        }
       }
 
       public AFPColorValue getColor() {
@@ -322,19 +333,26 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
         byte[] attributeData = null;
         if (flag == Flag.UseValuesAsSpecified) {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          if (mask.get(0))
+          if (mask.get(0)) {
             baos.write(lineType != null ? lineType.toByte() : LineType.Default.toByte());
-          if (mask.get(1)) baos.write(lineWidth != null ? lineWidth : 0x00);
-          if (mask.get(2))
+          }
+          if (mask.get(1)) {
+            baos.write(lineWidth != null ? lineWidth : 0x00);
+          }
+          if (mask.get(2)) {
             baos.write(lineEnd != null ? lineEnd.toByte() : LineEnd.Default.toByte());
-          if (mask.get(3))
+          }
+          if (mask.get(3)) {
             baos.write(lineJoin != null ? lineJoin.toByte() : LineJoin.Default.toByte());
+          }
           attributeData = baos.toByteArray();
         }
         lengthOfFollowingData = attributeData != null ? (short) (4 + attributeData.length) : 4;
 
         super.writeAFP(os, config);
-        if (attributeData != null) os.write(attributeData);
+        if (attributeData != null) {
+          os.write(attributeData);
+        }
       }
 
       public LineType getLineType() {
@@ -422,22 +440,31 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
         byte[] attributeData = null;
         if (flag == Flag.UseValuesAsSpecified) {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          if (mask.get(0))
+          if (mask.get(0)) {
             baos.write(characterAngleXY != null ? UtilBinaryDecoding.longToByteArray(characterAngleXY, 4) : Constants.EMPTYBYTES_4);
-          if (mask.get(1))
+          }
+          if (mask.get(1)) {
             baos.write(characterCellSizeWH != null ? UtilBinaryDecoding.longToByteArray(characterCellSizeWH, 4) : Constants.EMPTYBYTES_4);
-          if (mask.get(2))
+          }
+          if (mask.get(2)) {
             baos.write(characterDirection != null ? characterDirection : 0x00);
-          if (mask.get(3))
+          }
+          if (mask.get(3)) {
             baos.write(characterPrecision != null ? characterPrecision : 0x00);
-          if (mask.get(4)) baos.write(characterSet != null ? characterSet : 0x00);
-          if (mask.get(5))
+          }
+          if (mask.get(4)) {
+            baos.write(characterSet != null ? characterSet : 0x00);
+          }
+          if (mask.get(5)) {
             baos.write(characterShearXY != null ? UtilBinaryDecoding.longToByteArray(characterShearXY, 4) : Constants.EMPTYBYTES_4);
+          }
           attributeData = baos.toByteArray();
         }
         lengthOfFollowingData = attributeData != null ? (short) (4 + attributeData.length) : 4;
         super.writeAFP(os, config);
-        if (attributeData != null) os.write(attributeData);
+        if (attributeData != null) {
+          os.write(attributeData);
+        }
       }
 
       public Long getCharacterAngleXY() {
@@ -524,15 +551,23 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
         byte[] attributeData = null;
         if (flag == Flag.UseValuesAsSpecified) {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          if (mask.get(0)) baos.write(markerPrecision != null ? markerPrecision : 0x00);
-          if (mask.get(1)) baos.write(markerSet != null ? markerSet : 0x00);
-          if (mask.get(2)) baos.write(markerSymbol != null ? markerSymbol : 0x00);
+          if (mask.get(0)) {
+            baos.write(markerPrecision != null ? markerPrecision : 0x00);
+          }
+          if (mask.get(1)) {
+            baos.write(markerSet != null ? markerSet : 0x00);
+          }
+          if (mask.get(2)) {
+            baos.write(markerSymbol != null ? markerSymbol : 0x00);
+          }
           attributeData = baos.toByteArray();
         }
         lengthOfFollowingData = attributeData != null ? (short) (4 + attributeData.length) : 4;
 
         super.writeAFP(os, config);
-        if (attributeData != null) os.write(attributeData);
+        if (attributeData != null) {
+          os.write(attributeData);
+        }
       }
 
       public Byte getMarkerPrecision() {
@@ -589,13 +624,19 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
         byte[] attributeData = null;
         if (flag == Flag.UseValuesAsSpecified) {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          if (mask.get(0)) baos.write(patternSet != null ? patternSet : 0x00);
-          if (mask.get(1)) baos.write(patternSymbol != null ? patternSymbol : 0x00);
+          if (mask.get(0)) {
+            baos.write(patternSet != null ? patternSet : 0x00);
+          }
+          if (mask.get(1)) {
+            baos.write(patternSymbol != null ? patternSymbol : 0x00);
+          }
           attributeData = baos.toByteArray();
         }
         lengthOfFollowingData = attributeData != null ? (short) (4 + attributeData.length) : 4;
         super.writeAFP(os, config);
-        if (attributeData != null) os.write(attributeData);
+        if (attributeData != null) {
+          os.write(attributeData);
+        }
       }
 
       public Byte getPatternSet() {
@@ -669,14 +710,18 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
         byte[] attributeData = null;
         if (flag == Flag.UseValuesAsSpecified) {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          if (mask.get(0))
+          if (mask.get(0)) {
             baos.write(arcTransformP != null ? UtilBinaryDecoding.shortToByteArray(arcTransformP, 2) : Constants.EMPTYBYTES_2);
-          if (mask.get(1))
+          }
+          if (mask.get(1)) {
             baos.write(arcTransformQ != null ? UtilBinaryDecoding.shortToByteArray(arcTransformQ, 2) : Constants.EMPTYBYTES_2);
-          if (mask.get(2))
+          }
+          if (mask.get(2)) {
             baos.write(arcTransformR != null ? UtilBinaryDecoding.shortToByteArray(arcTransformR, 2) : Constants.EMPTYBYTES_2);
-          if (mask.get(3))
+          }
+          if (mask.get(3)) {
             baos.write(arcTransformS != null ? UtilBinaryDecoding.shortToByteArray(arcTransformS, 2) : Constants.EMPTYBYTES_2);
+          }
           attributeData = baos.toByteArray();
         }
         lengthOfFollowingData = attributeData != null ? (short) (4 + attributeData.length) : 4;
@@ -755,18 +800,23 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
         byte[] attributeData = null;
         if (flag == Flag.UseValuesAsSpecified) {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          if (mask.get(0))
+          if (mask.get(0)) {
             baos.write(foregroundMix != null ? foregroundMix.toByte() : AFPForegroundMix.Default.toByte());
-          if (mask.get(1))
+          }
+          if (mask.get(1)) {
             baos.write(backgroundMix != null ? backgroundMix.toByte() : AFPBackgroundMix.Default.toByte());
-          if (mask.get(2))
+          }
+          if (mask.get(2)) {
             baos.write(processColor != null ? processColor : Constants.EMPTYBYTES_3);
+          }
           attributeData = baos.toByteArray();
         }
         lengthOfFollowingData = attributeData != null ? (short) (4 + attributeData.length) : 4;
 
         super.writeAFP(os, config);
-        if (attributeData != null) os.write(attributeData);
+        if (attributeData != null) {
+          os.write(attributeData);
+        }
       }
 
       public AFPForegroundMix getForegroundMix() {
@@ -1014,8 +1064,7 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
       PictureResoulution_NotDefined_or_NonSymetric(2),
       PictureResoulution_XYEqual_DefinedByIMXYRES(2),
       SymetricImage_PictureResoulution_NotDefined_or_Symetric(3),
-      SymetricImage_PictureResoulution_120x140dpi(3);
-      ;
+      SymetricImage_PictureResoulution_120x140dpi(3);;
 
       int group;
 
@@ -1026,16 +1075,26 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
       public static EnumSet<WindowSpecification.WindowSpecificationFlag> valueOf(byte flagByte) {
         EnumSet<WindowSpecification.WindowSpecificationFlag> result = EnumSet.noneOf(WindowSpecification.WindowSpecificationFlag.class);
 
-        if ((flagByte & 0x80) == 0) result.add(PicturePresentationSpace_2D);
-        else result.add(PicturePresentationSpace_Undefined);
-        if ((flagByte & 0x40) == 0) result.add(PictureDimensions_Undefined);
-        else result.add(PictureDimensions_Absolute);
-        if ((flagByte & 0x10) == 0)
+        if ((flagByte & 0x80) == 0) {
+          result.add(PicturePresentationSpace_2D);
+        } else {
+          result.add(PicturePresentationSpace_Undefined);
+        }
+        if ((flagByte & 0x40) == 0) {
+          result.add(PictureDimensions_Undefined);
+        } else {
+          result.add(PictureDimensions_Absolute);
+        }
+        if ((flagByte & 0x10) == 0) {
           result.add(PictureResoulution_NotDefined_or_NonSymetric);
-        else result.add(PictureResoulution_XYEqual_DefinedByIMXYRES);
-        if ((flagByte & 0x08) == 0)
+        } else {
+          result.add(PictureResoulution_XYEqual_DefinedByIMXYRES);
+        }
+        if ((flagByte & 0x08) == 0) {
           result.add(SymetricImage_PictureResoulution_NotDefined_or_Symetric);
-        else result.add(SymetricImage_PictureResoulution_120x140dpi);
+        } else {
+          result.add(SymetricImage_PictureResoulution_120x140dpi);
+        }
 
         return result;
       }
@@ -1043,12 +1102,18 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
       public static int toByte(EnumSet<WindowSpecification.WindowSpecificationFlag> controlFlags) {
         int result = 0;
 
-        if (controlFlags.contains(PicturePresentationSpace_Undefined)) result |= 0x80;
-        if (controlFlags.contains(PictureDimensions_Absolute)) result |= 0x40;
-        if (controlFlags.contains(PictureResoulution_XYEqual_DefinedByIMXYRES))
+        if (controlFlags.contains(PicturePresentationSpace_Undefined)) {
+          result |= 0x80;
+        }
+        if (controlFlags.contains(PictureDimensions_Absolute)) {
+          result |= 0x40;
+        }
+        if (controlFlags.contains(PictureResoulution_XYEqual_DefinedByIMXYRES)) {
           result |= 0x10;
-        if (controlFlags.contains(SymetricImage_PictureResoulution_120x140dpi))
+        }
+        if (controlFlags.contains(SymetricImage_PictureResoulution_120x140dpi)) {
           result |= 0x08;
+        }
 
         return result;
       }
@@ -1083,7 +1148,7 @@ public abstract class GDD_Parameter implements IAFPDecodeableWriteable {
       parameterType = PARAMETERTYPE_DrawingOrderSubset_RETIRED;
       lengthOfFollowingData = 0x07;
       drawingOrderSubset = 0xB0;
-      reserved3_4 = new byte[]{0x00, 0x00};
+      reserved3_4 = new byte[] {0x00, 0x00};
       subsetLevel = 0x02;
       version = 0x00;
       lengthOfFollowingField = 0x01;

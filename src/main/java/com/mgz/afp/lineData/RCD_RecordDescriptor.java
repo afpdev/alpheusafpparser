@@ -132,7 +132,11 @@ public class RCD_RecordDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(fieldNumber, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(additionalBaselineIncrement, 2));
     baos.write(reserved57_69);
-    if (triplets != null) for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (triplets != null) {
+      for (Triplet t : triplets) {
+        t.writeAFP(baos, config);
+      }
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -254,7 +258,7 @@ public class RCD_RecordDescriptor extends StructuredFieldBaseTriplets {
   }
 
   public void setConditionalProcessingRCDPointer(
-          int conditionalProcessingRCDPointer) {
+      int conditionalProcessingRCDPointer) {
     this.conditionalProcessingRCDPointer = conditionalProcessingRCDPointer;
   }
 
@@ -381,41 +385,82 @@ public class RCD_RecordDescriptor extends StructuredFieldBaseTriplets {
       EnumSet<RCD_Flag> result = EnumSet.noneOf(RCD_Flag.class);
       // 0x800000 is not used.
       // 0x400000 is not used.
-      if ((flagBytes & 0x200000) != 0) result.add(GenerateInlinePosition_NewPosition);
-      else result.add(GenerateInlinePosition_CurrentPosition);
-      if ((flagBytes & 0x100000) != 0) result.add(GenerateBaselinePosition_NewPosition);
-      else result.add(GenerateBaselinePosition_CurrentPosition);
-      if ((flagBytes & 0x080000) != 0) result.add(GenerateFontChange_AsSpecified);
-      else result.add(GenerateFontChange_TRC_MRC_Default);
-      if ((flagBytes & 0x040000) != 0) result.add(GenerateSuppression_TextIsSuppressible);
-      else result.add(GenerateSuppression_TextIsNotSuppressible);
-      if ((flagBytes & 0x020000) != 0) result.add(FieldRCD_FieldRCD);
-      else result.add(FieldRCD_RecordRCD);
-      if ((flagBytes & 0x010000) != 0) result.add(UseFixedData_DoPresent);
-      else result.add(UseFixedData_DoNotPresent);
+      if ((flagBytes & 0x200000) != 0) {
+        result.add(GenerateInlinePosition_NewPosition);
+      } else {
+        result.add(GenerateInlinePosition_CurrentPosition);
+      }
+      if ((flagBytes & 0x100000) != 0) {
+        result.add(GenerateBaselinePosition_NewPosition);
+      } else {
+        result.add(GenerateBaselinePosition_CurrentPosition);
+      }
+      if ((flagBytes & 0x080000) != 0) {
+        result.add(GenerateFontChange_AsSpecified);
+      } else {
+        result.add(GenerateFontChange_TRC_MRC_Default);
+      }
+      if ((flagBytes & 0x040000) != 0) {
+        result.add(GenerateSuppression_TextIsSuppressible);
+      } else {
+        result.add(GenerateSuppression_TextIsNotSuppressible);
+      }
+      if ((flagBytes & 0x020000) != 0) {
+        result.add(FieldRCD_FieldRCD);
+      } else {
+        result.add(FieldRCD_RecordRCD);
+      }
+      if ((flagBytes & 0x010000) != 0) {
+        result.add(UseFixedData_DoPresent);
+      } else {
+        result.add(UseFixedData_DoNotPresent);
+      }
       // 0x008000 is not used.
       // 0x004000 is not used.
       // 0x002000 is not used.
-      if ((flagBytes & 0x001000) != 0) result.add(ConditionalProcessing_DoPerformCP);
-      else result.add(ConditionalProcessing_DoNotPerformCP);
+      if ((flagBytes & 0x001000) != 0) {
+        result.add(ConditionalProcessing_DoPerformCP);
+      } else {
+        result.add(ConditionalProcessing_DoNotPerformCP);
+      }
       // 0x000800 is not used.
-      if ((flagBytes & 0x000400) != 0) result.add(RelativeBaselinePosition_RelativePosition);
-      else result.add(RelativeBaselinePosition_AbsolutePosition);
+      if ((flagBytes & 0x000400) != 0) {
+        result.add(RelativeBaselinePosition_RelativePosition);
+      } else {
+        result.add(RelativeBaselinePosition_AbsolutePosition);
+      }
       // 0x000200 is not used.
       // 0x000100 is not used.
-      if ((flagBytes & 0x000080) != 0) result.add(NewPage_LogicalPageEject);
-      else result.add(NewPage_NoEffect);
-      if ((flagBytes & 0x000040) != 0) result.add(PrintPageNumber_PrintPageNumber);
-      else result.add(PrintPageNumber_NoEffect);
-      if ((flagBytes & 0x000020) != 0)
+      if ((flagBytes & 0x000080) != 0) {
+        result.add(NewPage_LogicalPageEject);
+      } else {
+        result.add(NewPage_NoEffect);
+      }
+      if ((flagBytes & 0x000040) != 0) {
+        result.add(PrintPageNumber_PrintPageNumber);
+      } else {
+        result.add(PrintPageNumber_NoEffect);
+      }
+      if ((flagBytes & 0x000020) != 0) {
         result.add(ResetPageNumber_ResetPageNumberToSpecifiedValue);
-      else result.add(ResetPageNumber_NoEffect);
-      if ((flagBytes & 0x000010) != 0) result.add(GroupIndicator_SaveGroupHeader);
-      else result.add(GroupIndicator_InputDataIsNotPartOfAGroup);
-      if ((flagBytes & 0x000008) != 0) result.add(FieldDelimeterSize_2Bytes);
-      else result.add(FieldDelimeterSize_1Byte);
-      if ((flagBytes & 0x000004) != 0) result.add(UseRecordID_SelectRecordID);
-      else result.add(UseRecordID_DoNotSelectRecordID);
+      } else {
+        result.add(ResetPageNumber_NoEffect);
+      }
+      if ((flagBytes & 0x000010) != 0) {
+        result.add(GroupIndicator_SaveGroupHeader);
+      } else {
+        result.add(GroupIndicator_InputDataIsNotPartOfAGroup);
+      }
+      if ((flagBytes & 0x000008) != 0) {
+        result.add(FieldDelimeterSize_2Bytes);
+      } else {
+        result.add(FieldDelimeterSize_1Byte);
+      }
+      if ((flagBytes & 0x000004) != 0) {
+        result.add(UseRecordID_SelectRecordID);
+      } else {
+        result.add(UseRecordID_DoNotSelectRecordID);
+      }
       // 0x000002 is not used.
       // 0x000001 is not used.
       return result;
@@ -426,40 +471,54 @@ public class RCD_RecordDescriptor extends StructuredFieldBaseTriplets {
 
       // 0x800000 is not used.
       // 0x400000 is not used.
-      if (flags.contains(GenerateInlinePosition_NewPosition))
+      if (flags.contains(GenerateInlinePosition_NewPosition)) {
         result |= 0x200000; // (flagBytes & 0x200000)!=0) result.add(GenerateInlinePosition_NewPosition);
-      if (flags.contains(GenerateBaselinePosition_NewPosition))
+      }
+      if (flags.contains(GenerateBaselinePosition_NewPosition)) {
         result |= 0x100000; // (flagBytes & 0x100000)!=0) result.add(GenerateBaselinePosition_NewPosition);
-      if (flags.contains(GenerateFontChange_AsSpecified))
+      }
+      if (flags.contains(GenerateFontChange_AsSpecified)) {
         result |= 0x080000; // (flagBytes & 0x080000)!=0) result.add(GenerateFontChange_AsSpecified);
-      if (flags.contains(GenerateSuppression_TextIsSuppressible))
+      }
+      if (flags.contains(GenerateSuppression_TextIsSuppressible)) {
         result |= 0x040000; // (flagBytes & 0x040000)!=0) result.add(GenerateSuppression_TextIsSuppressible);
-      if (flags.contains(FieldRCD_FieldRCD))
+      }
+      if (flags.contains(FieldRCD_FieldRCD)) {
         result |= 0x020000; // (flagBytes & 0x020000)!=0) result.add(FieldRCD_RecordRCD);
-      if (flags.contains(UseFixedData_DoPresent))
+      }
+      if (flags.contains(UseFixedData_DoPresent)) {
         result |= 0x010000; // (flagBytes & 0x010000)!=0) result.add(UseFixedData_DoPresent);
+      }
       // 0x008000 is not used.
       // 0x004000 is not used.
       // 0x002000 is not used.
-      if (flags.contains(ConditionalProcessing_DoPerformCP))
+      if (flags.contains(ConditionalProcessing_DoPerformCP)) {
         result |= 0x001000; // (flagBytes & 0x001000)!=0) result.add(ConditionalProcessing_DoNotPerformCP);
+      }
       // 0x000800 is not used.
-      if (flags.contains(RelativeBaselinePosition_RelativePosition))
+      if (flags.contains(RelativeBaselinePosition_RelativePosition)) {
         result |= 0x000400; // (flagBytes & 0x000400)!=0) result.add(RelativeBaselinePosition_AbsolutePosition);
+      }
       // 0x000200 is not used.
       // 0x000100 is not used.
-      if (flags.contains(NewPage_LogicalPageEject))
+      if (flags.contains(NewPage_LogicalPageEject)) {
         result |= 0x000080; // (flagBytes & 0x000080)!=0) result.add(NewPage_NoEffect);
-      if (flags.contains(PrintPageNumber_PrintPageNumber))
+      }
+      if (flags.contains(PrintPageNumber_PrintPageNumber)) {
         result |= 0x000040; // (flagBytes & 0x000040)!=0) result.add(PrintPageNumber_NoEffect);
-      if (flags.contains(ResetPageNumber_ResetPageNumberToSpecifiedValue))
+      }
+      if (flags.contains(ResetPageNumber_ResetPageNumberToSpecifiedValue)) {
         result |= 0x000020; // (flagBytes & 0x000020)!=0) result.add(ResetPageNumber_NoEffect);
-      if (flags.contains(GroupIndicator_SaveGroupHeader))
+      }
+      if (flags.contains(GroupIndicator_SaveGroupHeader)) {
         result |= 0x000010; // (flagBytes & 0x000010)!=0) result.add(GroupIndicator_InputDataIsNotPartOfAGroup);
-      if (flags.contains(FieldDelimeterSize_2Bytes))
+      }
+      if (flags.contains(FieldDelimeterSize_2Bytes)) {
         result |= 0x000008; // (flagBytes & 0x000008)!=0) result.add(FieldDelimeterSize_1Byte);
-      if (flags.contains(UseRecordID_SelectRecordID))
+      }
+      if (flags.contains(UseRecordID_SelectRecordID)) {
         result |= 0x000004; // (flagBytes & 0x000004)!=0) result.add(UseRecordID_DoNotSelectRecordID);
+      }
       // 0x000002 is not used.
       // 0x000001 is not used.
 

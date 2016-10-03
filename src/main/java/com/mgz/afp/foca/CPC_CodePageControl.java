@@ -69,7 +69,7 @@ public class CPC_CodePageControl extends StructuredField {
     spaceCharacterCodePoint = UtilBinaryDecoding.parseShort(sfData, offset + 11, 1);
     codePageUseFlags = CodePageUseFlag.valueOf(sfData[12] & 0xFF);
     if (cpiRepeatingGroupLength == CPIRepeatingGroupLength.SingleByteCodePageUnicodeScalarValues
-            || cpiRepeatingGroupLength == CPIRepeatingGroupLength.DoubleByteCodePageUnicodeScalarValues) {
+        || cpiRepeatingGroupLength == CPIRepeatingGroupLength.DoubleByteCodePageUnicodeScalarValues) {
       unicodeScalarValue = UtilBinaryDecoding.parseLong(sfData, 13, 4);
     }
 
@@ -86,7 +86,7 @@ public class CPC_CodePageControl extends StructuredField {
     baos.write(UtilBinaryDecoding.shortToByteArray(spaceCharacterCodePoint, 1));
     baos.write(CodePageUseFlag.toByte(codePageUseFlags));
     if (cpiRepeatingGroupLength == CPIRepeatingGroupLength.SingleByteCodePageUnicodeScalarValues
-            || cpiRepeatingGroupLength == CPIRepeatingGroupLength.DoubleByteCodePageUnicodeScalarValues) {
+        || cpiRepeatingGroupLength == CPIRepeatingGroupLength.DoubleByteCodePageUnicodeScalarValues) {
       baos.write(UtilBinaryDecoding.longToByteArray(unicodeScalarValue, 4));
     }
 
@@ -98,7 +98,7 @@ public class CPC_CodePageControl extends StructuredField {
   }
 
   public void setDefaultGraphicCharacterGlobalID(
-          String defaultGraphicCharacterGlobalID) {
+      String defaultGraphicCharacterGlobalID) {
     this.defaultGraphicCharacterGlobalID = defaultGraphicCharacterGlobalID;
   }
 
@@ -107,7 +107,7 @@ public class CPC_CodePageControl extends StructuredField {
   }
 
   public void setDefaultCharacterUseFlags(
-          EnumSet<DefaultCharacterUseFlag> defaultCharacterUseFlags) {
+      EnumSet<DefaultCharacterUseFlag> defaultCharacterUseFlags) {
     this.defaultCharacterUseFlags = defaultCharacterUseFlags;
   }
 
@@ -116,7 +116,7 @@ public class CPC_CodePageControl extends StructuredField {
   }
 
   public void setCpiRepeatingGroupLength(
-          CPIRepeatingGroupLength cpiRepeatingGroupLength) {
+      CPIRepeatingGroupLength cpiRepeatingGroupLength) {
     this.cpiRepeatingGroupLength = cpiRepeatingGroupLength;
   }
 
@@ -173,9 +173,15 @@ public class CPC_CodePageControl extends StructuredField {
     public static EnumSet<DefaultCharacterUseFlag> valueOf(int flagByte) {
       EnumSet<DefaultCharacterUseFlag> result = EnumSet.noneOf(DefaultCharacterUseFlag.class);
 
-      if ((flagByte & 0x80) != 0) result.add(InvalidCodedCharacter);
-      if ((flagByte & 0x40) != 0) result.add(NoPresentation);
-      if ((flagByte & 0x20) != 0) result.add(NoIncrement);
+      if ((flagByte & 0x80) != 0) {
+        result.add(InvalidCodedCharacter);
+      }
+      if ((flagByte & 0x40) != 0) {
+        result.add(NoPresentation);
+      }
+      if ((flagByte & 0x20) != 0) {
+        result.add(NoIncrement);
+      }
 
       return result;
     }
@@ -183,9 +189,15 @@ public class CPC_CodePageControl extends StructuredField {
     public static int toByte(EnumSet<DefaultCharacterUseFlag> flags) {
       int result = 0;
 
-      if (flags.contains(InvalidCodedCharacter)) result += 0x80;
-      if (flags.contains(NoPresentation)) result += 0x40;
-      if (flags.contains(NoIncrement)) result += 0x20;
+      if (flags.contains(InvalidCodedCharacter)) {
+        result += 0x80;
+      }
+      if (flags.contains(NoPresentation)) {
+        result += 0x40;
+      }
+      if (flags.contains(NoIncrement)) {
+        result += 0x20;
+      }
 
       return result;
     }
@@ -205,7 +217,9 @@ public class CPC_CodePageControl extends StructuredField {
 
     public static CPIRepeatingGroupLength valueOf(int cpiRepeatingGroupLengthByte) {
       for (CPIRepeatingGroupLength cpiRGL : values()) {
-        if (cpiRGL.val == cpiRepeatingGroupLengthByte) return cpiRGL;
+        if (cpiRGL.val == cpiRepeatingGroupLengthByte) {
+          return cpiRGL;
+        }
       }
       return null;
     }
@@ -215,15 +229,19 @@ public class CPC_CodePageControl extends StructuredField {
     }
 
     public short nrOfBytes() {
-      if (this == DoubleByteCodePage || this == DoubleByteCodePageUnicodeScalarValues)
+      if (this == DoubleByteCodePage || this == DoubleByteCodePageUnicodeScalarValues) {
         return 2;
-      else return 1;
+      } else {
+        return 1;
+      }
     }
 
     public boolean isUnicodeScalarValues() {
-      if (this == SingleByteCodePageUnicodeScalarValues || this == DoubleByteCodePageUnicodeScalarValues)
+      if (this == SingleByteCodePageUnicodeScalarValues || this == DoubleByteCodePageUnicodeScalarValues) {
         return true;
-      else return false;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -248,8 +266,12 @@ public class CPC_CodePageControl extends StructuredField {
     public static EnumSet<CodePageUseFlag> valueOf(int flagByte) {
       EnumSet<CodePageUseFlag> result = EnumSet.noneOf(CodePageUseFlag.class);
 
-      if ((flagByte & 0x80) != 0) result.add(SortOrder);
-      if ((flagByte & 0x08) != 0) result.add(VariableSpaceEnable);
+      if ((flagByte & 0x80) != 0) {
+        result.add(SortOrder);
+      }
+      if ((flagByte & 0x08) != 0) {
+        result.add(VariableSpaceEnable);
+      }
 
       return result;
     }
@@ -257,8 +279,12 @@ public class CPC_CodePageControl extends StructuredField {
     public static int toByte(EnumSet<CodePageUseFlag> flags) {
       int result = 0;
 
-      if (flags.contains(SortOrder)) result += 0x80;
-      if (flags.contains(VariableSpaceEnable)) result += 0x08;
+      if (flags.contains(SortOrder)) {
+        result += 0x80;
+      }
+      if (flags.contains(VariableSpaceEnable)) {
+        result += 0x08;
+      }
 
       return result;
     }

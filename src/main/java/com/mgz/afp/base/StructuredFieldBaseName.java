@@ -49,10 +49,13 @@ public abstract class StructuredFieldBaseName extends StructuredField implements
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-    if (name != null) writeFullStructuredField(os,
-            UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER)
-    );
-    else writeFullStructuredField(os, null);
+    if (name != null) {
+      writeFullStructuredField(os,
+          UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER)
+      );
+    } else {
+      writeFullStructuredField(os, null);
+    }
   }
 
   @Override

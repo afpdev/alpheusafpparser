@@ -36,11 +36,11 @@ public class TripletTest {
 
   @Test
   public void testTripletInstanciation() {
-    LOG.log(Level.INFO,"Defined MODCA Triplets:");
+    LOG.log(Level.INFO, "Defined MODCA Triplets:");
     for (TripletID tID : TripletID.values()) {
       Triplet t = TripletParser.createTripletInstance(tID);
       assertNotNull(t);
-      LOG.log(Level.INFO,t.getClass().getSimpleName());
+      LOG.log(Level.INFO, t.getClass().getSimpleName());
       assertEquals(tID.name(), t.getClass().getSimpleName());
     }
   }

@@ -70,7 +70,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       if (points != null && points.size() > 0) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (GOCA_Point lp : points) {
-          if (lp == null) continue;
+          if (lp == null) {
+            continue;
+          }
           UtilBinaryDecoding.shortToByteArray(lp.xCoordinate, 2);
           UtilBinaryDecoding.shortToByteArray(lp.yCoordinate, 2);
         }
@@ -82,7 +84,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
 
       os.write(drawingOrderType);
       os.write(lengthOfFollowingData);
-      if (lineEndpointsData != null) os.write(lineEndpointsData);
+      if (lineEndpointsData != null) {
+        os.write(lineEndpointsData);
+      }
     }
 
     public short getLengthOfFollowingData() {
@@ -105,8 +109,11 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
      */
     public void setPoints(List<GOCA_Point> points) {
       this.points = points;
-      if (points == null) lengthOfFollowingData = 0;
-      else lengthOfFollowingData = (short) (4 * points.size());
+      if (points == null) {
+        lengthOfFollowingData = 0;
+      } else {
+        lengthOfFollowingData = (short) (4 * points.size());
+      }
     }
 
     /**
@@ -115,8 +122,12 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
      * method does nothing.
      */
     public void addPoint(GOCA_Point point) {
-      if (point == null) return;
-      if (points == null) points = new ArrayList<GOCA_Point>();
+      if (point == null) {
+        return;
+      }
+      if (points == null) {
+        points = new ArrayList<GOCA_Point>();
+      }
       points.add(point);
       lengthOfFollowingData = (short) (4 * points.size());
     }
@@ -127,7 +138,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
      * does nothing.
      */
     public void removePoint(GOCA_Point point) {
-      if (point == null || points == null) return;
+      if (point == null || points == null) {
+        return;
+      }
       points.remove(point);
       lengthOfFollowingData = (short) (4 * points.size());
     }
@@ -165,7 +178,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       lengthOfFollowingData = comment != null ? (short) comment.length : 0;
       os.write(drawingOrderType);
       os.write(lengthOfFollowingData);
-      if (comment != null) os.write(comment);
+      if (comment != null) {
+        os.write(comment);
+      }
     }
 
     public short getLengthOfFollowingData() {
@@ -208,7 +223,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       os.write(drawingOrderType);
       os.write(lengthOfFollowingData);
       os.write(identificationCode);
-      if (parameters != null) os.write(parameters);
+      if (parameters != null) {
+        os.write(parameters);
+      }
     }
 
     public short getLengthOfFollowingData() {
@@ -423,7 +440,11 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       Invisible;
 
       public static LineType valueOf(byte codeByte) throws AFPParserException {
-        for (LineType le : values()) if (le.ordinal() == codeByte) return le;
+        for (LineType le : values()) {
+          if (le.ordinal() == codeByte) {
+            return le;
+          }
+        }
         throw new AFPParserException("The " + LineType.class.getSimpleName() + " code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -489,7 +510,11 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       Round;
 
       public static LineEnd valueOf(byte codeByte) throws AFPParserException {
-        for (LineEnd le : values()) if (le.ordinal() == codeByte) return le;
+        for (LineEnd le : values()) {
+          if (le.ordinal() == codeByte) {
+            return le;
+          }
+        }
         throw new AFPParserException("The " + LineEnd.class.getSimpleName() + " code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -530,7 +555,11 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       Miter;
 
       public static LineJoin valueOf(byte codeByte) throws AFPParserException {
-        for (LineJoin le : values()) if (le.ordinal() == codeByte) return le;
+        for (LineJoin le : values()) {
+          if (le.ordinal() == codeByte) {
+            return le;
+          }
+        }
         throw new AFPParserException("The " + LineJoin.class.getSimpleName() + " code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -795,7 +824,7 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
     }
 
     public void setWidthOfCharacterCellIntegerPart(
-            short widthOfCharacterCellIntegerPart) {
+        short widthOfCharacterCellIntegerPart) {
       this.widthOfCharacterCellIntegerPart = widthOfCharacterCellIntegerPart;
     }
 
@@ -804,7 +833,7 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
     }
 
     public void setHeightOfCharacterCellIntegerPart(
-            short heightOfCharacterCellIntegerPart) {
+        short heightOfCharacterCellIntegerPart) {
       this.heightOfCharacterCellIntegerPart = heightOfCharacterCellIntegerPart;
     }
 
@@ -1181,7 +1210,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       lengthOfFollowingData = data != null ? (short) data.length : 0;
       os.write(drawingOrderType);
       os.write(lengthOfFollowingData);
-      if (data != null) os.write(data);
+      if (data != null) {
+        os.write(data);
+      }
     }
 
     public byte[] getData() {
@@ -1197,8 +1228,11 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
      */
     public void setData(byte[] data) {
       this.data = data;
-      if (data == null) lengthOfFollowingData = 0;
-      else lengthOfFollowingData = (short) data.length;
+      if (data == null) {
+        lengthOfFollowingData = 0;
+      } else {
+        lengthOfFollowingData = (short) data.length;
+      }
     }
 
     public short getLengthOfFollowingData() {
@@ -1265,10 +1299,12 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       diagonalCorner = new GOCA_Point();
       diagonalCorner.xCoordinate = UtilBinaryDecoding.parseShort(sfData, offset + 4, 2);
       diagonalCorner.yCoordinate = UtilBinaryDecoding.parseShort(sfData, offset + 6, 2);
-      if (lengthOfFollowingData >= 8)
+      if (lengthOfFollowingData >= 8) {
         xAxisLengthForRoundCorner = UtilBinaryDecoding.parseShort(sfData, offset + 8, 2);
-      if (lengthOfFollowingData == 10)
+      }
+      if (lengthOfFollowingData == 10) {
         yAxisLengthForRoundCorner = UtilBinaryDecoding.parseShort(sfData, offset + 10, 2);
+      }
 
     }
 
@@ -1278,7 +1314,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       short actualLengthOfFollowingData = 6;
       if (xAxisLengthForRoundCorner != null) {
         actualLengthOfFollowingData = 8;
-        if (yAxisLengthForRoundCorner != null) actualLengthOfFollowingData = 10;
+        if (yAxisLengthForRoundCorner != null) {
+          actualLengthOfFollowingData = 10;
+        }
       }
       lengthOfFollowingData = actualLengthOfFollowingData;
 
@@ -1288,8 +1326,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       os.write(diagonalCorner.toBytes());
       if (xAxisLengthForRoundCorner != null) {
         os.write(UtilBinaryDecoding.shortToByteArray(xAxisLengthForRoundCorner, 2));
-        if (yAxisLengthForRoundCorner != null)
+        if (yAxisLengthForRoundCorner != null) {
           os.write(UtilBinaryDecoding.shortToByteArray(yAxisLengthForRoundCorner, 2));
+        }
       }
     }
 
@@ -1322,8 +1361,11 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
     public void setxAxisLengthForRoundCorner(Short xAxisLengthForRoundCorner) {
       this.xAxisLengthForRoundCorner = xAxisLengthForRoundCorner;
       if (this.xAxisLengthForRoundCorner != null) {
-        if (this.yAxisLengthForRoundCorner != null) lengthOfFollowingData = 10;
-        else lengthOfFollowingData = 8;
+        if (this.yAxisLengthForRoundCorner != null) {
+          lengthOfFollowingData = 10;
+        } else {
+          lengthOfFollowingData = 8;
+        }
       }
     }
 
@@ -1342,8 +1384,11 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       if (this.yAxisLengthForRoundCorner != null) {
         lengthOfFollowingData = 10;
       } else {
-        if (xAxisLengthForRoundCorner == null) lengthOfFollowingData = 6;
-        else lengthOfFollowingData = 8;
+        if (xAxisLengthForRoundCorner == null) {
+          lengthOfFollowingData = 6;
+        } else {
+          lengthOfFollowingData = 8;
+        }
       }
     }
 
@@ -1391,11 +1436,16 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      if (codePoints != null) lengthOfFollowingData = (short) codePoints.length;
-      else lengthOfFollowingData = 0;
+      if (codePoints != null) {
+        lengthOfFollowingData = (short) codePoints.length;
+      } else {
+        lengthOfFollowingData = 0;
+      }
       os.write(drawingOrderType);
       os.write(lengthOfFollowingData);
-      if (codePoints != null) os.write(codePoints);
+      if (codePoints != null) {
+        os.write(codePoints);
+      }
     }
 
     public short getLengthOfFollowingData() {
@@ -1578,12 +1628,17 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      if (imageData == null) lengthOfFollowingData = 0;
-      else lengthOfFollowingData = (short) imageData.length;
+      if (imageData == null) {
+        lengthOfFollowingData = 0;
+      } else {
+        lengthOfFollowingData = (short) imageData.length;
+      }
 
       os.write(drawingOrderType);
       os.write(lengthOfFollowingData);
-      if (imageData != null) os.write(imageData);
+      if (imageData != null) {
+        os.write(imageData);
+      }
     }
 
     public short getLengthOfFollowingData() {
@@ -1605,8 +1660,11 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
      */
     public void setImageData(byte[] imageData) {
       this.imageData = imageData;
-      if (imageData == null) lengthOfFollowingData = 0;
-      else lengthOfFollowingData = (short) imageData.length;
+      if (imageData == null) {
+        lengthOfFollowingData = 0;
+      } else {
+        lengthOfFollowingData = (short) imageData.length;
+      }
     }
   }
 
@@ -1629,11 +1687,16 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      if (reservedData == null) lengthOfFollowingData = 0;
-      else lengthOfFollowingData = (short) reservedData.length;
+      if (reservedData == null) {
+        lengthOfFollowingData = 0;
+      } else {
+        lengthOfFollowingData = (short) reservedData.length;
+      }
       os.write(drawingOrderType);
       os.write(lengthOfFollowingData);
-      if (reservedData != null) os.write(reservedData);
+      if (reservedData != null) {
+        os.write(reservedData);
+      }
     }
 
     public short getLengthOfFollowingData() {
@@ -1656,8 +1719,11 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
      */
     public void setReservedData(byte[] reservedData) {
       this.reservedData = reservedData;
-      if (reservedData == null) lengthOfFollowingData = 0;
-      else lengthOfFollowingData = (short) reservedData.length;
+      if (reservedData == null) {
+        lengthOfFollowingData = 0;
+      } else {
+        lengthOfFollowingData = (short) reservedData.length;
+      }
     }
   }
 
@@ -1703,8 +1769,8 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       os.write(arcCenter.toBytes());
       os.write(multiplierIntegerPortion);
       os.write(multiplierFractionalPortion);
-      os.write(UtilBinaryDecoding.longToByteArray(startAngle,4));
-      os.write(UtilBinaryDecoding.longToByteArray(sweepAngle,4));
+      os.write(UtilBinaryDecoding.longToByteArray(startAngle, 4));
+      os.write(UtilBinaryDecoding.longToByteArray(sweepAngle, 4));
     }
 
     public short getLengthOfFollowingData() {
@@ -1939,10 +2005,12 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       diagonalCorner = new GOCA_Point();
       diagonalCorner.xCoordinate = UtilBinaryDecoding.parseShort(sfData, offset + 8, 2);
       diagonalCorner.yCoordinate = UtilBinaryDecoding.parseShort(sfData, offset + 10, 2);
-      if (lengthOfFollowingData >= 12)
+      if (lengthOfFollowingData >= 12) {
         xAxisLengthForRoundCorner = UtilBinaryDecoding.parseShort(sfData, offset + 12, 2);
-      if (lengthOfFollowingData == 14)
+      }
+      if (lengthOfFollowingData == 14) {
         yAxisLengthForRoundCorner = UtilBinaryDecoding.parseShort(sfData, offset + 14, 2);
+      }
 
     }
 
@@ -1952,7 +2020,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       short actualLengthOfFollowingData = 10;
       if (xAxisLengthForRoundCorner != null) {
         actualLengthOfFollowingData = 12;
-        if (yAxisLengthForRoundCorner != null) actualLengthOfFollowingData = 14;
+        if (yAxisLengthForRoundCorner != null) {
+          actualLengthOfFollowingData = 14;
+        }
       }
       lengthOfFollowingData = actualLengthOfFollowingData;
 
@@ -1963,8 +2033,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
       os.write(diagonalCorner.toBytes());
       if (xAxisLengthForRoundCorner != null) {
         os.write(UtilBinaryDecoding.shortToByteArray(xAxisLengthForRoundCorner, 2));
-        if (yAxisLengthForRoundCorner != null)
+        if (yAxisLengthForRoundCorner != null) {
           os.write(UtilBinaryDecoding.shortToByteArray(yAxisLengthForRoundCorner, 2));
+        }
       }
     }
 
@@ -2056,7 +2127,9 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
       short actualLengthOfFollowingData = 4;
-      if (codePoints != null) actualLengthOfFollowingData = (short) (4 + codePoints.length);
+      if (codePoints != null) {
+        actualLengthOfFollowingData = (short) (4 + codePoints.length);
+      }
       lengthOfFollowingData = actualLengthOfFollowingData;
 
       os.write(drawingOrderType);
@@ -2413,7 +2486,7 @@ public abstract class GAD_DrawingOrder implements IAFPDecodeableWriteable {
     short yCoordinate;
 
     public byte[] toBytes() {
-      return new byte[]{(byte) (xCoordinate >>> 8), (byte) (xCoordinate & 0xFF), (byte) (yCoordinate >>> 8), (byte) (yCoordinate & 0xFF)};
+      return new byte[] {(byte) (xCoordinate >>> 8), (byte) (xCoordinate & 0xFF), (byte) (yCoordinate >>> 8), (byte) (yCoordinate & 0xFF)};
     }
 
     public short getxCoordinate() {

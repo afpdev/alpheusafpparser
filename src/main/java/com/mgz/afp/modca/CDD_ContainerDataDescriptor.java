@@ -69,13 +69,19 @@ public class CDD_ContainerDataDescriptor extends StructuredField implements IHas
   }
 
   public void addTriplet(Triplet triplet) {
-    if (triplet == null) return;
-    if (triplets == null) triplets = new ArrayList<Triplet>();
+    if (triplet == null) {
+      return;
+    }
+    if (triplets == null) {
+      triplets = new ArrayList<Triplet>();
+    }
     triplets.add(triplet);
   }
 
   public void removeTriplet(Triplet triplet) {
-    if (triplets == null) return;
+    if (triplets == null) {
+      return;
+    }
     triplets.remove(triplet);
   }
 }

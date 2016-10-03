@@ -129,7 +129,7 @@ public class CPD_CodePageDescriptor extends StructuredField {
   }
 
   public void setNumberOfCodedGraphicCharactersAssigned(
-          long numberOfCodedGraphicCharactersAssigned) {
+      long numberOfCodedGraphicCharactersAssigned) {
     this.numberOfCodedGraphicCharactersAssigned = numberOfCodedGraphicCharactersAssigned;
   }
 
@@ -173,8 +173,11 @@ public class CPD_CodePageDescriptor extends StructuredField {
     }
 
     public static EncodingScheme valueOf(int encodingSchemeCode) {
-      for (EncodingScheme es : values())
-        if (es.encodingSchemeCode == encodingSchemeCode) return es;
+      for (EncodingScheme es : values()) {
+        if (es.encodingSchemeCode == encodingSchemeCode) {
+          return es;
+        }
+      }
       return null;
     }
 

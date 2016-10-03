@@ -77,13 +77,19 @@ public class PTX_PresentationTextData extends StructuredField {
   }
 
   public void addControlSequence(PTOCAControlSequence cs) {
-    if (cs == null) return;
-    if (controlSequences == null) controlSequences = new ArrayList<PTOCAControlSequence>();
+    if (cs == null) {
+      return;
+    }
+    if (controlSequences == null) {
+      controlSequences = new ArrayList<PTOCAControlSequence>();
+    }
     controlSequences.add(cs);
   }
 
   public void removeControlSequence(PTOCAControlSequence cs) {
-    if (controlSequences == null) return;
+    if (controlSequences == null) {
+      return;
+    }
     controlSequences.remove(cs);
   }
 }

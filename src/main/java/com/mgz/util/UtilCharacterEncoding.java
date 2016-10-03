@@ -110,7 +110,11 @@ public class UtilCharacterEncoding {
    * @return true if the given character is a hex digit.
    */
   public static boolean isHexDigit(char chr) {
-    for (char hexChr : hexArray) if (hexChr == chr) return true;
+    for (char hexChr : hexArray) {
+      if (hexChr == chr) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -152,8 +156,10 @@ public class UtilCharacterEncoding {
    * @return byte array containing the resulting encoded {@link String}
    */
   public static byte[] stringToByteArray(String str, Charset charsetForEncoding, int lenOfByteArray, byte filler) {
-    if (charsetForEncoding == null) charsetForEncoding = Charset.defaultCharset();
-    byte[] encoded = str != null && str.length() > 0 ? str.getBytes(charsetForEncoding) : new byte[]{};
+    if (charsetForEncoding == null) {
+      charsetForEncoding = Charset.defaultCharset();
+    }
+    byte[] encoded = str != null && str.length() > 0 ? str.getBytes(charsetForEncoding) : new byte[] {};
     byte[] result = new byte[lenOfByteArray];
     for (int i = 0; i < lenOfByteArray; i++) {
       if (i < encoded.length) {
@@ -172,25 +178,37 @@ public class UtilCharacterEncoding {
 
   public static boolean isEBCDIC(byte[] data) {
     for (int i = 0; i < data.length; i++) {
-      if (!Character.isDefined((char) data[i])) return true;
+      if (!Character.isDefined((char) data[i])) {
+        return true;
+      }
     }
     return false;
   }
 
   public static String reduceLabel(String s) {
-    if (s == null) return "null";
+    if (s == null) {
+      return "null";
+    }
     s = s.trim();
-    if (s.length() == 0) return "";
+    if (s.length() == 0) {
+      return "";
+    }
 
     StringBuilder sb = new StringBuilder();
-    if (Character.isLowerCase(s.charAt(0))) sb.append(Character.toUpperCase(s.charAt(0)));
+    if (Character.isLowerCase(s.charAt(0))) {
+      sb.append(Character.toUpperCase(s.charAt(0)));
+    }
 
 
     for (char ch : s.toCharArray()) {
-      if (Character.isUpperCase(ch)) sb.append(ch);
+      if (Character.isUpperCase(ch)) {
+        sb.append(ch);
+      }
     }
 
-    if (sb.length() == 0) sb.append(s.indexOf(0));
+    if (sb.length() == 0) {
+      sb.append(s.indexOf(0));
+    }
 
     return sb.toString();
   }
@@ -204,8 +222,11 @@ public class UtilCharacterEncoding {
 
       if (i > 0) {
         char prevC = name.charAt(i - 1);
-        if (Character.isDigit(c) && !Character.isDigit(prevC)) sb.append(' ');
-        else if (Character.isUpperCase(c) && !Character.isUpperCase(prevC)) sb.append(' ');
+        if (Character.isDigit(c) && !Character.isDigit(prevC)) {
+          sb.append(' ');
+        } else if (Character.isUpperCase(c) && !Character.isUpperCase(prevC)) {
+          sb.append(' ');
+        }
       }
 
       if (c == '_') {
@@ -230,9 +251,13 @@ public class UtilCharacterEncoding {
    * @return array of bytes.
    */
   public static Object hexStringWithSpacesToByteArray(String text) {
-    if (text == null) return null;
+    if (text == null) {
+      return null;
+    }
     text = text.replace("0x", "").trim();
-    if (text.length() == 0) return null;
+    if (text.length() == 0) {
+      return null;
+    }
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -262,7 +287,9 @@ public class UtilCharacterEncoding {
       }
     }
 
-    if (baos.size() == 0) return null;
+    if (baos.size() == 0) {
+      return null;
+    }
     return baos.toByteArray();
   }
 

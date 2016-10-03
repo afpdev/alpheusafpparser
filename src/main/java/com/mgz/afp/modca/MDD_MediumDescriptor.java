@@ -71,7 +71,11 @@ public class MDD_MediumDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(xMediumExtent, 3));
     baos.write(UtilBinaryDecoding.intToByteArray(yMediumExtent, 3));
     baos.write(flag.toByte());
-    if (triplets != null) for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (triplets != null) {
+      for (Triplet t : triplets) {
+        t.writeAFP(baos, config);
+      }
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -137,13 +141,19 @@ public class MDD_MediumDescriptor extends StructuredFieldBaseTriplets {
     PassMediumOrientationToCutsheetPrinter;
 
     public static MDD_Flag valueOf(byte codeByte) {
-      if ((codeByte & 0x80) == 0) return DoNotPassMediumOrientationToCutsheetPrinter;
-      else return PassMediumOrientationToCutsheetPrinter;
+      if ((codeByte & 0x80) == 0) {
+        return DoNotPassMediumOrientationToCutsheetPrinter;
+      } else {
+        return PassMediumOrientationToCutsheetPrinter;
+      }
     }
 
     public int toByte() {
-      if (this == DoNotPassMediumOrientationToCutsheetPrinter) return 0x00;
-      else return 0x80;
+      if (this == DoNotPassMediumOrientationToCutsheetPrinter) {
+        return 0x00;
+      } else {
+        return 0x80;
+      }
     }
   }
 }

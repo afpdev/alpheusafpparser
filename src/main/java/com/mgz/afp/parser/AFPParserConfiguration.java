@@ -145,7 +145,7 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
    * field or individual attribute values are valid according to AFP specifications.
    */
   public void setParseToStructuredFieldsBaseData(
-          boolean isParseToStructuredFieldsBaseData) {
+      boolean isParseToStructuredFieldsBaseData) {
     this.isParseToStructuredFieldsBaseData = isParseToStructuredFieldsBaseData;
   }
 
@@ -208,7 +208,7 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
   }
 
   public void setCurrentBarCodeDataDescriptor(
-          BDD_BarCodeDataDescriptor currentBarCodeDataDescriptor) {
+      BDD_BarCodeDataDescriptor currentBarCodeDataDescriptor) {
     this.currentBarCodeDataDescriptor = currentBarCodeDataDescriptor;
   }
 
@@ -217,7 +217,7 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
   }
 
   public void setCurrentCodePageDescriptor(
-          CPD_CodePageDescriptor currentCodePageDescriptor) {
+      CPD_CodePageDescriptor currentCodePageDescriptor) {
     this.currentCodePageDescriptor = currentCodePageDescriptor;
   }
 

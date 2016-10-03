@@ -196,7 +196,7 @@ public class OBP_ObjectAreaPosition extends StructuredField {
     }
 
     public void setReferenceCoordinateSystem(
-            AFPReferenceCoordinateSystem referenceCoordinateSystem) {
+        AFPReferenceCoordinateSystem referenceCoordinateSystem) {
       this.referenceCoordinateSystem = referenceCoordinateSystem;
     }
   }

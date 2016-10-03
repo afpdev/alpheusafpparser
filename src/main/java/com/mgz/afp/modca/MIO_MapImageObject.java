@@ -42,12 +42,12 @@ public class MIO_MapImageObject extends StructuredFieldBaseRepeatingGroups {
   }
 
   @Override
-  public void writeAFP(OutputStream os, AFPParserConfiguration config)throws IOException {
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for(IRepeatingGroup rg : this.getRepeatingGroups()){
-      rg.writeAFP(baos,config);
+    for (IRepeatingGroup rg : this.getRepeatingGroups()) {
+      rg.writeAFP(baos, config);
     }
-    super.writeFullStructuredField(os,baos.toByteArray());
+    super.writeFullStructuredField(os, baos.toByteArray());
   }
 
   public static class MIO_RepeatingGroup extends RepeatingGroupWithTriplets {

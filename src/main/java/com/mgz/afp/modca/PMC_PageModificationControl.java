@@ -56,7 +56,9 @@ public class PMC_PageModificationControl extends StructuredFieldBaseTriplets {
     baos.write(pageModificationControlID);
     baos.write(reserved1);
     if (triplets != null) {
-      for (Triplet t : triplets) t.writeAFP(baos, config);
+      for (Triplet t : triplets) {
+        t.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());

@@ -85,8 +85,11 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
 
     public static ControlSequenceFunctionType valueOf(short typeCode) throws AFPParserException {
-      for (ControlSequenceFunctionType csft : values())
-        if (csft.typeCode == typeCode || csft.typeCode == (typeCode - 1)) return csft;
+      for (ControlSequenceFunctionType csft : values()) {
+        if (csft.typeCode == typeCode || csft.typeCode == (typeCode - 1)) {
+          return csft;
+        }
+      }
       return Undefined;
     }
 
@@ -102,18 +105,29 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     NoBypass;
 
     public static PTOCA_BypassFlag valueOf(byte flagByte) {
-      if ((flagByte & 0x08) == 0x08) return BypassRelativeMoveInline;
-      else if ((flagByte & 0x04) == 0x04) return BypassAbsoluteMoveInline;
-      else if ((flagByte & 0x02) == 0x02) return BypassSpaceCharactersVariableSpaceCharacters;
-      else if ((flagByte & 0x01) == 0x01) return NoBypass;
-      else return null;
+      if ((flagByte & 0x08) == 0x08) {
+        return BypassRelativeMoveInline;
+      } else if ((flagByte & 0x04) == 0x04) {
+        return BypassAbsoluteMoveInline;
+      } else if ((flagByte & 0x02) == 0x02) {
+        return BypassSpaceCharactersVariableSpaceCharacters;
+      } else if ((flagByte & 0x01) == 0x01) {
+        return NoBypass;
+      } else {
+        return null;
+      }
     }
 
     public int toByte() {
-      if (this == BypassRelativeMoveInline) return 0x08;
-      else if (this == BypassAbsoluteMoveInline) return 0x04;
-      else if (this == BypassSpaceCharactersVariableSpaceCharacters) return 0x02;
-      else return 0x01;
+      if (this == BypassRelativeMoveInline) {
+        return 0x08;
+      } else if (this == BypassAbsoluteMoveInline) {
+        return 0x04;
+      } else if (this == BypassSpaceCharactersVariableSpaceCharacters) {
+        return 0x02;
+      } else {
+        return 0x01;
+      }
     }
   }
 
@@ -199,7 +213,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
 
     public void setControlSequenceFunctionType(
-            ControlSequenceFunctionType controlSequenceFunctionType) {
+        ControlSequenceFunctionType controlSequenceFunctionType) {
       this.controlSequenceFunctionType = controlSequenceFunctionType;
     }
 
@@ -241,7 +255,9 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      if (undefinedData != null) os.write(undefinedData);
+      if (undefinedData != null) {
+        os.write(undefinedData);
+      }
     }
 
   }
@@ -488,7 +504,9 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      if (ignoredData != null) os.write(ignoredData);
+      if (ignoredData != null) {
+        os.write(ignoredData);
+      }
     }
 
 
@@ -606,7 +624,9 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
       os.write(UtilBinaryDecoding.shortToByteArray(repeatLength, 2));
-      if (repeatData != null) os.write(repeatData);
+      if (repeatData != null) {
+        os.write(repeatData);
+      }
     }
 
 
@@ -800,7 +820,9 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
       os.write(UtilBinaryDecoding.shortToByteArray(adjustment, 2));
-      if (direction != null) os.write(direction.toByte());
+      if (direction != null) {
+        os.write(direction.toByte());
+      }
     }
 
     public short getAdjustment() {
@@ -824,13 +846,19 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       NegativeIDirection;
 
       public static SIA_Direction valueOf(byte codeByte) {
-        if (codeByte == 0) return PositiveIDirection;
-        else return NegativeIDirection;
+        if (codeByte == 0) {
+          return PositiveIDirection;
+        } else {
+          return NegativeIDirection;
+        }
       }
 
       public int toByte() {
-        if (this == PositiveIDirection) return 0x00;
-        else return 0x01;
+        if (this == PositiveIDirection) {
+          return 0x00;
+        } else {
+          return 0x01;
+        }
       }
     }
   }
@@ -878,7 +906,9 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
       os.write(foregroundColor.toByte2());
-      if (precision != null) os.write(precision.toByte());
+      if (precision != null) {
+        os.write(precision.toByte());
+      }
     }
 
     public AFPColorValue getForegroundColor() {
@@ -902,13 +932,19 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       IfSpecifiedColorNotSupported_SubstitutColorOrDefaul0xFF07;
 
       public static STC_Precision valueOf(byte codeByte) {
-        if (codeByte == 0x00) return IfSpecifiedColorNotSupported_EceptionAndDefault0xFF07;
-        else return IfSpecifiedColorNotSupported_SubstitutColorOrDefaul0xFF07;
+        if (codeByte == 0x00) {
+          return IfSpecifiedColorNotSupported_EceptionAndDefault0xFF07;
+        } else {
+          return IfSpecifiedColorNotSupported_SubstitutColorOrDefaul0xFF07;
+        }
       }
 
       public int toByte() {
-        if (this == IfSpecifiedColorNotSupported_EceptionAndDefault0xFF07) return 0x00;
-        else return 0x01;
+        if (this == IfSpecifiedColorNotSupported_EceptionAndDefault0xFF07) {
+          return 0x00;
+        } else {
+          return 0x01;
+        }
       }
     }
   }
@@ -1036,7 +1072,11 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       MoveTowardIAxis;
 
       public static TBM_Direction valueOf(byte codeByte) throws AFPParserException {
-        for (TBM_Direction dir : values()) if (dir.ordinal() == codeByte) return dir;
+        for (TBM_Direction dir : values()) {
+          if (dir.ordinal() == codeByte) {
+            return dir;
+          }
+        }
         throw new AFPParserException("The TBM direction code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -1050,8 +1090,11 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       MayBeSimulated;
 
       public static TBM_Precision valueOf(byte codeByte) throws AFPParserException {
-        if (codeByte == 0x00) return AccuratelyPlaced;
-        else if (codeByte == 0x01) return MayBeSimulated;
+        if (codeByte == 0x00) {
+          return AccuratelyPlaced;
+        } else if (codeByte == 0x01) {
+          return MayBeSimulated;
+        }
         throw new AFPParserException("The TBM precision code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 

@@ -32,18 +32,20 @@ public class UtilCharacterEncodingTest {
   public void testStringToByteArray() {
     SortedMap<String, Charset> charsets = Charset.availableCharsets();
 
-    String testStrings[] = new String[]{"hallo welt", "ÄÖßabc€!$!§Üäö \t\n\r", "", null};
-    int[] lens = new int[]{0, 1, 3, 8, 100, 256, 1024};
-    byte[] fillers = new byte[]{0x00, (byte) 0xff, 0x12, Constants.EBCDIC_ID_FILLER};
+    String testStrings[] = new String[] {"hallo welt", "ÄÖßabc€!$!§Üäö \t\n\r", "", null};
+    int[] lens = new int[] {0, 1, 3, 8, 100, 256, 1024};
+    byte[] fillers = new byte[] {0x00, (byte) 0xff, 0x12, Constants.EBCDIC_ID_FILLER};
 
     for (Charset chs : charsets.values()) {
-      if (!chs.canEncode()) continue;
+      if (!chs.canEncode()) {
+        continue;
+      }
 
       for (String str : testStrings) {
         for (int len : lens) {
           for (byte filler : fillers) {
 
-            byte[] expected = str != null && str.length() > 0 ? str.getBytes(chs) : new byte[]{};
+            byte[] expected = str != null && str.length() > 0 ? str.getBytes(chs) : new byte[] {};
 
             byte[] result = UtilCharacterEncoding.stringToByteArray(str, chs, len, filler);
 
@@ -53,8 +55,9 @@ public class UtilCharacterEncodingTest {
 
             assertEquals("Length of resulting byte[] is not as expected.", len, result.length);
             if (len > expected.length) {
-              for (int i = expected.length; i < result.length; i++)
+              for (int i = expected.length; i < result.length; i++) {
                 assertEquals("Filler byte is not as expected.", result[i], filler);
+              }
             }
           }
         }

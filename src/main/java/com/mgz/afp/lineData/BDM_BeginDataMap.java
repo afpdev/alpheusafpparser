@@ -64,7 +64,9 @@ public class BDM_BeginDataMap extends StructuredFieldBaseTriplets implements IHa
     if (dataFormat != null) {
       baos.write(dataFormat.toByte());
       if (triplets != null) {
-        for (Triplet t : triplets) t.writeAFP(baos, config);
+        for (Triplet t : triplets) {
+          t.writeAFP(baos, config);
+        }
       }
     }
 
@@ -108,7 +110,11 @@ public class BDM_BeginDataMap extends StructuredFieldBaseTriplets implements IHa
     UsingXMD;
 
     public static BDM_DataFormat valueOf(byte dataFormtCode) {
-      for (BDM_DataFormat df : values()) if (df.ordinal() == dataFormtCode) return df;
+      for (BDM_DataFormat df : values()) {
+        if (df.ordinal() == dataFormtCode) {
+          return df;
+        }
+      }
       return null;
     }
 

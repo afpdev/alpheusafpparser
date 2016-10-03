@@ -58,7 +58,9 @@ public class MSU_MapSuppression extends StructuredFieldBaseRepeatingGroups {
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     if (repeatingGroups != null) {
-      for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+      for (IRepeatingGroup rg : repeatingGroups) {
+        rg.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());

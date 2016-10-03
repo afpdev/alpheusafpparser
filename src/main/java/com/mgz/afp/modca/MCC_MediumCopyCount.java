@@ -49,7 +49,9 @@ public class MCC_MediumCopyCount extends StructuredField {
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for (MCC_RepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    for (MCC_RepeatingGroup rg : repeatingGroups) {
+      rg.writeAFP(baos, config);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -63,14 +65,19 @@ public class MCC_MediumCopyCount extends StructuredField {
   }
 
   public void addRepeatingGroup(MCC_RepeatingGroup rg) {
-    if (rg == null) return;
-    if (repeatingGroups == null)
+    if (rg == null) {
+      return;
+    }
+    if (repeatingGroups == null) {
       repeatingGroups = new ArrayList<MCC_MediumCopyCount.MCC_RepeatingGroup>();
+    }
     repeatingGroups.add(rg);
   }
 
   public void removeRepeatingGroup(MCC_RepeatingGroup rg) {
-    if (repeatingGroups == null) return;
+    if (repeatingGroups == null) {
+      return;
+    }
     repeatingGroups.remove(rg);
   }
 
@@ -126,7 +133,7 @@ public class MCC_MediumCopyCount extends StructuredField {
     }
 
     public void setMediumModificationControlIdentifier(
-            byte mediumModificationControlIdentifier) {
+        byte mediumModificationControlIdentifier) {
       this.mediumModificationControlIdentifier = mediumModificationControlIdentifier;
     }
   }

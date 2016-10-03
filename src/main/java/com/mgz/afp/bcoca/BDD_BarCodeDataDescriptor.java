@@ -226,50 +226,50 @@ public class BDD_BarCodeDataDescriptor extends StructuredField {
   }
 
   public enum BarCodeType {
-    Code39_3of9Code_AIM_USS_39(0x01, true, true, new byte[]{0x01, 0x02}),
-    MSI_MmodifiedPlesseyCode(0x02, true, true, new byte[]{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09}),
-    UPC_CGPC_VersionA(0x03, true, true, new byte[]{0x00}),
-    UPC_CGPC_VersionE(0x05, true, true, new byte[]{0x00}),
-    UPC_TwoDigit_Supplemental_Periodicals(0x06, true, true, new byte[]{0x00, 0x01, 0x02}),
-    UPC_FiveDigit_Supplemental_Paperbacks(0x07, true, true, new byte[]{0x00, 0x01, 0x02}),
-    EAN_8_includingJANShort(0x08, true, true, new byte[]{0x00}),
-    EAN_13_includingJANStandard(0x09, true, true, new byte[]{0x00}),
-    Industrial_2of5(0x0A, false, false, new byte[]{0x01, 0x02}),
-    Matrix_2ofFive(0x0B, false, false, new byte[]{0x01, 0x02}),
+    Code39_3of9Code_AIM_USS_39(0x01, true, true, new byte[] {0x01, 0x02}),
+    MSI_MmodifiedPlesseyCode(0x02, true, true, new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09}),
+    UPC_CGPC_VersionA(0x03, true, true, new byte[] {0x00}),
+    UPC_CGPC_VersionE(0x05, true, true, new byte[] {0x00}),
+    UPC_TwoDigit_Supplemental_Periodicals(0x06, true, true, new byte[] {0x00, 0x01, 0x02}),
+    UPC_FiveDigit_Supplemental_Paperbacks(0x07, true, true, new byte[] {0x00, 0x01, 0x02}),
+    EAN_8_includingJANShort(0x08, true, true, new byte[] {0x00}),
+    EAN_13_includingJANStandard(0x09, true, true, new byte[] {0x00}),
+    Industrial_2of5(0x0A, false, false, new byte[] {0x01, 0x02}),
+    Matrix_2ofFive(0x0B, false, false, new byte[] {0x01, 0x02}),
 
-    Interleaved_2of5__ITF14__AIM_USS_I_2of5(0x0C, true, true, new byte[]{0x01, 0x02, 0x03, 0x04}),
-    Codabar_2of7_AIM_USS_Codabar(0x0D, false, true, new byte[]{0x01, 0x02}),
-    Code_128__GS1_128__UCC_EAN_128__AIM_USS_128__IntelligentMail__ContainerBarcode(0x11, false, true, new byte[]{0x02, 0x03, 0x04, 0x05}),
-    EAN_TwoDigit_Supplemental(0x16, true, true, new byte[]{0x00, 0x01}),
-    EAN_FiveDigit_Supplemental(0x17, true, true, new byte[]{0x00, 0x01}),
-    POSTNET_PLANET(0x18, false, false, new byte[]{0x00, 0x01, 0x02, 0x03, 0x04}),
-    RM4SCC_DutchKIX(0x1A, false, true, new byte[]{0x00, 0x01}),
-    JapanPostalBarCode(0x1B, false, true, new byte[]{0x00, 0x01}),
-    DataMatrix_GS1DataMatrix_2D(0x1C, false, true, new byte[]{0x00}),
-    MaxiCode_2D(0x1D, false, true, new byte[]{0x00}),
-    PDF417_2D(0x1E, false, true, new byte[]{0x00, 0x01}),
-    AustraliaPostBarCode(0x1F, false, true, new byte[]{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}),
-    QRCode_2D(0x20, false, true, new byte[]{0x02}),
-    Code93(0x21, false, true, new byte[]{0x00}),
-    IntelligentMailBarcode(0x22, false, true, new byte[]{0x00, 0x01, 0x02, 0x03}),
-    RoyalMail_RED_TAG(0x23, false, false, new byte[]{0x00}),
-    GS1_DataBar(0x24, false, false, new byte[]{0x00, 0x01, 0x02, 0x04, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x17, 0x18, 0x19, 0x1A, 0x1B}),
+    Interleaved_2of5__ITF14__AIM_USS_I_2of5(0x0C, true, true, new byte[] {0x01, 0x02, 0x03, 0x04}),
+    Codabar_2of7_AIM_USS_Codabar(0x0D, false, true, new byte[] {0x01, 0x02}),
+    Code_128__GS1_128__UCC_EAN_128__AIM_USS_128__IntelligentMail__ContainerBarcode(0x11, false, true, new byte[] {0x02, 0x03, 0x04, 0x05}),
+    EAN_TwoDigit_Supplemental(0x16, true, true, new byte[] {0x00, 0x01}),
+    EAN_FiveDigit_Supplemental(0x17, true, true, new byte[] {0x00, 0x01}),
+    POSTNET_PLANET(0x18, false, false, new byte[] {0x00, 0x01, 0x02, 0x03, 0x04}),
+    RM4SCC_DutchKIX(0x1A, false, true, new byte[] {0x00, 0x01}),
+    JapanPostalBarCode(0x1B, false, true, new byte[] {0x00, 0x01}),
+    DataMatrix_GS1DataMatrix_2D(0x1C, false, true, new byte[] {0x00}),
+    MaxiCode_2D(0x1D, false, true, new byte[] {0x00}),
+    PDF417_2D(0x1E, false, true, new byte[] {0x00, 0x01}),
+    AustraliaPostBarCode(0x1F, false, true, new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}),
+    QRCode_2D(0x20, false, true, new byte[] {0x02}),
+    Code93(0x21, false, true, new byte[] {0x00}),
+    IntelligentMailBarcode(0x22, false, true, new byte[] {0x00, 0x01, 0x02, 0x03}),
+    RoyalMail_RED_TAG(0x23, false, false, new byte[] {0x00}),
+    GS1_DataBar(0x24, false, false, new byte[] {0x00, 0x01, 0x02, 0x04, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x17, 0x18, 0x19, 0x1A, 0x1B}),
 
     // Retired Bar Codes:
-    Retired_Item7(0x04, false, false, new byte[]{0x00, 0x01, 0x02, 0x03, 0x04}),
-    Retired_Item10(0x0E, false, false, new byte[]{0x00}),
-    Retired_Item11(0x0F, false, false, new byte[]{0x00}),
-    Retired_Item12(0x10, false, false, new byte[]{0x01, 0x02}),
+    Retired_Item7(0x04, false, false, new byte[] {0x00, 0x01, 0x02, 0x03, 0x04}),
+    Retired_Item10(0x0E, false, false, new byte[] {0x00}),
+    Retired_Item11(0x0F, false, false, new byte[] {0x00}),
+    Retired_Item12(0x10, false, false, new byte[] {0x01, 0x02}),
     // Retired_Item20(0x11,?,?,new byte[]{0x01}), // see BCOCA page
-    Retired_Item13(0x12, false, false, new byte[]{0x01, 0x02}),
-    Retired_Item14(0x13, false, false, new byte[]{0x01, 0x02, 0x3}),
-    Retired_Item15(0x14, false, false, new byte[]{0x00}),
-    Retired_Item16(0x15, false, false, new byte[]{0x01, 0x02}),
-    Retired_Item19(0x19, false, false, new byte[]{0x00, 0x01, 0x02, 0x03}),
-    Retired_Item22(0xEC, false, false, new byte[]{0x02}),
-    Retired_Item23(0xED, false, false, new byte[]{0x00}),
-    Retired_Item24(0xEE, false, false, new byte[]{0x00}),
-    Retired_Item25(0xEF, false, false, new byte[]{0x00, 0x01});
+    Retired_Item13(0x12, false, false, new byte[] {0x01, 0x02}),
+    Retired_Item14(0x13, false, false, new byte[] {0x01, 0x02, 0x3}),
+    Retired_Item15(0x14, false, false, new byte[] {0x00}),
+    Retired_Item16(0x15, false, false, new byte[] {0x01, 0x02}),
+    Retired_Item19(0x19, false, false, new byte[] {0x00, 0x01, 0x02, 0x03}),
+    Retired_Item22(0xEC, false, false, new byte[] {0x02}),
+    Retired_Item23(0xED, false, false, new byte[] {0x00}),
+    Retired_Item24(0xEE, false, false, new byte[] {0x00}),
+    Retired_Item25(0xEF, false, false, new byte[] {0x00, 0x01});
 
     int code;
     boolean isBCD1;
@@ -282,7 +282,11 @@ public class BDD_BarCodeDataDescriptor extends StructuredField {
     }
 
     public static BarCodeType valueOf(int barcodeTypeCode) {
-      for (BarCodeType bct : values()) if (bct.code == barcodeTypeCode) return bct;
+      for (BarCodeType bct : values()) {
+        if (bct.code == barcodeTypeCode) {
+          return bct;
+        }
+      }
       return null;
     }
 

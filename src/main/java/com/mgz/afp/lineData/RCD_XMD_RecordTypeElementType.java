@@ -25,7 +25,11 @@ public enum RCD_XMD_RecordTypeElementType {
   GroupHeader;
 
   public static RCD_XMD_RecordTypeElementType valuesOf(byte code) {
-    for (RCD_XMD_RecordTypeElementType rt : values()) if (rt.ordinal() == code) return rt;
+    for (RCD_XMD_RecordTypeElementType rt : values()) {
+      if (rt.ordinal() == code) {
+        return rt;
+      }
+    }
     return null;
   }
 

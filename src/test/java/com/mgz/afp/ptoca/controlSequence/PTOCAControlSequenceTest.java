@@ -51,7 +51,9 @@ public class PTOCAControlSequenceTest {
   public void testUniqunessOfControlSequenceFunctionType() {
     for (ControlSequenceFunctionType csft : ControlSequenceFunctionType.values()) {
       for (ControlSequenceFunctionType otherCsft : ControlSequenceFunctionType.values()) {
-        if (csft == otherCsft) continue;
+        if (csft == otherCsft) {
+          continue;
+        }
         assertFalse(csft.toByte(true) == otherCsft.toByte(true));
         assertFalse(csft.toByte(false) == otherCsft.toByte(false));
       }

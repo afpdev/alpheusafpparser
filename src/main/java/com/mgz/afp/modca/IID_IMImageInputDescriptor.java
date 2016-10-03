@@ -90,7 +90,9 @@ public class IID_IMImageInputDescriptor extends StructuredField {
     baos.write(UtilBinaryDecoding.shortToByteArray(yDefaultCellSize, 2));
     if (constantData32_33 != null) {
       baos.write(constantData32_33);
-      if (color != null) baos.write(color.toByte2());
+      if (color != null) {
+        baos.write(color.toByte2());
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());

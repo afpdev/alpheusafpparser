@@ -38,30 +38,42 @@ public class AFPWriterHumanReadable implements IAFPWriter {
     Class<? extends Object> clazz = sf.getClass();
     do {
       for (Field f : clazz.getDeclaredFields()) {
-        if (!f.isAnnotationPresent(AFPField.class)) continue;
+        if (!f.isAnnotationPresent(AFPField.class)) {
+          continue;
+        }
         AFPField annotationAFPField = f.getAnnotation(AFPField.class);
-        if (annotationAFPField.isHidden()) continue;
+        if (annotationAFPField.isHidden()) {
+          continue;
+        }
 
         String fieldName = null;
         String methodName = null;
         fieldName = f.getName();
         Method method = null;
         for (Method m : clazz.getDeclaredMethods()) {
-          if (!m.isAccessible()) continue;
+          if (!m.isAccessible()) {
+            continue;
+          }
           methodName = m.getName();
-          if (!methodName.startsWith("get")) continue;
+          if (!methodName.startsWith("get")) {
+            continue;
+          }
 
           if (methodName.equalsIgnoreCase("get" + fieldName)) {
             method = m;
             break;
           }
         }
-        if (method == null) continue;
+        if (method == null) {
+          continue;
+        }
 
         Object o;
         try {
           o = method.invoke(sf);
-          if (o == null && annotationAFPField.isOptional()) continue;
+          if (o == null && annotationAFPField.isOptional()) {
+            continue;
+          }
 
 
           if (o != null) {
@@ -98,8 +110,11 @@ public class AFPWriterHumanReadable implements IAFPWriter {
                     }
                   } else {
                     for (Object a : coll) {
-                      if (!isFirst) sb.append(",");
-                      else isFirst = false;
+                      if (!isFirst) {
+                        sb.append(",");
+                      } else {
+                        isFirst = false;
+                      }
 
                       if (a instanceof Enum) {
                         sb.append('"').append(((Enum<?>) a).name()).append('"');

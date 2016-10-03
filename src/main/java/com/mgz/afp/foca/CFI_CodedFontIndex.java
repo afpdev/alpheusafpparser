@@ -91,15 +91,21 @@ public class CFI_CodedFontIndex extends StructuredField {
   }
 
   public void addCFIRepeatingGroup(CFIRepeatingGroup CFIrg) {
-    if (CFIrg == null) return;
-    if (this.cfiRepeatingGroups == null)
+    if (CFIrg == null) {
+      return;
+    }
+    if (this.cfiRepeatingGroups == null) {
       this.cfiRepeatingGroups = new ArrayList<CFIRepeatingGroup>();
+    }
     this.cfiRepeatingGroups.add(CFIrg);
   }
 
   public void removeCFIRepeatingGroup(CFIRepeatingGroup CFIrg) {
-    if (this.cfiRepeatingGroups == null) return;
-    else this.cfiRepeatingGroups.remove(CFIrg);
+    if (this.cfiRepeatingGroups == null) {
+      return;
+    } else {
+      this.cfiRepeatingGroups.remove(CFIrg);
+    }
   }
 
   public static class CFIRepeatingGroup implements IAFPDecodeableWriteable {

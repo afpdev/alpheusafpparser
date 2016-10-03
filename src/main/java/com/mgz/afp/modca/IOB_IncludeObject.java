@@ -89,7 +89,9 @@ public class IOB_IncludeObject extends StructuredFieldBaseName {
     baos.write(UtilBinaryDecoding.intToByteArray(yOriginOfContent, 3));
     baos.write(referenceCoordinateSystem);
     if (triplets != null) {
-      for (Triplet triplet : triplets) triplet.writeAFP(baos, config);
+      for (Triplet triplet : triplets) {
+        triplet.writeAFP(baos, config);
+      }
     }
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -175,13 +177,19 @@ public class IOB_IncludeObject extends StructuredFieldBaseName {
   }
 
   public final void addTriplet(Triplet triplet) {
-    if (triplet == null) return;
-    if (triplets == null) triplets = new ArrayList<Triplet>();
+    if (triplet == null) {
+      return;
+    }
+    if (triplets == null) {
+      triplets = new ArrayList<Triplet>();
+    }
     triplets.add(triplet);
   }
 
   public final void removeTriplet(Triplet triplet) {
-    if (triplets == null) return;
+    if (triplets == null) {
+      return;
+    }
     triplets.remove(triplet);
   }
 }

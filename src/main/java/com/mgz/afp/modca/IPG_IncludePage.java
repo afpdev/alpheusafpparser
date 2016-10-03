@@ -52,7 +52,9 @@ public class IPG_IncludePage extends StructuredFieldBaseTriplets {
     baos.write(UtilCharacterEncoding.stringToByteArray(pageName, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
     baos.write(reserved8_15);
     baos.write(flags.toByte());
-    for (Triplet t : triplets) t.writeAFP(baos, config);
+    for (Triplet t : triplets) {
+      t.writeAFP(baos, config);
+    }
     writeFullStructuredField(os, baos.toByteArray());
   }
 
@@ -85,13 +87,19 @@ public class IPG_IncludePage extends StructuredFieldBaseTriplets {
     PageIsContainedInResourceDocument;
 
     public static IPG_Flag valueOf(byte flagByte) {
-      if ((flagByte & 0x80) != 0) return PageIsContainedInResourceDocument;
-      else return Reserved;
+      if ((flagByte & 0x80) != 0) {
+        return PageIsContainedInResourceDocument;
+      } else {
+        return Reserved;
+      }
     }
 
     public int toByte() {
-      if (this == PageIsContainedInResourceDocument) return 0x80;
-      else return 0x00;
+      if (this == PageIsContainedInResourceDocument) {
+        return 0x80;
+      } else {
+        return 0x00;
+      }
     }
   }
 }

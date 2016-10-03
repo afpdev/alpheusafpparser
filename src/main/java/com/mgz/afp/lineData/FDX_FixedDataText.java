@@ -41,15 +41,21 @@ public class FDX_FixedDataText extends StructuredField {
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     int actualLength = getActualLength(sfData, offset, length);
-    if (actualLength > 0) text = new String(sfData, 0, 8, config.getAfpCharSet());
-    else text = null;
+    if (actualLength > 0) {
+      text = new String(sfData, 0, 8, config.getAfpCharSet());
+    } else {
+      text = null;
+    }
   }
 
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-    if (text != null) writeFullStructuredField(os, text.getBytes(config.getAfpCharSet()));
-    else writeFullStructuredField(os, null);
+    if (text != null) {
+      writeFullStructuredField(os, text.getBytes(config.getAfpCharSet()));
+    } else {
+      writeFullStructuredField(os, null);
+    }
   }
 
   public final String getText() {

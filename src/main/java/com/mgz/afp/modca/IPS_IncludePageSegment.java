@@ -70,7 +70,9 @@ public class IPS_IncludePageSegment extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(xOrigin, 3));
     baos.write(UtilBinaryDecoding.intToByteArray(yOrigin, 3));
     if (triplets != null) {
-      for (Triplet t : triplets) t.writeAFP(baos, config);
+      for (Triplet t : triplets) {
+        t.writeAFP(baos, config);
+      }
     }
     writeFullStructuredField(os, baos.toByteArray());
   }

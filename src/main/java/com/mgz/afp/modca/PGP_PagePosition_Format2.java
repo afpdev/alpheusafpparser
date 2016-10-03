@@ -76,7 +76,9 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(constant0);
-    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    for (IRepeatingGroup rg : repeatingGroups) {
+      rg.writeAFP(baos, config);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -106,14 +108,14 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
       yOrigin = UtilBinaryDecoding.parseInt(sfData, offset + 4, 3);
       xRotation = AFPOrientation.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 7, 2));
       sheetSideAndPartitionSelection = PGP_SheetSideAndPartitionSelection.valueOf(sfData[offset + 9]);
-      if(repeatingGroupLength>10){
+      if (repeatingGroupLength > 10) {
         flags = PGP_RGFlag.valueOf(sfData[offset + 10]);
-      }else{
-        flags=null;
+      } else {
+        flags = null;
       }
-      if(repeatingGroupLength>11) {
+      if (repeatingGroupLength > 11) {
         pageModififationControlID = sfData[offset + 11];
-      }else{
+      } else {
         pageModififationControlID = null;
       }
     }
@@ -125,10 +127,10 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
       os.write(UtilBinaryDecoding.intToByteArray(yOrigin, 3));
       os.write(xRotation.toBytes());
       os.write(sheetSideAndPartitionSelection.toByte());
-      if(flags!=null){
+      if (flags != null) {
         os.write(PGP_RGFlag.toByte(flags));
       }
-      if(pageModififationControlID!=null) {
+      if (pageModififationControlID != null) {
         os.write(pageModififationControlID);
       }
     }
@@ -162,7 +164,7 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
     }
 
     public void setSheetSideAndPartitionSelection(
-            PGP_SheetSideAndPartitionSelection sheetSideAndPartitionSelection) {
+        PGP_SheetSideAndPartitionSelection sheetSideAndPartitionSelection) {
       this.sheetSideAndPartitionSelection = sheetSideAndPartitionSelection;
     }
 
@@ -200,8 +202,11 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
       }
 
       public static PGP_SheetSideAndPartitionSelection valueOf(byte codeByte) {
-        for (PGP_SheetSideAndPartitionSelection ssps : values())
-          if (ssps.code == codeByte) return ssps;
+        for (PGP_SheetSideAndPartitionSelection ssps : values()) {
+          if (ssps.code == codeByte) {
+            return ssps;
+          }
+        }
         return null;
       }
 
@@ -232,24 +237,44 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
 
       public static EnumSet<PGP_RGFlag> valueOf(byte codeByte) {
         EnumSet<PGP_RGFlag> result = EnumSet.noneOf(PGP_RGFlag.class);
-        if ((codeByte & 0x80) == 0) result.add(VariablPageData_PresentVPDInPartiton);
-        else result.add(VariablPageData_DoNotPresentVPDInPartiton);
-        if ((codeByte & 0x40) == 0) result.add(PCMOverlay_PresentPCMOverlaysInPartition);
-        else result.add(PCMOverlay_DoNotPresentPCMOverlaysInPartition);
-        if ((codeByte & 0x20) == 0) result.add(PCMOverlayPosition_PageOrigin);
-        else result.add(PCMOverlayPosition_PartitionOrigin);
-        if ((codeByte & 0x10) == 0) result.add(PageViewControl_IntendedForViewing);
-        else result.add(PageViewControl_NotIntendedForViewing);
+        if ((codeByte & 0x80) == 0) {
+          result.add(VariablPageData_PresentVPDInPartiton);
+        } else {
+          result.add(VariablPageData_DoNotPresentVPDInPartiton);
+        }
+        if ((codeByte & 0x40) == 0) {
+          result.add(PCMOverlay_PresentPCMOverlaysInPartition);
+        } else {
+          result.add(PCMOverlay_DoNotPresentPCMOverlaysInPartition);
+        }
+        if ((codeByte & 0x20) == 0) {
+          result.add(PCMOverlayPosition_PageOrigin);
+        } else {
+          result.add(PCMOverlayPosition_PartitionOrigin);
+        }
+        if ((codeByte & 0x10) == 0) {
+          result.add(PageViewControl_IntendedForViewing);
+        } else {
+          result.add(PageViewControl_NotIntendedForViewing);
+        }
         return result;
       }
 
       public static int toByte(EnumSet<PGP_RGFlag> flags) {
         int result = 0;
 
-        if (flags.contains(VariablPageData_DoNotPresentVPDInPartiton)) result |= 0x80;
-        if (flags.contains(PCMOverlay_DoNotPresentPCMOverlaysInPartition)) result |= 0x40;
-        if (flags.contains(PCMOverlayPosition_PartitionOrigin)) result |= 0x20;
-        if (flags.contains(PageViewControl_NotIntendedForViewing)) result |= 0x10;
+        if (flags.contains(VariablPageData_DoNotPresentVPDInPartiton)) {
+          result |= 0x80;
+        }
+        if (flags.contains(PCMOverlay_DoNotPresentPCMOverlaysInPartition)) {
+          result |= 0x40;
+        }
+        if (flags.contains(PCMOverlayPosition_PartitionOrigin)) {
+          result |= 0x20;
+        }
+        if (flags.contains(PageViewControl_NotIntendedForViewing)) {
+          result |= 0x10;
+        }
 
         return result;
       }

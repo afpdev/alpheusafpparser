@@ -40,7 +40,9 @@ public class UtilBinaryDecoding {
   }
 
   public static final short parseShort(InputStream is, int length) throws AFPParserException, IOException {
-    if (length > 2) throw new AFPParserException("Short has max length of two bytes.");
+    if (length > 2) {
+      throw new AFPParserException("Short has max length of two bytes.");
+    }
     int result = 0;
     for (int i = 0; i < length; i++) {
       result = (result << 8);
@@ -50,7 +52,9 @@ public class UtilBinaryDecoding {
   }
 
   public static short parseShort(byte[] sfData, int offset, int length) throws AFPParserException {
-    if (length > 2) throw new AFPParserException("Short has max length of two bytes.");
+    if (length > 2) {
+      throw new AFPParserException("Short has max length of two bytes.");
+    }
     short result = 0;
     for (int i = 0; i < length; i++) {
       result = (short) (result << 8);
@@ -60,7 +64,9 @@ public class UtilBinaryDecoding {
   }
 
   public static final int parseInt(InputStream is, int length) throws IOException {
-    if (length > 4) throw new IOException("Integer has max length of four bytes.");
+    if (length > 4) {
+      throw new IOException("Integer has max length of four bytes.");
+    }
     int result = 0;
     for (int i = 0; i < length; i++) {
       result = (result << 8);
@@ -70,7 +76,9 @@ public class UtilBinaryDecoding {
   }
 
   public static int parseInt(byte[] sfData, int offset, int length) throws AFPParserException {
-    if (length > 4) throw new AFPParserException("Integer has max length of four bytes.");
+    if (length > 4) {
+      throw new AFPParserException("Integer has max length of four bytes.");
+    }
     int result = 0;
     for (int i = 0; i < length; i++) {
       result = (result << 8);
@@ -92,7 +100,9 @@ public class UtilBinaryDecoding {
   }
 
   public static final long parseLong(InputStream is, int length) throws IOException {
-    if (length > 8) throw new IOException("Long integer has max length of eight bytes.");
+    if (length > 8) {
+      throw new IOException("Long integer has max length of eight bytes.");
+    }
     long result = 0;
     for (int i = 0; i < length; i++) {
       result = (result << 8);
@@ -102,7 +112,9 @@ public class UtilBinaryDecoding {
   }
 
   public static long parseLong(byte[] sfData, int offset, int length) throws AFPParserException {
-    if (length > 8) throw new AFPParserException("Long integer has max length of eight bytes.");
+    if (length > 8) {
+      throw new AFPParserException("Long integer has max length of eight bytes.");
+    }
     long result = 0;
     for (int i = 0; i < length; i++) {
       result = (result << 8);
@@ -144,9 +156,13 @@ public class UtilBinaryDecoding {
 
     for (int i = 0; i < byteLen; i++) {
       for (int j = 7; j >= 0; j--) {
-        if (bitSet.length() < (i * 8 + (7 - j))) return result;
+        if (bitSet.length() < (i * 8 + (7 - j))) {
+          return result;
+        }
 
-        if (bitSet.get(i * 8 + (7 - j))) result[i] |= (0x01 << j);
+        if (bitSet.get(i * 8 + (7 - j))) {
+          result[i] |= (0x01 << j);
+        }
       }
     }
 

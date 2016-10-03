@@ -79,7 +79,9 @@ public class IPO_IncludePageOverlay extends StructuredFieldBaseTriplets {
     if (xRotation != null) {
       baos.write(xRotation.toBytes());
       if (triplets != null) {
-        for (Triplet t : triplets) t.writeAFP(baos, config);
+        for (Triplet t : triplets) {
+          t.writeAFP(baos, config);
+        }
       }
     }
     writeFullStructuredField(os, baos.toByteArray());

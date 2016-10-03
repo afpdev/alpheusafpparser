@@ -65,7 +65,9 @@ public class MMO_MapMediumOverlay extends StructuredFieldBaseRepeatingGroups {
     baos.write(lengtOfEachRepeatingGroup);
     baos.write(reserved1_3);
     if (repeatingGroups != null) {
-      for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+      for (IRepeatingGroup rg : repeatingGroups) {
+        rg.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());
@@ -152,13 +154,19 @@ public class MMO_MapMediumOverlay extends StructuredFieldBaseRepeatingGroups {
       RasterIndicator_RasterOverlay;
 
       public static MMO_Flag valueOf(byte codeByte) {
-        if ((codeByte & 0x80) == 0x00) return RasterIndicator_CodedOverlay;
-        else return RasterIndicator_RasterOverlay;
+        if ((codeByte & 0x80) == 0x00) {
+          return RasterIndicator_CodedOverlay;
+        } else {
+          return RasterIndicator_RasterOverlay;
+        }
       }
 
       public int toByte() {
-        if (this == RasterIndicator_CodedOverlay) return 0x00;
-        else return 0x80;
+        if (this == RasterIndicator_CodedOverlay) {
+          return 0x00;
+        } else {
+          return 0x80;
+        }
       }
     }
   }

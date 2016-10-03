@@ -149,7 +149,9 @@ public class FND_FontDescriptor extends StructuredField {
     baos.write(UtilBinaryDecoding.intToByteArray(FGID_FontTypefaceGlobalID, 2));
 
     if (triplets != null) {
-      for (Triplet t : triplets) t.writeAFP(baos, config);
+      for (Triplet t : triplets) {
+        t.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());
@@ -280,7 +282,7 @@ public class FND_FontDescriptor extends StructuredField {
   }
 
   public void setGCSGID_FontGraphicCharacterSetGlobalID(
-          int gCSGID_FontGraphicCharacterSetGlobalID) {
+      int gCSGID_FontGraphicCharacterSetGlobalID) {
     GCSGID_FontGraphicCharacterSetGlobalID = gCSGID_FontGraphicCharacterSetGlobalID;
   }
 
@@ -313,7 +315,11 @@ public class FND_FontDescriptor extends StructuredField {
     Ultrabold;
 
     public static FontWeightClass valueOf(byte code) {
-      for (FontWeightClass fwc : values()) if (fwc.ordinal() == code) return fwc;
+      for (FontWeightClass fwc : values()) {
+        if (fwc.ordinal() == code) {
+          return fwc;
+        }
+      }
       return null;
     }
 
@@ -335,7 +341,11 @@ public class FND_FontDescriptor extends StructuredField {
     Ultraexpanded;
 
     public static FontWidthClass valueOf(byte code) {
-      for (FontWidthClass fwc : values()) if (fwc.ordinal() == code) return fwc;
+      for (FontWidthClass fwc : values()) {
+        if (fwc.ordinal() == code) {
+          return fwc;
+        }
+      }
       return null;
     }
 
@@ -353,20 +363,36 @@ public class FND_FontDescriptor extends StructuredField {
 
     public static EnumSet<FontDesignFlag> valueOf(byte code) {
       EnumSet<FontDesignFlag> result = EnumSet.noneOf(FontDesignFlag.class);
-      if ((code & 0x80) != 0) result.add(Italic);
-      if ((code & 0x40) != 0) result.add(Underscored);
-      if ((code & 0x10) != 0) result.add(Hollow);
-      if ((code & 0x08) != 0) result.add(Overstruck);
+      if ((code & 0x80) != 0) {
+        result.add(Italic);
+      }
+      if ((code & 0x40) != 0) {
+        result.add(Underscored);
+      }
+      if ((code & 0x10) != 0) {
+        result.add(Hollow);
+      }
+      if ((code & 0x08) != 0) {
+        result.add(Overstruck);
+      }
 
       return result;
     }
 
     public static int toByte(EnumSet<FontDesignFlag> fontDesignFlags) {
       int result = 0;
-      if (fontDesignFlags.contains(Italic)) result |= 0x80;
-      if (fontDesignFlags.contains(Underscored)) result |= 0x40;
-      if (fontDesignFlags.contains(Hollow)) result |= 0x10;
-      if (fontDesignFlags.contains(Overstruck)) result |= 0x08;
+      if (fontDesignFlags.contains(Italic)) {
+        result |= 0x80;
+      }
+      if (fontDesignFlags.contains(Underscored)) {
+        result |= 0x40;
+      }
+      if (fontDesignFlags.contains(Hollow)) {
+        result |= 0x10;
+      }
+      if (fontDesignFlags.contains(Overstruck)) {
+        result |= 0x08;
+      }
       return result;
     }
   }

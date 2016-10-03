@@ -51,14 +51,14 @@ public class UtilBinaryDecodingTest {
 
     assertEquals("byte array length different", bytes.length, result.length);
 
-    int byteLen = bitSet.length()/ 8;
+    int byteLen = bitSet.length() / 8;
     for (int i = 0; i < byteLen; i++) {
       for (int j = 0; j <= 7; j++) {
-        assertTrue("bit " + (i * 8 + j) + "differs", bitSet.get(i * 8 + j) == ((bytes[i] & (0x01 << (7-j))) != 0));
+        assertTrue("bit " + (i * 8 + j) + "differs", bitSet.get(i * 8 + j) == ((bytes[i] & (0x01 << (7 - j))) != 0));
       }
     }
 
-    assertArrayEquals(bytes,result);
+    assertArrayEquals(bytes, result);
 
   }
 

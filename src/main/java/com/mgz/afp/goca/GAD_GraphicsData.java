@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * GOCA, 164.<br><br>
- *
+ * <p>
  * The graphics segments for a graphics object are contained within one or more GAD structured
  * fields. Receipt of the first segment starts the drawing process. No restrictions exist on how
  * much or how little graphics data is specified in a single GAD, except for the length limit of the
@@ -404,14 +404,18 @@ public class GAD_GraphicsData extends StructuredField {
       os.write(lengtOfFollowingParameters);
       os.write(nameOfSegment.getBytes(Constants.cpIBM500));
       os.write(flagAnyValue);
-      if (segmentPropertiesFlags != null)
+      if (segmentPropertiesFlags != null) {
         os.write(SegmentPropertiesFlag.toByte(segmentPropertiesFlags));
-      else os.write(0x00);
+      } else {
+        os.write(0x00);
+      }
 
       if (drawingOrders != null && drawingOrders.size() > 0) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (GAD_DrawingOrder order : drawingOrders) {
-          if (order == null) continue;
+          if (order == null) {
+            continue;
+          }
           order.writeAFP(baos, config);
         }
         drawingOrdersData = baos.toByteArray();
@@ -435,8 +439,9 @@ public class GAD_GraphicsData extends StructuredField {
      * @param flag {@link SegmentPropertiesFlag} to set.
      */
     public void setSegmentPropertiesFlag(SegmentPropertiesFlag flag) {
-      if (segmentPropertiesFlags == null)
+      if (segmentPropertiesFlags == null) {
         segmentPropertiesFlags = EnumSet.noneOf(SegmentPropertiesFlag.class);
+      }
       SegmentPropertiesFlag.setFlag(segmentPropertiesFlags, flag);
     }
 
@@ -477,7 +482,7 @@ public class GAD_GraphicsData extends StructuredField {
     }
 
     public void setSegmentPropertiesFlags(
-            EnumSet<SegmentPropertiesFlag> segmentPropertiesFlags) {
+        EnumSet<SegmentPropertiesFlag> segmentPropertiesFlags) {
       this.segmentPropertiesFlags = segmentPropertiesFlags;
     }
 
@@ -494,7 +499,7 @@ public class GAD_GraphicsData extends StructuredField {
     }
 
     public void setNameOfPredecessorSuccessorSegment(
-            String nameOfPredecessorSuccessorSegment) {
+        String nameOfPredecessorSuccessorSegment) {
       this.nameOfPredecessorSuccessorSegment = nameOfPredecessorSuccessorSegment;
     }
 
@@ -524,26 +529,45 @@ public class GAD_GraphicsData extends StructuredField {
 
       public static EnumSet<SegmentPropertiesFlag> valueOF(byte flagsByte) {
         EnumSet<SegmentPropertiesFlag> result = EnumSet.noneOf(SegmentPropertiesFlag.class);
-        if ((flagsByte & 0x80) == 0) result.add(Chained);
-        else result.add(Unchained);
-        if ((flagsByte & 0x10) == 0) result.add(NoProlog);
-        else result.add(Prolog);
+        if ((flagsByte & 0x80) == 0) {
+          result.add(Chained);
+        } else {
+          result.add(Unchained);
+        }
+        if ((flagsByte & 0x10) == 0) {
+          result.add(NoProlog);
+        } else {
+          result.add(Prolog);
+        }
         int crap = (flagsByte >> 1) & 0x03;
-        if (crap == 0x00) result.add(NewSegment);
-        else if (crap == 0x01) result.add(Reserved_01);
-        else if (crap == 0x02) result.add(Reserved_10);
-        else if (crap == 0x03) result.add(AppendToExisting);
+        if (crap == 0x00) {
+          result.add(NewSegment);
+        } else if (crap == 0x01) {
+          result.add(Reserved_01);
+        } else if (crap == 0x02) {
+          result.add(Reserved_10);
+        } else if (crap == 0x03) {
+          result.add(AppendToExisting);
+        }
         return result;
       }
 
       public static int toByte(EnumSet<SegmentPropertiesFlag> flags) {
         int result = 0;
 
-        if (flags.contains(Unchained)) result |= 0x80;
-        if (flags.contains(Prolog)) result |= 0x10;
-        if (flags.contains(Reserved_01)) result += 2;
-        else if (flags.contains(Reserved_10)) result += 4;
-        else if (flags.contains(AppendToExisting)) result += 6;
+        if (flags.contains(Unchained)) {
+          result |= 0x80;
+        }
+        if (flags.contains(Prolog)) {
+          result |= 0x10;
+        }
+        if (flags.contains(Reserved_01)) {
+          result += 2;
+        } else if (flags.contains(Reserved_10)) {
+          result += 4;
+        } else if (flags.contains(AppendToExisting)) {
+          result += 6;
+        }
 
         return result;
       }

@@ -83,7 +83,9 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
     baos.write(UtilBinaryDecoding.intToByteArray(numberOfRepeatingGroups, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(lengthOfRepeatingGroup, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(lengthOfComparisonString, 2));
-    for (CCP_RepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    for (CCP_RepeatingGroup rg : repeatingGroups) {
+      rg.writeAFP(baos, config);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -163,7 +165,11 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
     }
 
     public static CCP_Flag valueOf(byte flagByte) {
-      for (CCP_Flag flag : values()) if (flag.code == flagByte) return flag;
+      for (CCP_Flag flag : values()) {
+        if (flag.code == flagByte) {
+          return flag;
+        }
+      }
       return null;
     }
 
@@ -189,25 +195,41 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       int actualLength = getActualLength(sfData, offset, length);
-      if (actualLength >= 1)
+      if (actualLength >= 1) {
         timingOfAction = CCP_TimingOfAction.valueOf(UtilBinaryDecoding.parseInt(sfData, offset, 1));
-      else timingOfAction = null;
-      if (actualLength >= 2)
+      } else {
+        timingOfAction = null;
+      }
+      if (actualLength >= 2) {
         mediumMapAction = CCP_MediumMapAction.valueOf(sfData[offset + 1]);
-      else mediumMapAction = null;
-      if (actualLength >= 10)
+      } else {
+        mediumMapAction = null;
+      }
+      if (actualLength >= 10) {
         mediumMapName = new String(sfData, offset + 2, 8, config.getAfpCharSet());
-      else mediumMapName = null;
-      if (actualLength >= 11) dataMapAction = CCP_DataMapAction.valueOf(sfData[offset + 10]);
-      else dataMapAction = null;
-      if (actualLength >= 19)
+      } else {
+        mediumMapName = null;
+      }
+      if (actualLength >= 11) {
+        dataMapAction = CCP_DataMapAction.valueOf(sfData[offset + 10]);
+      } else {
+        dataMapAction = null;
+      }
+      if (actualLength >= 19) {
         dataMapName = new String(sfData, offset + 11, 8, config.getAfpCharSet());
-      else dataMapName = null;
-      if (actualLength >= 20) comparison = CCP_Comparison.valueOf(sfData[offset + 19]);
-      else comparison = null;
-      if (actualLength >= 21)
+      } else {
+        dataMapName = null;
+      }
+      if (actualLength >= 20) {
+        comparison = CCP_Comparison.valueOf(sfData[offset + 19]);
+      } else {
+        comparison = null;
+      }
+      if (actualLength >= 21) {
         comparisonString = new String(sfData, offset + 20, actualLength - 20, config.getAfpCharSet());
-      else comparisonString = null;
+      } else {
+        comparisonString = null;
+      }
     }
 
     @Override
@@ -305,7 +327,11 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
       }
 
       public static CCP_TimingOfAction valueOf(int codeByte) {
-        for (CCP_TimingOfAction toa : values()) if (toa.code == codeByte) return toa;
+        for (CCP_TimingOfAction toa : values()) {
+          if (toa.code == codeByte) {
+            return toa;
+          }
+        }
         return null;
       }
 
@@ -322,7 +348,11 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
       InvokeNextMediumMap;
 
       public static CCP_MediumMapAction valueOf(byte codeByte) {
-        for (CCP_MediumMapAction mma : values()) if (mma.ordinal() == codeByte) return mma;
+        for (CCP_MediumMapAction mma : values()) {
+          if (mma.ordinal() == codeByte) {
+            return mma;
+          }
+        }
         return null;
       }
 
@@ -339,7 +369,11 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
       InvokeNextDataMap;
 
       public static CCP_DataMapAction valueOf(byte codeByte) {
-        for (CCP_DataMapAction dma : values()) if (dma.ordinal() == codeByte) return dma;
+        for (CCP_DataMapAction dma : values()) {
+          if (dma.ordinal() == codeByte) {
+            return dma;
+          }
+        }
         return null;
       }
 
@@ -359,7 +393,11 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
       TakeTheActionWithoutComparison;
 
       public static CCP_Comparison valueOf(byte codeByte) {
-        for (CCP_Comparison comp : values()) if (comp.ordinal() == codeByte) return comp;
+        for (CCP_Comparison comp : values()) {
+          if (comp.ordinal() == codeByte) {
+            return comp;
+          }
+        }
         return null;
       }
 

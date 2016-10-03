@@ -39,8 +39,11 @@ public class PTOCAControlSequenceParser {
 
       PTOCAControlSequence cs = createControlSequenceInstance(csi);
       // Move pos to begin of CS payload.
-      if (isChained) pos += 2;
-      else pos += 4;
+      if (isChained) {
+        pos += 2;
+      } else {
+        pos += 4;
+      }
 
       cs.decodeAFP(sfData, offset + pos, csi.getLength() - 2, config);
       isChained = cs.getCsi().isChained();
@@ -63,7 +66,9 @@ public class PTOCAControlSequenceParser {
       throw new AFPParserException(PTOCAControlSequence.class.getSimpleName() + ": failed to instantiate control sequence class '" + className + "'.");
     }
 
-    if (cs == null) cs = new com.mgz.afp.ptoca.controlSequence.Undefined();
+    if (cs == null) {
+      cs = new com.mgz.afp.ptoca.controlSequence.Undefined();
+    }
     cs.setCsi(csi);
 
     return cs;

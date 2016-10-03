@@ -69,7 +69,9 @@ public class IOC_IMImageOutputControl extends StructuredField {
     baos.write(constantData10_17);
     baos.write(xImageMapping.toBytes());
     baos.write(yImageMapping.toBytes());
-    if (constantData22_23 != null) baos.write(constantData22_23);
+    if (constantData22_23 != null) {
+      baos.write(constantData22_23);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -148,7 +150,11 @@ public class IOC_IMImageOutputControl extends StructuredField {
     }
 
     public static ImageMapping valueOf(short code) {
-      for (ImageMapping im : values()) if (im.code == code) return im;
+      for (ImageMapping im : values()) {
+        if (im.code == code) {
+          return im;
+        }
+      }
       return null;
     }
 

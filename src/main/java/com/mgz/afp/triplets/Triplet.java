@@ -161,7 +161,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
     public static TripletID valueOf(short codeByte) throws AFPParserException {
-      for (TripletID id : values()) if (id.code == codeByte) return id;
+      for (TripletID id : values()) {
+        if (id.code == codeByte) {
+          return id;
+        }
+      }
       throw new AFPParserException(TripletID.class.getSimpleName() + ": the ID 0x" + Integer.toHexString(codeByte) + " is undefined.");
     }
 
@@ -207,7 +211,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
     public static GlobalID_Use valueOf(short codeByte) {
-      for (GlobalID_Use gidu : values()) if (gidu.code == codeByte) return gidu;
+      for (GlobalID_Use gidu : values()) {
+        if (gidu.code == codeByte) {
+          return gidu;
+        }
+      }
       return null;
     }
 
@@ -230,7 +238,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
     public static GlobalID_Format valueOf(byte codeByte) {
-      for (GlobalID_Format f : values()) return f;
+      for (GlobalID_Format f : values()) {
+        return f;
+      }
       return null;
     }
 
@@ -362,8 +372,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       baos.write(tripletID.toByte());
       baos.write(type.toByte());
       baos.write(format.toByte());
-      if (nameAsBytes != null) baos.write(nameAsBytes);
-      else baos.write(nameAsString.getBytes(config.getAfpCharSet()));
+      if (nameAsBytes != null) {
+        baos.write(nameAsBytes);
+      } else {
+        baos.write(nameAsString.getBytes(config.getAfpCharSet()));
+      }
 
       length = (short) (baos.size() + 1);
       os.write(UtilBinaryDecoding.shortToByteArray(length, 1));
@@ -440,7 +453,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
 
       public static DataObjecMapingOption valueOf(byte codeByte) {
-        for (DataObjecMapingOption o : values()) if (o.code == codeByte) return o;
+        for (DataObjecMapingOption o : values()) {
+          if (o.code == codeByte) {
+            return o;
+          }
+        }
         return null;
       }
 
@@ -547,7 +564,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
 
       public static ObjectClass valueOf(byte codeByte) throws AFPParserException {
-        for (ObjectClass oc : values()) if (oc.code == codeByte) return oc;
+        for (ObjectClass oc : values()) {
+          if (oc.code == codeByte) {
+            return oc;
+          }
+        }
         throw new AFPParserException(ObjectClass.class.getSimpleName() + ": object class 0x" + Integer.toHexString(codeByte) + " is unknwon.");
       }
 
@@ -583,23 +604,35 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static EnumSet<StructureFlag> valueOf(int codeByte) {
         EnumSet<StructureFlag> result = EnumSet.noneOf(StructureFlag.class);
 
-        if ((codeByte & 0xC000) == 0) result.add(OC_Reserved);
-        else if ((codeByte & 0x8000) != 0 && (codeByte & 0x4000) != 0)
+        if ((codeByte & 0xC000) == 0) {
+          result.add(OC_Reserved);
+        } else if ((codeByte & 0x8000) != 0 && (codeByte & 0x4000) != 0) {
           result.add(OC_DataCarriedInObjectContainer);
-        else if ((codeByte & 0x8000) != 0) result.add(OC_UnknownContainerStructure);
-        else if ((codeByte & 0x4000) != 0) result.add(OC_DataNotCarriedInObjectContainer);
+        } else if ((codeByte & 0x8000) != 0) {
+          result.add(OC_UnknownContainerStructure);
+        } else if ((codeByte & 0x4000) != 0) {
+          result.add(OC_DataNotCarriedInObjectContainer);
+        }
 
-        if ((codeByte & 0x3000) == 0) result.add(OEG_Reserved);
-        else if ((codeByte & 0x2000) != 0 && (codeByte & 0x1000) != 0)
+        if ((codeByte & 0x3000) == 0) {
+          result.add(OEG_Reserved);
+        } else if ((codeByte & 0x2000) != 0 && (codeByte & 0x1000) != 0) {
           result.add(OEG_Included);
-        else if ((codeByte & 0x2000) != 0) result.add(OEG_Unknown);
-        else if ((codeByte & 0x1000) != 0) result.add(OEG_NotIncluded);
+        } else if ((codeByte & 0x2000) != 0) {
+          result.add(OEG_Unknown);
+        } else if ((codeByte & 0x1000) != 0) {
+          result.add(OEG_NotIncluded);
+        }
 
-        if ((codeByte & 0x0C00) == 0) result.add(OCD_Reserved);
-        else if ((codeByte & 0x0800) != 0 && (codeByte & 0x0400) != 0)
+        if ((codeByte & 0x0C00) == 0) {
+          result.add(OCD_Reserved);
+        } else if ((codeByte & 0x0800) != 0 && (codeByte & 0x0400) != 0) {
           result.add(OCD_DataCarriedInOCD);
-        else if ((codeByte & 0x0800) != 0) result.add(OCD_UnknownIfOCDCarriesData);
-        else if ((codeByte & 0x0400) != 0) result.add(OCD_DataNotCarriedInOCD);
+        } else if ((codeByte & 0x0800) != 0) {
+          result.add(OCD_UnknownIfOCDCarriesData);
+        } else if ((codeByte & 0x0400) != 0) {
+          result.add(OCD_DataNotCarriedInOCD);
+        }
 
         return result;
       }
@@ -607,17 +640,29 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static byte[] toBytes(EnumSet<StructureFlag> flags) {
         int result = 0;
 
-        if (flags.contains(OC_DataCarriedInObjectContainer)) result |= 0xC000;
-        else if (flags.contains(OC_UnknownContainerStructure)) result |= 0x8000;
-        else if (flags.contains(OC_DataNotCarriedInObjectContainer)) result |= 0x4000;
+        if (flags.contains(OC_DataCarriedInObjectContainer)) {
+          result |= 0xC000;
+        } else if (flags.contains(OC_UnknownContainerStructure)) {
+          result |= 0x8000;
+        } else if (flags.contains(OC_DataNotCarriedInObjectContainer)) {
+          result |= 0x4000;
+        }
 
-        if (flags.contains(OEG_Included)) result |= 0x3000;
-        else if (flags.contains(OEG_Unknown)) result |= 0x2000;
-        else if (flags.contains(OEG_NotIncluded)) result |= 0x1000;
+        if (flags.contains(OEG_Included)) {
+          result |= 0x3000;
+        } else if (flags.contains(OEG_Unknown)) {
+          result |= 0x2000;
+        } else if (flags.contains(OEG_NotIncluded)) {
+          result |= 0x1000;
+        }
 
-        if (flags.contains(OCD_DataCarriedInOCD)) result |= 0x0C00;
-        else if (flags.contains(OCD_UnknownIfOCDCarriesData)) result |= 0x0800;
-        else if (flags.contains(OCD_DataNotCarriedInOCD)) result |= 0x0400;
+        if (flags.contains(OCD_DataCarriedInOCD)) {
+          result |= 0x0C00;
+        } else if (flags.contains(OCD_UnknownIfOCDCarriesData)) {
+          result |= 0x0800;
+        } else if (flags.contains(OCD_DataNotCarriedInOCD)) {
+          result |= 0x0400;
+        }
 
         return UtilBinaryDecoding.intToByteArray(result, 2);
       }
@@ -670,7 +715,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       Presentation;
 
       public static MODCAInterchangeSet_Type valueOf(byte typeCode) throws AFPParserException {
-        if (typeCode == 0x01) return Presentation;
+        if (typeCode == 0x01) {
+          return Presentation;
+        }
         throw new AFPParserException(MODCAInterchangeSet_Type.class.getSimpleName() + ": type code 0x" + Integer.toHexString(typeCode) + " is unknown.");
       }
 
@@ -690,7 +737,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
 
       public static MODCAInterchangeSet_Identifier valueOf(short code) throws AFPParserException {
-        for (MODCAInterchangeSet_Identifier id : values()) if (id.code == code) return id;
+        for (MODCAInterchangeSet_Identifier id : values()) {
+          if (id.code == code) {
+            return id;
+          }
+        }
         throw new AFPParserException(MODCAInterchangeSet_Identifier.class.getSimpleName() + ": type code 0x" + Integer.toHexString(code) + " is unknown.");
       }
 
@@ -750,7 +801,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       baos.write(FDS_FontDsFlag.toByte(fontDsFlags));
       if (reserved9_18 != null) {
         baos.write(reserved9_18);
-        if (fontUsFlags != null) baos.write(FDS_FontUsFlag.toByte(fontUsFlags));
+        if (fontUsFlags != null) {
+          baos.write(FDS_FontUsFlag.toByte(fontUsFlags));
+        }
       }
 
       length = (short) (baos.size() + 1);
@@ -777,7 +830,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
 
       public static FDS_FontWeigthClass valueOf(byte codeByte) throws AFPParserException {
-        for (FDS_FontWeigthClass wc : values()) if (wc.ordinal() == codeByte) return wc;
+        for (FDS_FontWeigthClass wc : values()) {
+          if (wc.ordinal() == codeByte) {
+            return wc;
+          }
+        }
         throw new AFPParserException(FDS_FontWeigthClass.class.getSimpleName() + ": class code 0x" + Integer.toHexString(codeByte) + " is unknown.");
       }
 
@@ -804,7 +861,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
 
       public static FDS_FontWidthClass valueOf(byte codeByte) throws AFPParserException {
-        for (FDS_FontWidthClass wc : values()) if (wc.ordinal() == codeByte) return wc;
+        for (FDS_FontWidthClass wc : values()) {
+          if (wc.ordinal() == codeByte) {
+            return wc;
+          }
+        }
         throw new AFPParserException(FDS_FontWidthClass.class.getSimpleName() + ": class code 0x" + Integer.toHexString(codeByte) + " is unknown.");
       }
 
@@ -840,21 +901,42 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static EnumSet<FDS_FontDsFlag> valueOf(short flagByte) {
         EnumSet<FDS_FontDsFlag> result = EnumSet.noneOf(FDS_FontDsFlag.class);
 
-        if ((flagByte & 0x80) == 0) result.add(NoItalicCharacters);
-        else result.add(ItalicCharacters);
-        if ((flagByte & 0x40) == 0) result.add(NoUnderscoredCharacters);
-        else result.add(UnderscoredCharacters);
+        if ((flagByte & 0x80) == 0) {
+          result.add(NoItalicCharacters);
+        } else {
+          result.add(ItalicCharacters);
+        }
+        if ((flagByte & 0x40) == 0) {
+          result.add(NoUnderscoredCharacters);
+        } else {
+          result.add(UnderscoredCharacters);
+        }
 
-        if ((flagByte & 0x10) == 0) result.add(NoHollowCharacters);
-        else result.add(HollowCharacters);
-        if ((flagByte & 0x08) == 0) result.add(NoOverstruckCharacters);
-        else result.add(OverstruckCharacters);
-        if ((flagByte & 0x04) == 0) result.add(UniformlySpacedCharacters);
-        else result.add(ProportionallyCharacters);
-        if ((flagByte & 0x02) == 0) result.add(NoPairwiseKernedCharacters);
-        else result.add(PairwiseKernedCharacters);
-        if ((flagByte & 0x01) == 0) result.add(ParameterIsNotSpecified);
-        else result.add(ParameterIsSpecified);
+        if ((flagByte & 0x10) == 0) {
+          result.add(NoHollowCharacters);
+        } else {
+          result.add(HollowCharacters);
+        }
+        if ((flagByte & 0x08) == 0) {
+          result.add(NoOverstruckCharacters);
+        } else {
+          result.add(OverstruckCharacters);
+        }
+        if ((flagByte & 0x04) == 0) {
+          result.add(UniformlySpacedCharacters);
+        } else {
+          result.add(ProportionallyCharacters);
+        }
+        if ((flagByte & 0x02) == 0) {
+          result.add(NoPairwiseKernedCharacters);
+        } else {
+          result.add(PairwiseKernedCharacters);
+        }
+        if ((flagByte & 0x01) == 0) {
+          result.add(ParameterIsNotSpecified);
+        } else {
+          result.add(ParameterIsSpecified);
+        }
 
         return result;
       }
@@ -862,14 +944,28 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static int toByte(EnumSet<FDS_FontDsFlag> flags) {
         int result = 0;
 
-        if (flags.contains(ItalicCharacters)) result |= 0x80;
-        if (flags.contains(UnderscoredCharacters)) result |= 0x40;
+        if (flags.contains(ItalicCharacters)) {
+          result |= 0x80;
+        }
+        if (flags.contains(UnderscoredCharacters)) {
+          result |= 0x40;
+        }
 
-        if (flags.contains(HollowCharacters)) result |= 0x10;
-        if (flags.contains(OverstruckCharacters)) result |= 0x08;
-        if (flags.contains(ProportionallyCharacters)) result |= 0x04;
-        if (flags.contains(PairwiseKernedCharacters)) result |= 0x02;
-        if (flags.contains(ParameterIsSpecified)) result |= 0x01;
+        if (flags.contains(HollowCharacters)) {
+          result |= 0x10;
+        }
+        if (flags.contains(OverstruckCharacters)) {
+          result |= 0x08;
+        }
+        if (flags.contains(ProportionallyCharacters)) {
+          result |= 0x04;
+        }
+        if (flags.contains(PairwiseKernedCharacters)) {
+          result |= 0x02;
+        }
+        if (flags.contains(ParameterIsSpecified)) {
+          result |= 0x01;
+        }
 
         return result;
       }
@@ -902,10 +998,16 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static EnumSet<FDS_FontUsFlag> valueOf(byte flagByte) {
         EnumSet<FDS_FontUsFlag> result = EnumSet.noneOf(FDS_FontUsFlag.class);
 
-        if ((flagByte & 0x40) == 0) result.add(FontType_BitmapFont);
-        else result.add(FontType_OutlineOrVector);
-        if ((flagByte & 0x20) == 0) result.add(TransformFont_WillNotBeTransformed);
-        else result.add(TransformFont_MayBeTransformed);
+        if ((flagByte & 0x40) == 0) {
+          result.add(FontType_BitmapFont);
+        } else {
+          result.add(FontType_OutlineOrVector);
+        }
+        if ((flagByte & 0x20) == 0) {
+          result.add(TransformFont_WillNotBeTransformed);
+        } else {
+          result.add(TransformFont_MayBeTransformed);
+        }
 
         return result;
       }
@@ -913,8 +1015,12 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static int toByte(EnumSet<FDS_FontUsFlag> flags) {
         int result = 0;
 
-        if (flags.contains(FontType_OutlineOrVector)) result |= 0x40;
-        if (flags.contains(TransformFont_MayBeTransformed)) result |= 0x20;
+        if (flags.contains(FontType_OutlineOrVector)) {
+          result |= 0x40;
+        }
+        if (flags.contains(TransformFont_MayBeTransformed)) {
+          result |= 0x20;
+        }
 
         return result;
       }
@@ -1018,7 +1124,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
 
       public static ROT_ObjectType valueOf(short codeByte) throws AFPParserException {
-        for (ROT_ObjectType t : values()) if (t.code == codeByte) return t;
+        for (ROT_ObjectType t : values()) {
+          if (t.code == codeByte) {
+            return t;
+          }
+        }
         throw new AFPParserException(ROT_ObjectType.class.getSimpleName() + ": type 0x" + Integer.toHexString(codeByte) + " is unknown.");
       }
 
@@ -1065,7 +1175,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       baos.write(ocaArchitectureLevel);
       baos.write(UtilBinaryDecoding.intToByteArray(modcaFunctionSetIdentifier, 2));
       baos.write(ocaFunctionSet.toByte());
-      if (reserved != null) baos.write(reserved);
+      if (reserved != null) {
+        baos.write(reserved);
+      }
 
       length = (short) (baos.size() + 1);
       os.write(UtilBinaryDecoding.shortToByteArray(length, 1));
@@ -1084,7 +1196,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
 
       public static OCAFunctionSet valueOf(int code) throws AFPParserException {
-        for (OCAFunctionSet fs : values()) if (fs.code == code) return fs;
+        for (OCAFunctionSet fs : values()) {
+          if (fs.code == code) {
+            return fs;
+          }
+        }
         throw new AFPParserException(OCAFunctionSet.class.getSimpleName() + ": code 0x" + Integer.toHexString(code) + " is unknown.");
       }
 
@@ -1135,18 +1251,27 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       MediaDestinationResource;
 
       public static ERLI_ResourceType valueOf(byte codeByte) throws AFPParserException {
-        if (codeByte == 0x30) return IOBReference_Reserved;
-        else if (codeByte == 0x40) return MediaTypeResource;
-        else if (codeByte == 0x42) return MediaDestinationResource;
-        else
+        if (codeByte == 0x30) {
+          return IOBReference_Reserved;
+        } else if (codeByte == 0x40) {
+          return MediaTypeResource;
+        } else if (codeByte == 0x42) {
+          return MediaDestinationResource;
+        } else {
           throw new AFPParserException(ERLI_ResourceType.class.getSimpleName() + ": resource type code 0x" + Integer.toHexString(codeByte) + " is unknown.");
+        }
       }
 
       public int toByte() {
-        if (this == IOBReference_Reserved) return 0x30;
-        else if (this == MediaTypeResource) return 0x40;
-        else if (this == MediaDestinationResource) return 0x42;
-        else return 0;
+        if (this == IOBReference_Reserved) {
+          return 0x30;
+        } else if (this == MediaTypeResource) {
+          return 0x40;
+        } else if (this == MediaDestinationResource) {
+          return 0x42;
+        } else {
+          return 0;
+        }
       }
     }
   }
@@ -1184,20 +1309,31 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       ColorAttributeTable;
 
       public static RLI_ResourceType valueOf(byte codeByte) throws AFPParserException {
-        if (codeByte == 0x00) return UsageDependent;
-        else if (codeByte == 0x02) return PageOverlay;
-        else if (codeByte == 0x05) return CodedFont;
-        else if (codeByte == 0x07) return ColorAttributeTable;
-        else
+        if (codeByte == 0x00) {
+          return UsageDependent;
+        } else if (codeByte == 0x02) {
+          return PageOverlay;
+        } else if (codeByte == 0x05) {
+          return CodedFont;
+        } else if (codeByte == 0x07) {
+          return ColorAttributeTable;
+        } else {
           throw new AFPParserException(RLI_ResourceType.class.getSimpleName() + ": resource type code 0x" + Integer.toHexString(codeByte) + " is unknown.");
+        }
       }
 
       public int toByte() {
-        if (this == UsageDependent) return 0x00;
-        else if (this == PageOverlay) return 0x02;
-        else if (this == CodedFont) return 0x05;
-        else if (this == ColorAttributeTable) return 0x07;
-        else return 0x00;
+        if (this == UsageDependent) {
+          return 0x00;
+        } else if (this == PageOverlay) {
+          return 0x02;
+        } else if (this == CodedFont) {
+          return 0x05;
+        } else if (this == ColorAttributeTable) {
+          return 0x07;
+        } else {
+          return 0x00;
+        }
       }
     }
   }
@@ -1276,8 +1412,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(UtilBinaryDecoding.shortToByteArray(length, 1));
       os.write(tripletID.toByte());
       os.write(UtilBinaryDecoding.longToByteArray(byteOffset, 4));
-      if (byteOffsetHighOrder != null)
+      if (byteOffsetHighOrder != null) {
         os.write(UtilBinaryDecoding.longToByteArray(byteOffsetHighOrder, 4));
+      }
     }
   }
 
@@ -1388,20 +1525,31 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       ConditionalEjectToNextBacksidePartition;
 
       public static MediaEjectControlType valueOf(byte codeByte) throws AFPParserException {
-        if (codeByte == 0x01) return EjectToNewSheet;
-        else if (codeByte == 0x02) return ConditionalEjectToNextPartition;
-        else if (codeByte == 0x03) return ConditionalEjectToNextFrontsidePartition;
-        else if (codeByte == 0x04) return ConditionalEjectToNextBacksidePartition;
-        else
+        if (codeByte == 0x01) {
+          return EjectToNewSheet;
+        } else if (codeByte == 0x02) {
+          return ConditionalEjectToNextPartition;
+        } else if (codeByte == 0x03) {
+          return ConditionalEjectToNextFrontsidePartition;
+        } else if (codeByte == 0x04) {
+          return ConditionalEjectToNextBacksidePartition;
+        } else {
           throw new AFPParserException(MediaEjectControlType.class.getSimpleName() + ": code byte 0x" + Integer.toHexString(codeByte) + " is undefined.");
+        }
       }
 
       public int toByte() {
-        if (this == EjectToNewSheet) return 0x01;
-        else if (this == ConditionalEjectToNextPartition) return 0x02;
-        else if (this == ConditionalEjectToNextFrontsidePartition) return 0x03;
-        else if (this == ConditionalEjectToNextBacksidePartition) return 0x04;
-        else return 0;
+        if (this == EjectToNewSheet) {
+          return 0x01;
+        } else if (this == ConditionalEjectToNextPartition) {
+          return 0x02;
+        } else if (this == ConditionalEjectToNextFrontsidePartition) {
+          return 0x03;
+        } else if (this == ConditionalEjectToNextBacksidePartition) {
+          return 0x04;
+        } else {
+          return 0;
+        }
       }
     }
   }
@@ -1434,7 +1582,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(length);
       os.write(tripletID.toByte());
       os.write(pageOverlayType.toByte());
-      if (levelOfOverlay != null) os.write(levelOfOverlay);
+      if (levelOfOverlay != null) {
+        os.write(levelOfOverlay);
+      }
     }
 
     public enum PageOverlayType {
@@ -1444,7 +1594,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       Highlight;
 
       public static PageOverlayType valueOf(byte codeByte) throws AFPParserException {
-        for (PageOverlayType loo : values()) if (loo.ordinal() == codeByte) return loo;
+        for (PageOverlayType loo : values()) {
+          if (loo.ordinal() == codeByte) {
+            return loo;
+          }
+        }
         throw new AFPParserException(PageOverlayType.class.getSimpleName() + ": page overlay type 0x" + Integer.toHexString(codeByte) + " is unknown.");
       }
 
@@ -1486,20 +1640,26 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       Low, High;
 
       public static FrequencyOfUse valueOf(byte codeByte) {
-        if (codeByte == 0x00) return Low;
-        else return High;
+        if (codeByte == 0x00) {
+          return Low;
+        } else {
+          return High;
+        }
       }
 
       public int toByte() {
-        if (this == Low) return 0x00;
-        else return 0xFF;
+        if (this == Low) {
+          return 0x00;
+        } else {
+          return 0xFF;
+        }
       }
     }
   }
 
   /**
    * MODCA page 579<br><br>
-   *
+   * <p>
    * The use of this triplet is restricted to the BMO and BPS structured fields in external (print
    * file level) AFP resource groups for the following products: v PSF/MVS v PSF/VSE v RPM 2.0 v RPM
    * 3.0 v PSF/2 (DPF) v RMARK The Object Checksum object specifies a qualifier that can be used to
@@ -1568,15 +1728,22 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       Retired_PrivateUse;
 
       public static CheckSumFormat valueOf(byte codeByte) throws AFPParserException {
-        if (codeByte == 0x01) return ObjectCycleRedundancyCheck;
-        if (codeByte == 0x02) return Retired_PrivateUse;
-        else
+        if (codeByte == 0x01) {
+          return ObjectCycleRedundancyCheck;
+        }
+        if (codeByte == 0x02) {
+          return Retired_PrivateUse;
+        } else {
           throw new AFPParserException(CheckSumFormat.class.getSimpleName() + ": checksum format code 0x" + Integer.toHexString(codeByte) + " is undefined.");
+        }
       }
 
       public int toByte() {
-        if (this == ObjectCycleRedundancyCheck) return 0x01;
-        else return 0x02;
+        if (this == ObjectCycleRedundancyCheck) {
+          return 0x01;
+        } else {
+          return 0x02;
+        }
       }
     }
 
@@ -1595,10 +1762,16 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static EnumSet<ChecksumFlag> valueOf(short codByte) {
         EnumSet<ChecksumFlag> result = EnumSet.noneOf(ChecksumFlag.class);
 
-        if ((codByte & 0x80) == 0) result.add(UsageScope_PublicUnlimited);
-        else result.add(UsageScope_PrivateLimited);
-        if ((codByte & 0x40) == 0) result.add(ResourceRetention_SaveResource);
-        else result.add(ResourceRetention_DoNotSaveResource);
+        if ((codByte & 0x80) == 0) {
+          result.add(UsageScope_PublicUnlimited);
+        } else {
+          result.add(UsageScope_PrivateLimited);
+        }
+        if ((codByte & 0x40) == 0) {
+          result.add(ResourceRetention_SaveResource);
+        } else {
+          result.add(ResourceRetention_DoNotSaveResource);
+        }
 
         return result;
       }
@@ -1606,8 +1779,12 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static int toByte(EnumSet<ChecksumFlag> set) {
         int result = 0x00;
 
-        if (set.contains(UsageScope_PrivateLimited)) result |= 0x80;
-        if (set.contains(ResourceRetention_DoNotSaveResource)) result |= 0x40;
+        if (set.contains(UsageScope_PrivateLimited)) {
+          result |= 0x80;
+        }
+        if (set.contains(ResourceRetention_DoNotSaveResource)) {
+          result |= 0x40;
+        }
 
         return result;
       }
@@ -1661,10 +1838,15 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       VSE;
 
       public static AFPSystem valueOf(byte codeByte) throws AFPParserException {
-        if (codeByte == 0x01) return MVS;
-        else if (codeByte == 0x02) return VM;
-        else if (codeByte == 0x03) return PC_DOS;
-        else if (codeByte == 0x04) return VSE;
+        if (codeByte == 0x01) {
+          return MVS;
+        } else if (codeByte == 0x02) {
+          return VM;
+        } else if (codeByte == 0x03) {
+          return PC_DOS;
+        } else if (codeByte == 0x04) {
+          return VSE;
+        }
         throw new AFPParserException(AFPSystem.class.getSimpleName() + ": system code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -1676,7 +1858,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA page 582, retired function.<br><br>
-   *
+   * <p>
    * The use of this triplet is restricted to the IMM structured field for the following products: v
    * AFP OnDemand v AFP Workbench The IMM Insertion triplet is used to indicate that the Invoke
    * Medium Map (IMM) structured field on which it is specified was inserted at the beginning of a
@@ -1712,7 +1894,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA page 569, retired function.<br><br>
-   *
+   * <p>
    * Text Orientation Triplet X'1D' The use of this triplet is restricted to the MCF-2 structured
    * field for 3800 compatibility for the following products: v PSF/MVS v PSF/VM v PSF/VSE v PSF/400
    * v PSF/2 v Infoprint Manager (IPM) v 3800 printer v Applications that generate MCF-2s in
@@ -1780,8 +1962,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       UperRight_90;
 
       public static LocationAndOrientation valueOf(byte codeByte) throws AFPParserException {
-        for (LocationAndOrientation lao : values())
-          if (lao.ordinal() == codeByte) return lao;
+        for (LocationAndOrientation lao : values()) {
+          if (lao.ordinal() == codeByte) {
+            return lao;
+          }
+        }
         throw new AFPParserException(LocationAndOrientation.class.getSimpleName() + ": location/orientation code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -1978,19 +2163,20 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       return encodingSchemeForCodePage;
     }
 
-    public void setEncodingSchemeForCodePage(
-            EnumSet<EncodingScheme> encodingSchemeForCodePage) {
-      this.encodingSchemeForCodePage = encodingSchemeForCodePage;
-    }
-
     /**
      * Sets the given {@link EncodingScheme} and un-sets the mutual exclusive {@link EncodingScheme}
      * values.
      */
     public void setEncodingSchemeForCodePage(EncodingScheme encodingScheme) {
-      if (encodingSchemeForCodePage == null)
+      if (encodingSchemeForCodePage == null) {
         encodingSchemeForCodePage = EnumSet.noneOf(EncodingScheme.class);
+      }
       EncodingScheme.handler.setFlag(encodingSchemeForCodePage, encodingScheme);
+    }
+
+    public void setEncodingSchemeForCodePage(
+        EnumSet<EncodingScheme> encodingSchemeForCodePage) {
+      this.encodingSchemeForCodePage = encodingSchemeForCodePage;
     }
 
     public EnumSet<EncodingScheme> getEncodingSchemeForUserData() {
@@ -1998,7 +2184,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
     public void setEncodingSchemeForUserData(
-            EnumSet<EncodingScheme> encodingSchemeForUserData) {
+        EnumSet<EncodingScheme> encodingSchemeForUserData) {
       this.encodingSchemeForUserData = encodingSchemeForUserData;
     }
 
@@ -2031,24 +2217,39 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
         int extension = code & 0xFF;
 
         EnumSet<EncodingScheme> result = EnumSet.noneOf(EncodingScheme.class);
-        if (basicEncoding == 0x00) result.add(BasicEncoding_NotSpecified);
-        else if (basicEncoding == 0x02) result.add(BasicEncoding_IBMPC_Data);
-        else if (basicEncoding == 0x03) result.add(BasicEncoding_IBMPC_Display);
-        else if (basicEncoding == 0x06) result.add(BasicEncoding_EBCDIC_Presentation);
-        else if (basicEncoding == 0x07) result.add(BasicEncoding_UTF16);
-        else if (basicEncoding == 0x08) result.add(BasicEncoding_UnicodePresentation);
-        else
+        if (basicEncoding == 0x00) {
+          result.add(BasicEncoding_NotSpecified);
+        } else if (basicEncoding == 0x02) {
+          result.add(BasicEncoding_IBMPC_Data);
+        } else if (basicEncoding == 0x03) {
+          result.add(BasicEncoding_IBMPC_Display);
+        } else if (basicEncoding == 0x06) {
+          result.add(BasicEncoding_EBCDIC_Presentation);
+        } else if (basicEncoding == 0x07) {
+          result.add(BasicEncoding_UTF16);
+        } else if (basicEncoding == 0x08) {
+          result.add(BasicEncoding_UnicodePresentation);
+        } else {
           throw new AFPParserException(EncodingScheme.class.getSimpleName() + ": basic encoding value 0x" + Integer.toHexString(basicEncoding) + " is undefined.");
+        }
 
-        if (numberOfBytes == 0x00) result.add(NumberOfBytes_NotSpecified);
-        else if (numberOfBytes == 0x01) result.add(NumberOfBytes_Fixed_SingleByte);
-        else if (numberOfBytes == 0x02) result.add(NumberOfBytes_Fixed_SingleByte);
-        else if (numberOfBytes == 0x08) result.add(NumberOfBytes_UTFnVariable);
-        else
+        if (numberOfBytes == 0x00) {
+          result.add(NumberOfBytes_NotSpecified);
+        } else if (numberOfBytes == 0x01) {
+          result.add(NumberOfBytes_Fixed_SingleByte);
+        } else if (numberOfBytes == 0x02) {
+          result.add(NumberOfBytes_Fixed_SingleByte);
+        } else if (numberOfBytes == 0x08) {
+          result.add(NumberOfBytes_UTFnVariable);
+        } else {
           throw new AFPParserException(EncodingScheme.class.getSimpleName() + ": number of bytes value 0x" + Integer.toHexString(numberOfBytes) + " is undefined.");
+        }
 
-        if (extension == 0x00) result.add(CodeExtension_NotSpecified);
-        else if (extension == 0x07) result.add(CodeExtension_UTF8);
+        if (extension == 0x00) {
+          result.add(CodeExtension_NotSpecified);
+        } else if (extension == 0x07) {
+          result.add(CodeExtension_UTF8);
+        }
 
         return result;
 
@@ -2057,21 +2258,33 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static byte[] toBytes(EnumSet<EncodingScheme> flags) {
         int result = 0;
 
-        if (flags.contains(BasicEncoding_IBMPC_Data)) result |= 0x02;
-        else if (flags.contains(BasicEncoding_IBMPC_Display)) result |= 0x03;
-        else if (flags.contains(BasicEncoding_EBCDIC_Presentation)) result |= 0x06;
-        else if (flags.contains(BasicEncoding_UTF16)) result |= 0x07;
-        else if (flags.contains(BasicEncoding_UnicodePresentation)) result |= 0x08;
+        if (flags.contains(BasicEncoding_IBMPC_Data)) {
+          result |= 0x02;
+        } else if (flags.contains(BasicEncoding_IBMPC_Display)) {
+          result |= 0x03;
+        } else if (flags.contains(BasicEncoding_EBCDIC_Presentation)) {
+          result |= 0x06;
+        } else if (flags.contains(BasicEncoding_UTF16)) {
+          result |= 0x07;
+        } else if (flags.contains(BasicEncoding_UnicodePresentation)) {
+          result |= 0x08;
+        }
 
         result <<= 4;
 
-        if (flags.contains(NumberOfBytes_Fixed_SingleByte)) result |= 0x01;
-        else if (flags.contains(NumberOfBytes_Fixed_DoubleByte)) result |= 0x02;
-        else if (flags.contains(NumberOfBytes_UTFnVariable)) result |= 0x08;
+        if (flags.contains(NumberOfBytes_Fixed_SingleByte)) {
+          result |= 0x01;
+        } else if (flags.contains(NumberOfBytes_Fixed_DoubleByte)) {
+          result |= 0x02;
+        } else if (flags.contains(NumberOfBytes_UTFnVariable)) {
+          result |= 0x08;
+        }
 
         result <<= 8;
 
-        if (flags.contains(CodeExtension_UTF8)) result |= 0x7;
+        if (flags.contains(CodeExtension_UTF8)) {
+          result |= 0x7;
+        }
 
         return UtilBinaryDecoding.intToByteArray(result, 2);
       }
@@ -2146,8 +2359,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       super.decodeAFP(sfData, offset, length, config);
       offsetLow = UtilBinaryDecoding.parseLong(sfData, offset + 2, 4);
-      if (this.length > 6) offsetHigh = UtilBinaryDecoding.parseLong(sfData, offset + 6, 4);
-      else offsetHigh = null;
+      if (this.length > 6) {
+        offsetHigh = UtilBinaryDecoding.parseLong(sfData, offset + 6, 4);
+      } else {
+        offsetHigh = null;
+      }
     }
 
     @Override
@@ -2156,13 +2372,15 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(length);
       os.write(tripletID.toByte());
       os.write(UtilBinaryDecoding.longToByteArray(offsetLow, 4));
-      if (offsetHigh != null) os.write(UtilBinaryDecoding.longToByteArray(offsetHigh, 4));
+      if (offsetHigh != null) {
+        os.write(UtilBinaryDecoding.longToByteArray(offsetHigh, 4));
+      }
     }
   }
 
   /**
    * MODCA, page 409.<br><br>
-   *
+   * <p>
    * The Object Structured Field Extent triplet is used to specify the number of structured fields
    * contained in an object, starting with the Begin Object structured field and ending with the End
    * Object structured field.
@@ -2175,9 +2393,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       super.decodeAFP(sfData, offset, length, config);
       numberOfSFLow = UtilBinaryDecoding.parseLong(sfData, offset + 2, 4);
-      if (this.length > 6)
+      if (this.length > 6) {
         numberOfSFHigh = UtilBinaryDecoding.parseLong(sfData, offset + 6, 4);
-      else numberOfSFHigh = null;
+      } else {
+        numberOfSFHigh = null;
+      }
     }
 
     @Override
@@ -2186,14 +2406,15 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(length);
       os.write(tripletID.toByte());
       os.write(UtilBinaryDecoding.longToByteArray(numberOfSFLow, 4));
-      if (numberOfSFHigh != null)
+      if (numberOfSFHigh != null) {
         os.write(UtilBinaryDecoding.longToByteArray(numberOfSFHigh, 4));
+      }
     }
   }
 
   /**
    * MODCA, page 410.<br><br>
-   *
+   * <p>
    * The Object Offset triplet specifies the number of objects of a particular type that precede a
    * selected object in the document. If the object being counted is a document, this triplet
    * specifies the number of documents that precede the selected object in the print file.
@@ -2211,9 +2432,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       objectType = ObjectType.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 2, 1));
       reserved3 = sfData[offset + 3];
       nrOfPrecedingObjectsLow = UtilBinaryDecoding.parseLong(sfData, offset + 4, 4);
-      if (this.length > 7)
+      if (this.length > 7) {
         nrOfPrecedingObjectsHigh = UtilBinaryDecoding.parseLong(sfData, offset + 8, 4);
-      else nrOfPrecedingObjectsHigh = null;
+      } else {
+        nrOfPrecedingObjectsHigh = null;
+      }
     }
 
     @Override
@@ -2224,8 +2447,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(objectType.toByte());
       os.write(reserved3);
       os.write(UtilBinaryDecoding.longToByteArray(nrOfPrecedingObjectsLow, 4));
-      if (nrOfPrecedingObjectsHigh != null)
+      if (nrOfPrecedingObjectsHigh != null) {
         os.write(UtilBinaryDecoding.longToByteArray(nrOfPrecedingObjectsHigh, 4));
+      }
     }
 
     public enum ObjectType {
@@ -2233,15 +2457,21 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       Page_PaginatedObject;
 
       public static ObjectType valueOf(short codeByte) throws AFPParserException {
-        if (codeByte == 0xA8) return Document;
-        else if (codeByte == 0xAF) return Page_PaginatedObject;
-        else
+        if (codeByte == 0xA8) {
+          return Document;
+        } else if (codeByte == 0xAF) {
+          return Page_PaginatedObject;
+        } else {
           throw new AFPParserException(ObjectType.class.getSimpleName() + ": object type 0x" + Integer.toHexString(codeByte) + " is undefined.");
+        }
       }
 
       public int toByte() {
-        if (this == Document) return 0xA8;
-        else if (this == Page_PaginatedObject) return 0xAF;
+        if (this == Document) {
+          return 0xA8;
+        } else if (this == Page_PaginatedObject) {
+          return 0xAF;
+        }
         return 0;
       }
     }
@@ -2249,7 +2479,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 413.<br><br>
-   *
+   * <p>
    * The Font Horizontal Scale Factor triplet is used to carry information to support anamorphic
    * scaling of an outline technology font.
    */
@@ -2357,18 +2587,27 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       Revision;
 
       public static DateAndTimeStampType valueOf(byte codeByte) throws AFPParserException {
-        if (codeByte == 0x00) return Creation;
-        else if (codeByte == 0x01) return RMARK_Retired;
-        else if (codeByte == 0x03) return Revision;
-        else
+        if (codeByte == 0x00) {
+          return Creation;
+        } else if (codeByte == 0x01) {
+          return RMARK_Retired;
+        } else if (codeByte == 0x03) {
+          return Revision;
+        } else {
           throw new AFPParserException(DateAndTimeStampType.class.getSimpleName() + ": type 0x" + Integer.toHexString(codeByte) + " is undefined.");
+        }
       }
 
       public int toByte() {
-        if (this == Creation) return 0x00;
-        else if (this == RMARK_Retired) return 0x01;
-        else if (this == Revision) return 0x03;
-        else return 0;
+        if (this == Creation) {
+          return 0x00;
+        } else if (this == RMARK_Retired) {
+          return 0x01;
+        } else if (this == Revision) {
+          return 0x03;
+        } else {
+          return 0;
+        }
       }
     }
 
@@ -2376,7 +2615,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 418.<br><br>
-   *
+   * <p>
    * The Comment triplet is used to include comments for documentation purposes within a structured
    * field.
    */
@@ -2429,7 +2668,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       Landscape90;
 
       public static MediumOrientationValue valueOf(byte codeByte) throws AFPParserException {
-        for (MediumOrientationValue v : values()) if (v.ordinal() == codeByte) return v;
+        for (MediumOrientationValue v : values()) {
+          if (v.ordinal() == codeByte) {
+            return v;
+          }
+        }
         throw new AFPParserException(MediumOrientationValue.class.getSimpleName() + ": medium orientation value 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -2505,20 +2748,26 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       ResetColor;
 
       public static BackgroundMixingFlag valueOf(byte codeByte) {
-        if (codeByte == 0x00) return DoNotResetColor;
-        else return ResetColor;
+        if (codeByte == 0x00) {
+          return DoNotResetColor;
+        } else {
+          return ResetColor;
+        }
       }
 
       public int toByte() {
-        if (this == DoNotResetColor) return 0x00;
-        else return 0x80;
+        if (this == DoNotResetColor) {
+          return 0x00;
+        } else {
+          return 0x80;
+        }
       }
     }
   }
 
   /**
    * MODCA, page 425.<br><br>
-   *
+   * <p>
    * This triplet is used to specify the rules for establishing the color attribute of areas formed
    * by the intersection of two presentation spaces. It is specified on structured fields associated
    * with a presentation space that is to be merged onto an existing presentation space.
@@ -2545,7 +2794,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       length = (short) (2 + 2 * mixingRules.size());
       os.write(length);
       os.write(tripletID.toByte());
-      for (MixingKeywordAndRule mr : mixingRules) os.write(mr.toBytes());
+      for (MixingKeywordAndRule mr : mixingRules) {
+        os.write(mr.toBytes());
+      }
     }
 
     public List<MixingKeywordAndRule> getMixingRules() {
@@ -2557,13 +2808,19 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
     public void addMixingRule(MixingKeywordAndRule mixingRule) {
-      if (mixingRule == null) return;
-      if (this.mixingRules == null) this.mixingRules = new ArrayList<MixingKeywordAndRule>();
+      if (mixingRule == null) {
+        return;
+      }
+      if (this.mixingRules == null) {
+        this.mixingRules = new ArrayList<MixingKeywordAndRule>();
+      }
       mixingRules.add(mixingRule);
     }
 
     public void removeMixingRule(MixingKeywordAndRule mixingRule) {
-      if (this.mixingRules == null) return;
+      if (this.mixingRules == null) {
+        return;
+      }
       mixingRules.remove(mixingRule);
     }
 
@@ -2574,7 +2831,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       ForegroundOnForeground;
 
       public static MixingKeyword valueOf(short codeByte) throws AFPParserException {
-        for (MixingKeyword mk : values()) if (mk.ordinal() + 0x70 == codeByte) return mk;
+        for (MixingKeyword mk : values()) {
+          if (mk.ordinal() + 0x70 == codeByte) {
+            return mk;
+          }
+        }
         throw new AFPParserException(MixingKeyword.class.getSimpleName() + ": mixing keyword 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -2590,7 +2851,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       MODCADefaultMixing;
 
       public static MixingRule valueOf(short xodeByte) throws AFPParserException {
-        for (MixingRule mr : values()) if (mr.ordinal() + 1 == xodeByte) return mr;
+        for (MixingRule mr : values()) {
+          if (mr.ordinal() + 1 == xodeByte) {
+            return mr;
+          }
+        }
         throw new AFPParserException(MixingRule.class.getSimpleName() + ": mixing rule code 0x" + Integer.toHexString(xodeByte) + " is undefined.");
       }
 
@@ -2604,9 +2869,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       MixingRule rule;
 
       public byte[] toBytes() {
-        byte[] result = new byte[]{
-                (byte) keyword.toByte(),
-                (byte) rule.toByte()
+        byte[] result = new byte[] {
+            (byte) keyword.toByte(),
+            (byte) rule.toByte()
         };
         return result;
       }
@@ -2684,7 +2949,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       BehindUTC;
 
       public static TimeZone valueOf(byte codeByte) throws AFPParserException {
-        for (TimeZone tz : values()) if (tz.ordinal() == codeByte) return tz;
+        for (TimeZone tz : values()) {
+          if (tz.ordinal() == codeByte) {
+            return tz;
+          }
+        }
         throw new AFPParserException(TimeZone.class.getSimpleName() + ": time zone code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -2696,7 +2965,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 430.<br><br>
-   *
+   * <p>
    * The Toner Saver triplet activates a toner saver mode for printing. The toner saver control
    * specified by this triplet overrides any other toner saver controls that may be active in the
    * printer.
@@ -2711,9 +2980,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       super.decodeAFP(sfData, offset, length, config);
       reserved2 = sfData[offset + 2];
       tonerSaverFunction = TonerSaverFunction.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 3, 1));
-      reserved4_5 = new byte[]{
-              sfData[offset + 4],
-              sfData[offset + 5],
+      reserved4_5 = new byte[] {
+          sfData[offset + 4],
+          sfData[offset + 5],
       };
     }
 
@@ -2733,16 +3002,23 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       DefaultTonerSaverSetting;
 
       public static TonerSaverFunction valueOf(short codeByte) throws AFPParserException {
-        if (codeByte == 0x00) return DeactivateTonerSaver;
-        else if (codeByte == 0x01) return ActivateTonerSaver;
-        else if (codeByte == 0xFF) return DefaultTonerSaverSetting;
-        else
+        if (codeByte == 0x00) {
+          return DeactivateTonerSaver;
+        } else if (codeByte == 0x01) {
+          return ActivateTonerSaver;
+        } else if (codeByte == 0xFF) {
+          return DefaultTonerSaverSetting;
+        } else {
           throw new AFPParserException(TonerSaverFunction.class.getSimpleName() + ": tonser saver function code 0x" + Integer.toHexString(codeByte) + " is undefined.");
+        }
       }
 
       public int toByte() {
-        if (this == DefaultTonerSaverSetting) return 0xFF;
-        else return ordinal();
+        if (this == DefaultTonerSaverSetting) {
+          return 0xFF;
+        } else {
+          return ordinal();
+        }
       }
     }
   }
@@ -2787,8 +3063,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       DoNotStop;
 
       public static ExceptionContinuationRule valueOf(byte ruleByte) throws AFPParserException {
-        for (ExceptionContinuationRule ecr : values())
-          if (ecr.ordinal() + 1 == ruleByte) return ecr;
+        for (ExceptionContinuationRule ecr : values()) {
+          if (ecr.ordinal() + 1 == ruleByte) {
+            return ecr;
+          }
+        }
         throw new AFPParserException(ExceptionContinuationRule.class.getSimpleName() + ": continuation rule 0x" + Integer.toHexString(ruleByte) + " is undefined.");
       }
 
@@ -2802,8 +3081,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       DoNotReport;
 
       public static ExceptionReportingRule valueOf(byte ruleByte) throws AFPParserException {
-        for (ExceptionReportingRule ecr : values())
-          if (ecr.ordinal() + 1 == ruleByte) return ecr;
+        for (ExceptionReportingRule ecr : values()) {
+          if (ecr.ordinal() + 1 == ruleByte) {
+            return ecr;
+          }
+        }
         throw new AFPParserException(ExceptionReportingRule.class.getSimpleName() + ": reporting rule 0x" + Integer.toHexString(ruleByte) + " is undefined.");
       }
 
@@ -2816,8 +3098,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       AnySubstitution_Default;
 
       public static ExceptionSubstitutionRule valueOf(byte ruleByte) throws AFPParserException {
-        for (ExceptionSubstitutionRule ecr : values())
-          if (ecr.ordinal() + 1 == ruleByte) return ecr;
+        for (ExceptionSubstitutionRule ecr : values()) {
+          if (ecr.ordinal() + 1 == ruleByte) {
+            return ecr;
+          }
+        }
         throw new AFPParserException(ExceptionSubstitutionRule.class.getSimpleName() + ": substitution rule 0x" + Integer.toHexString(ruleByte) + " is undefined.");
       }
 
@@ -2839,9 +3124,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       super.decodeAFP(sfData, offset, length, config);
       exceptionContinuationRule = ExceptionContinuationRule.valueOf(sfData[offset + 2]);
-      reserved3_6 = new byte[]{
-              sfData[offset + 3], sfData[offset + 4],
-              sfData[offset + 5], sfData[offset + 6],
+      reserved3_6 = new byte[] {
+          sfData[offset + 3], sfData[offset + 4],
+          sfData[offset + 5], sfData[offset + 6],
       };
     }
 
@@ -2857,7 +3142,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 436.<br><br>
-   *
+   * <p>
    * The Attribute Qualifier triplet is used to specify a qualifier for a document attribute.
    */
   public static class AttributeQualifier extends Triplet {
@@ -2909,7 +3194,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 438.<br><br>
-   *
+   * <p>
    * The Parameter Value triplet is used to pass parameter values to an executable program such as
    * an object handler or a system command interpreter.
    */
@@ -2938,7 +3223,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(length);
       os.write(tripletID.toByte());
       os.write(parameterSyntax.toByte());
-      if (parameterValue != null) os.write(parameterValue);
+      if (parameterValue != null) {
+        os.write(parameterValue);
+      }
     }
 
     public enum ParameterSyntax {
@@ -2951,7 +3238,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       Name;
 
       public static ParameterSyntax valueOf(byte codeByte) throws AFPParserException {
-        for (ParameterSyntax ps : values()) if (ps.ordinal() == codeByte) return ps;
+        for (ParameterSyntax ps : values()) {
+          if (ps.ordinal() == codeByte) {
+            return ps;
+          }
+        }
         throw new AFPParserException(ParameterSyntax.class.getSimpleName() + ": systax code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -2987,7 +3278,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     }
 
     public void setPresentationControlFlags(
-            EnumSet<PresentationControlFlags> presentationControlFlags) {
+        EnumSet<PresentationControlFlags> presentationControlFlags) {
       this.presentationControlFlags = presentationControlFlags;
     }
 
@@ -2995,9 +3286,12 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
      * Sets the given flag and unsets all mutual exclusive flags.
      */
     public void setPresentationControlFlag(PresentationControlFlags presentationControlFlag) {
-      if (presentationControlFlag == null) return;
-      if (presentationControlFlags == null)
+      if (presentationControlFlag == null) {
+        return;
+      }
+      if (presentationControlFlags == null) {
         presentationControlFlags = EnumSet.noneOf(PresentationControlFlags.class);
+      }
       PresentationControlFlags.handler.setFlag(presentationControlFlags, presentationControlFlag);
     }
 
@@ -3017,19 +3311,31 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static EnumSet<PresentationControlFlags> valueOf(byte codeByte) {
         EnumSet<PresentationControlFlags> result = EnumSet.noneOf(PresentationControlFlags.class);
 
-        if ((codeByte & 0x80) == 0) result.add(ViewControl_View);
-        else result.add(ViewControl_DoNotView);
-        if ((codeByte & 0x40) == 0) result.add(IndexingControl_Indexing);
-        else result.add(IndexingControl_NoIndexing);
+        if ((codeByte & 0x80) == 0) {
+          result.add(ViewControl_View);
+        } else {
+          result.add(ViewControl_DoNotView);
+        }
+        if ((codeByte & 0x40) == 0) {
+          result.add(IndexingControl_Indexing);
+        } else {
+          result.add(IndexingControl_NoIndexing);
+        }
 
         return result;
       }
 
       public static int toByte(EnumSet<PresentationControlFlags> flags) {
-        if (flags == null) return 0x00;
+        if (flags == null) {
+          return 0x00;
+        }
         int result = 0;
-        if (flags.contains(ViewControl_DoNotView)) result |= 80;
-        if (flags.contains(IndexingControl_NoIndexing)) result |= 40;
+        if (flags.contains(ViewControl_DoNotView)) {
+          result |= 80;
+        }
+        if (flags.contains(IndexingControl_NoIndexing)) {
+          result |= 40;
+        }
         return result;
       }
 
@@ -3042,7 +3348,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 440.<br><br>
-   *
+   * <p>
    * The Font Resolution and Metric Technology specifies certain metric characteristics of a FOCA
    * raster-technology font character set which may have affected the formatting of the document
    * with this font. This information, as carried by the X'84' triplet, may be used by presentation
@@ -3076,10 +3382,13 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       Relative;
 
       public static MetricTechnology valueOf(byte codeByte) throws AFPParserException {
-        if (codeByte == 0x01) return Fixed;
-        else if (codeByte == 0x02) return Relative;
-        else
+        if (codeByte == 0x01) {
+          return Fixed;
+        } else if (codeByte == 0x02) {
+          return Relative;
+        } else {
           throw new AFPParserException(MetricTechnology.class.getSimpleName() + ": technology code 0x" + Integer.toHexString(codeByte) + " is undefined.");
+        }
       }
 
       public int toByte() {
@@ -3090,7 +3399,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 442.<br><br>
-   *
+   * <p>
    * The Finishing Operation triplet is used to specify finishing operations that are to be applied
    * to media.
    */
@@ -3134,7 +3443,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(operationCount);
       os.write(UtilBinaryDecoding.intToByteArray(offsetOfOperation, 2));
       if (positions != null) {
-        for (Short s : positions) os.write(UtilBinaryDecoding.shortToByteArray(s, 2));
+        for (Short s : positions) {
+          os.write(UtilBinaryDecoding.shortToByteArray(s, 2));
+        }
       }
     }
 
@@ -3159,7 +3470,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
 
       public static OperationType valueOf(byte codeValue) throws AFPParserException {
-        for (OperationType ot : values()) if (ot.code == codeValue) return ot;
+        for (OperationType ot : values()) {
+          if (ot.code == codeValue) {
+            return ot;
+          }
+        }
         throw new AFPParserException(OperationType.class.getSimpleName() + ": operation type 0x" + Integer.toHexString(codeValue) + " is undefined.");
       }
 
@@ -3181,7 +3496,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       }
 
       public static ReferenceCorner valueOf(short codeByte) throws AFPParserException {
-        for (ReferenceCorner rc : values()) if (rc.code == codeByte) return rc;
+        for (ReferenceCorner rc : values()) {
+          if (rc.code == codeByte) {
+            return rc;
+          }
+        }
         throw new AFPParserException(ReferenceCorner.class.getSimpleName() + ": corner/edge code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -3193,7 +3512,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 450.<br><br>
-   *
+   * <p>
    * The Text Fidelity triplet is used to specify the exception continuation and reporting rules for
    * text exceptions. A text exception is detected when an unrecognized or unsupported text control
    * sequence is encountered in a PTOCA text object.
@@ -3228,7 +3547,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 452.<br><br>
-   *
+   * <p>
    * The Media Fidelity triplet is used to specify the continuation rule if a request for a specific
    * media or a specific media bin cannot be satisfied.
    */
@@ -3262,7 +3581,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 454.<br><br>
-   *
+   * <p>
    * The Finishing Fidelity triplet is used to specify the exception continuation and reporting
    * rules for finishing exceptions. A finishing exception is detected when the specified finishing
    * operation cannot be satisfied.
@@ -3354,17 +3673,27 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
       public static EnumSet<FontInformationFlag> valueOf(short codeByte) {
         EnumSet<FontInformationFlag> result = EnumSet.noneOf(FontInformationFlag.class);
-        if ((codeByte & 0x80) == 0) result.add(MICR_NonMICR);
-        else result.add(MICR_MICR);
-        if ((codeByte & 0x40) == 0) result.add(Location_Anyware);
-        else result.add(Location_ResourceGroup);
+        if ((codeByte & 0x80) == 0) {
+          result.add(MICR_NonMICR);
+        } else {
+          result.add(MICR_MICR);
+        }
+        if ((codeByte & 0x40) == 0) {
+          result.add(Location_Anyware);
+        } else {
+          result.add(Location_ResourceGroup);
+        }
         return result;
       }
 
       public static int toByte(EnumSet<FontInformationFlag> flags) {
         int result = 0;
-        if (flags.contains(MICR_MICR)) result |= 0x80;
-        if (flags.contains(Location_ResourceGroup)) result |= 0x40;
+        if (flags.contains(MICR_MICR)) {
+          result |= 0x80;
+        }
+        if (flags.contains(Location_ResourceGroup)) {
+          result |= 0x40;
+        }
         return result;
       }
 
@@ -3377,7 +3706,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 461.<br><br>
-   *
+   * <p>
    * The Locale Selector triplet is used to identify the end-user community for presentation text
    * data. The locale information consists of an ISO-639 based language code, an ISO-15924 based
    * script code, an ISO-3166 based region code, and an application-specific variant code. The
@@ -3426,7 +3755,9 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       os.write(UtilCharacterEncoding.stringToByteArray(scriptCode, Charset.defaultCharset(), 8, (byte) 0x00));
       os.write(UtilCharacterEncoding.stringToByteArray(regionCode, Charset.defaultCharset(), 8, (byte) 0x00));
       os.write(reserved28_35);
-      if (variantCodeData != null) os.write(variantCodeData);
+      if (variantCodeData != null) {
+        os.write(variantCodeData);
+      }
     }
 
     public byte getReserved2() {
@@ -3451,8 +3782,12 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
      * @param flag flag to set.
      */
     public void setFlag(LocalSelectorFlag flag) {
-      if (flag == null) return;
-      if (flags == null) flags = EnumSet.noneOf(LocalSelectorFlag.class);
+      if (flag == null) {
+        return;
+      }
+      if (flags == null) {
+        flags = EnumSet.noneOf(LocalSelectorFlag.class);
+      }
       LocalSelectorFlag.handler.setFlag(flags, flag);
     }
 
@@ -3521,14 +3856,25 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
         short languageCode = (short) (codeByte >>> 4);
         short regionCode = (short) (codeByte & 0x07);
 
-        if (languageCode == 0x00) result.add(LanguageCode_NotSpecified);
-        else if (languageCode == 0x02) result.add(LanguageCode_TwoBytes);
-        else if (languageCode == 0x03) result.add(LanguageCode_ThreeBytes);
-        if ((codeByte & 0x08) == 0) result.add(ScriptCode_NotSpecified);
-        else result.add(ScriptCode_FourCharacter);
-        if (regionCode == 0x00) result.add(RegionCode_NotSpecified);
-        else if (regionCode == 0x02) result.add(RegionCode_TwoBytes);
-        else if (regionCode == 0x03) result.add(RegionCode_ThreeBytes);
+        if (languageCode == 0x00) {
+          result.add(LanguageCode_NotSpecified);
+        } else if (languageCode == 0x02) {
+          result.add(LanguageCode_TwoBytes);
+        } else if (languageCode == 0x03) {
+          result.add(LanguageCode_ThreeBytes);
+        }
+        if ((codeByte & 0x08) == 0) {
+          result.add(ScriptCode_NotSpecified);
+        } else {
+          result.add(ScriptCode_FourCharacter);
+        }
+        if (regionCode == 0x00) {
+          result.add(RegionCode_NotSpecified);
+        } else if (regionCode == 0x02) {
+          result.add(RegionCode_TwoBytes);
+        } else if (regionCode == 0x03) {
+          result.add(RegionCode_ThreeBytes);
+        }
 
         return result;
       }
@@ -3536,13 +3882,21 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       public static int toByte(EnumSet<LocalSelectorFlag> flags) {
         int result = 0;
 
-        if (flags.contains(LanguageCode_TwoBytes)) result |= 0x02;
-        else if (flags.contains(LanguageCode_ThreeBytes)) result |= 0x03;
+        if (flags.contains(LanguageCode_TwoBytes)) {
+          result |= 0x02;
+        } else if (flags.contains(LanguageCode_ThreeBytes)) {
+          result |= 0x03;
+        }
         result <<= 1;
-        if (flags.contains(ScriptCode_FourCharacter)) result |= 0x01;
+        if (flags.contains(ScriptCode_FourCharacter)) {
+          result |= 0x01;
+        }
         result <<= 3;
-        if (flags.contains(RegionCode_TwoBytes)) result |= 0x02;
-        else if (flags.contains(RegionCode_ThreeBytes)) result |= 0x03;
+        if (flags.contains(RegionCode_TwoBytes)) {
+          result |= 0x02;
+        } else if (flags.contains(RegionCode_ThreeBytes)) {
+          result |= 0x03;
+        }
 
         return result;
       }
@@ -3612,7 +3966,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 466.<br><br>
-   *
+   * <p>
    * The Color Management Resource Descriptor triplet specifies the processing mode and scope for a
    * Color Management Resource (CMR).
    */
@@ -3668,7 +4022,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       LinkCMR;
 
       public static CMRProcessingMode valueOf(byte codeByte) throws AFPParserException {
-        for (CMRProcessingMode pm : values()) if (pm.ordinal() + 1 == codeByte) return pm;
+        for (CMRProcessingMode pm : values()) {
+          if (pm.ordinal() + 1 == codeByte) {
+            return pm;
+          }
+        }
         throw new AFPParserException(CMRProcessingMode.class.getSimpleName() + ": processing mode 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -3685,7 +4043,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       PageGroup_SheetGroup;
 
       public static CMRScope valueOf(byte codeByte) throws AFPParserException {
-        for (CMRScope sc : values()) if (sc.ordinal() + 1 == codeByte) return sc;
+        for (CMRScope sc : values()) {
+          if (sc.ordinal() + 1 == codeByte) {
+            return sc;
+          }
+        }
         throw new AFPParserException(CMRScope.class.getSimpleName() + ": scope code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
@@ -3697,7 +4059,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 468.<br><br>
-   *
+   * <p>
    * The Rendering Intent triplet specifies the rendering intent parameter, which is used to modify
    * the final appearance of color data. This parameter is based on the rendering intents defined by
    * the International Color Consortium (ICC). For more information on rendering intents, see the
@@ -3714,12 +4076,12 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       super.decodeAFP(sfData, offset, length, config);
-      reserved2_3 = new byte[]{sfData[offset + 2], sfData[offset + 3]};
+      reserved2_3 = new byte[] {sfData[offset + 2], sfData[offset + 3]};
       intentForIOCA = Intent.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 4, 1));
       intentForContainerNonIOCA = Intent.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 5, 1));
       intentForPTOCA = Intent.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 6, 1));
       intentForGOCA = Intent.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 7, 1));
-      reserved8_9 = new byte[]{sfData[offset + 8], sfData[offset + 9]};
+      reserved8_9 = new byte[] {sfData[offset + 8], sfData[offset + 9]};
     }
 
     @Override
@@ -3743,21 +4105,30 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       NotSpecified;
 
       public static Intent valueOf(short codeByte) throws AFPParserException {
-        if (codeByte == 0xFF) return NotSpecified;
-        for (Intent intent : values()) if (intent.ordinal() == codeByte) return intent;
+        if (codeByte == 0xFF) {
+          return NotSpecified;
+        }
+        for (Intent intent : values()) {
+          if (intent.ordinal() == codeByte) {
+            return intent;
+          }
+        }
         throw new AFPParserException(Intent.class.getSimpleName() + ": intent code 0x" + Integer.toHexString(codeByte) + " is undefined.");
       }
 
       public int toByte() {
-        if (this == NotSpecified) return 0xFF;
-        else return ordinal();
+        if (this == NotSpecified) {
+          return 0xFF;
+        } else {
+          return ordinal();
+        }
       }
     }
   }
 
   /**
    * MODCA, page 471.<br><br>
-   *
+   * <p>
    * The CMR Tag Fidelity triplet is used to specify the exception continuation and reporting rules
    * for Color Management Resource (CMR) tag exceptions. A CMR tag exception is detected when an
    * unsupported CMR tag is encountered in a Color Management Resource (CMR).
@@ -3792,7 +4163,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 473.<br><br>
-   *
+   * <p>
    * The Device Appearance triplet specifies one of a set of architected appearances to be assumed
    * by the presentation device.
    */
@@ -3806,7 +4177,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       super.decodeAFP(sfData, offset, length, config);
       reserved2 = sfData[offset + 2];
       appearance = Appearance.valueOf(sfData[offset + 3]);
-      reserved5_6 = new byte[]{sfData[offset + 5], sfData[offset + 6]};
+      reserved5_6 = new byte[] {sfData[offset + 5], sfData[offset + 6]};
     }
 
     @Override
@@ -3825,8 +4196,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       DeviceDefaultMonochrome;
 
       public static Appearance valueOf(byte codeByte) {
-        if (codeByte == 0x00) return DeviceDefault;
-        else return DeviceDefaultMonochrome;
+        if (codeByte == 0x00) {
+          return DeviceDefault;
+        } else {
+          return DeviceDefaultMonochrome;
+        }
       }
 
       public int toByte() {
@@ -3837,7 +4211,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
 
   /**
    * MODCA, page 474.<br><br>
-   *
+   * <p>
    * The Image Resolution triplet specifies the resolution of a raster image.
    */
   public static class ImageResolution extends Triplet {
@@ -3850,7 +4224,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       super.decodeAFP(sfData, offset, length, config);
-      reserved2_3 = new byte[]{sfData[offset + 2], sfData[offset + 3]};
+      reserved2_3 = new byte[] {sfData[offset + 2], sfData[offset + 3]};
       xUnitBase = AFPUnitBase.valueOf(sfData[offset + 4]);
       yUnitBase = AFPUnitBase.valueOf(sfData[offset + 5]);
       xUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 6, 2);
@@ -3882,7 +4256,7 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       super.decodeAFP(sfData, offset, length, config);
-      reserved2_3 = new byte[]{sfData[offset + 2], sfData[offset + 3]};
+      reserved2_3 = new byte[] {sfData[offset + 2], sfData[offset + 3]};
       pdfPresentationSpace = PDFPresentationSpace.valueOf(sfData[offset + 4]);
     }
 
@@ -3903,8 +4277,11 @@ public abstract class Triplet implements IAFPDecodeableWriteable {
       ArtBox;
 
       public static PDFPresentationSpace valueOf(byte codeByte) throws AFPParserException {
-        for (PDFPresentationSpace ps : values())
-          if (ps.ordinal() + 1 == codeByte) return ps;
+        for (PDFPresentationSpace ps : values()) {
+          if (ps.ordinal() + 1 == codeByte) {
+            return ps;
+          }
+        }
         throw new AFPParserException(PDFPresentationSpace.class.getSimpleName() + ": presentation space code 0x" + Integer.toHexString(codeByte) + " is undfined.");
       }
 

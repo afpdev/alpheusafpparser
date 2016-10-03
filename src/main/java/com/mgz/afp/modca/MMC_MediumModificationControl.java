@@ -64,7 +64,9 @@ public class MMC_MediumModificationControl extends StructuredField {
     baos.write(mmcIdentifier);
     baos.write(constantData1);
     if (keywords != null) {
-      for (MMC_KeyWord kw : keywords) kw.writeAFP(baos, config);
+      for (MMC_KeyWord kw : keywords) {
+        kw.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());
@@ -95,14 +97,21 @@ public class MMC_MediumModificationControl extends StructuredField {
   }
 
   public void addKeyword(MMC_KeyWord keyword) {
-    if (keyword == null) return;
-    if (keywords == null) keywords = new ArrayList<MMC_KeyWord>();
+    if (keyword == null) {
+      return;
+    }
+    if (keywords == null) {
+      keywords = new ArrayList<MMC_KeyWord>();
+    }
     keywords.add(keyword);
   }
 
   public void removeKeyword(MMC_KeyWord keyword) {
-    if (keywords == null) return;
-    else keywords.remove(keyword);
+    if (keywords == null) {
+      return;
+    } else {
+      keywords.remove(keyword);
+    }
   }
 
   public static class MMC_KeyWord implements IAFPDecodeableWriteable {
@@ -167,7 +176,11 @@ public class MMC_MediumModificationControl extends StructuredField {
       }
 
       public static MMC_KeyWordID valueOf(short codeByte) {
-        for (MMC_KeyWordID kwid : values()) if (kwid.code == codeByte) return kwid;
+        for (MMC_KeyWordID kwid : values()) {
+          if (kwid.code == codeByte) {
+            return kwid;
+          }
+        }
         return null;
       }
 

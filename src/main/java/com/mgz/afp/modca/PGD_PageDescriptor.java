@@ -31,7 +31,7 @@ import java.io.OutputStream;
 
 /**
  * MO:DCA, page 309. <br><br>
- *
+ * <p>
  * The Page Descriptor structured field specifies the size and attributes of a page or overlay
  * presentation space.
  */
@@ -78,7 +78,9 @@ public class PGD_PageDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(ySize, 3));
     baos.write(reserved12_14);
     if (triplets != null) {
-      for (Triplet t : triplets) t.writeAFP(baos, config);
+      for (Triplet t : triplets) {
+        t.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());

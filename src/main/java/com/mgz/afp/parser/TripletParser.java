@@ -118,7 +118,9 @@ public class TripletParser {
       // NOP.
     }
 
-    if (cs == null) cs = new Triplet.Undefined();
+    if (cs == null) {
+      cs = new Triplet.Undefined();
+    }
     cs.setTripletID(tid);
 
     return cs;

@@ -115,7 +115,11 @@ public class LND_LineDescriptor extends StructuredFieldBaseTriplets {
     baos.write(subpageID);
     baos.write(UtilBinaryDecoding.intToByteArray(ccpIdentifier, 2));
 
-    if (triplets != null) for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (triplets != null) {
+      for (Triplet t : triplets) {
+        t.writeAFP(baos, config);
+      }
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -301,33 +305,72 @@ public class LND_LineDescriptor extends StructuredFieldBaseTriplets {
     public static EnumSet<LND_Flag> valueOf(int flagBytes) {
       EnumSet<LND_Flag> result = EnumSet.noneOf(LND_Flag.class);
 
-      if ((flagBytes & 0x8000) != 0) result.add(Skipping_CurrentPagesEnds);
-      else result.add(Skipping_CurrentPageDoesNotEnd);
-      if ((flagBytes & 0x4000) != 0) result.add(Spacing_CurrentPagesEnds);
-      else result.add(Spacing_CurrentPageDoesNotEnd);
-      if ((flagBytes & 0x2000) != 0) result.add(GenerateInlinePosition_NewPosition);
-      else result.add(GenerateInlinePosition_CurrentPosition);
-      if ((flagBytes & 0x1000) != 0) result.add(GenerateBaselinePosition_NewPosition);
-      else result.add(GenerateBaselinePosition_CurrentPosition);
-      if ((flagBytes & 0x0800) != 0) result.add(GenerateFontChange_AsSpecified);
-      else result.add(GenerateFontChange_TRC_MRC_Default);
-      if ((flagBytes & 0x0400) != 0) result.add(GenerateSuppression_TextIsSuppressible);
-      else result.add(GenerateSuppression_TextIsNotSuppressible);
-      if ((flagBytes & 0x0200) != 0) result.add(ReuseRecord_DoReuse);
-      else result.add(ReuseRecord_DoNotReuse);
-      if ((flagBytes & 0x0100) != 0) result.add(UseFixedData_DoPresent);
-      else result.add(UseFixedData_DoNotPresent);
+      if ((flagBytes & 0x8000) != 0) {
+        result.add(Skipping_CurrentPagesEnds);
+      } else {
+        result.add(Skipping_CurrentPageDoesNotEnd);
+      }
+      if ((flagBytes & 0x4000) != 0) {
+        result.add(Spacing_CurrentPagesEnds);
+      } else {
+        result.add(Spacing_CurrentPageDoesNotEnd);
+      }
+      if ((flagBytes & 0x2000) != 0) {
+        result.add(GenerateInlinePosition_NewPosition);
+      } else {
+        result.add(GenerateInlinePosition_CurrentPosition);
+      }
+      if ((flagBytes & 0x1000) != 0) {
+        result.add(GenerateBaselinePosition_NewPosition);
+      } else {
+        result.add(GenerateBaselinePosition_CurrentPosition);
+      }
+      if ((flagBytes & 0x0800) != 0) {
+        result.add(GenerateFontChange_AsSpecified);
+      } else {
+        result.add(GenerateFontChange_TRC_MRC_Default);
+      }
+      if ((flagBytes & 0x0400) != 0) {
+        result.add(GenerateSuppression_TextIsSuppressible);
+      } else {
+        result.add(GenerateSuppression_TextIsNotSuppressible);
+      }
+      if ((flagBytes & 0x0200) != 0) {
+        result.add(ReuseRecord_DoReuse);
+      } else {
+        result.add(ReuseRecord_DoNotReuse);
+      }
+      if ((flagBytes & 0x0100) != 0) {
+        result.add(UseFixedData_DoPresent);
+      } else {
+        result.add(UseFixedData_DoNotPresent);
+      }
       // 0x0080 is not used.
-      if ((flagBytes & 0x0040) != 0) result.add(UseCompatibilityTRC_DoUse);
-      else result.add(UseCompatibilityTRC_DoNotUse);
-      if ((flagBytes & 0x0020) != 0) result.add(SetTextColor_AsSpecified);
-      else result.add(SetTextColor_DefaultColor);
-      if ((flagBytes & 0x0010) != 0) result.add(ConditionalProcessing_DoPerformCP);
-      else result.add(ConditionalProcessing_DoNotPerformCP);
-      if ((flagBytes & 0x0008) != 0) result.add(ResourceObjectInclude_DoIncludeResource);
-      else result.add(ResourceObjectInclude_DoNotIncludeResource);
-      if ((flagBytes & 0x0004) != 0) result.add(RelativeBaselinePosition_RelativePosition);
-      else result.add(RelativeBaselinePosition_AbsolutePosition);
+      if ((flagBytes & 0x0040) != 0) {
+        result.add(UseCompatibilityTRC_DoUse);
+      } else {
+        result.add(UseCompatibilityTRC_DoNotUse);
+      }
+      if ((flagBytes & 0x0020) != 0) {
+        result.add(SetTextColor_AsSpecified);
+      } else {
+        result.add(SetTextColor_DefaultColor);
+      }
+      if ((flagBytes & 0x0010) != 0) {
+        result.add(ConditionalProcessing_DoPerformCP);
+      } else {
+        result.add(ConditionalProcessing_DoNotPerformCP);
+      }
+      if ((flagBytes & 0x0008) != 0) {
+        result.add(ResourceObjectInclude_DoIncludeResource);
+      } else {
+        result.add(ResourceObjectInclude_DoNotIncludeResource);
+      }
+      if ((flagBytes & 0x0004) != 0) {
+        result.add(RelativeBaselinePosition_RelativePosition);
+      } else {
+        result.add(RelativeBaselinePosition_AbsolutePosition);
+      }
 
       return result;
     }
@@ -335,20 +378,46 @@ public class LND_LineDescriptor extends StructuredFieldBaseTriplets {
     public static byte[] toBytes(EnumSet<LND_Flag> flags) {
       int result = 0;
 
-      if (flags.contains(Skipping_CurrentPagesEnds)) result |= 0x8000;
-      if (flags.contains(Spacing_CurrentPagesEnds)) result |= 0x4000;
-      if (flags.contains(GenerateInlinePosition_NewPosition)) result |= 0x2000;
-      if (flags.contains(GenerateBaselinePosition_NewPosition)) result |= 0x1000;
-      if (flags.contains(GenerateFontChange_AsSpecified)) result |= 0x0800;
-      if (flags.contains(GenerateSuppression_TextIsSuppressible)) result |= 0x0400;
-      if (flags.contains(ReuseRecord_DoReuse)) result |= 0x0200;
-      if (flags.contains(UseFixedData_DoPresent)) result |= 0x0100;
+      if (flags.contains(Skipping_CurrentPagesEnds)) {
+        result |= 0x8000;
+      }
+      if (flags.contains(Spacing_CurrentPagesEnds)) {
+        result |= 0x4000;
+      }
+      if (flags.contains(GenerateInlinePosition_NewPosition)) {
+        result |= 0x2000;
+      }
+      if (flags.contains(GenerateBaselinePosition_NewPosition)) {
+        result |= 0x1000;
+      }
+      if (flags.contains(GenerateFontChange_AsSpecified)) {
+        result |= 0x0800;
+      }
+      if (flags.contains(GenerateSuppression_TextIsSuppressible)) {
+        result |= 0x0400;
+      }
+      if (flags.contains(ReuseRecord_DoReuse)) {
+        result |= 0x0200;
+      }
+      if (flags.contains(UseFixedData_DoPresent)) {
+        result |= 0x0100;
+      }
       // 0x0080 is not used.
-      if (flags.contains(UseCompatibilityTRC_DoUse)) result |= 0x0040;
-      if (flags.contains(SetTextColor_AsSpecified)) result |= 0x0020;
-      if (flags.contains(ConditionalProcessing_DoPerformCP)) result |= 0x0010;
-      if (flags.contains(ResourceObjectInclude_DoIncludeResource)) result |= 0x0008;
-      if (flags.contains(RelativeBaselinePosition_RelativePosition)) result |= 0x0004;
+      if (flags.contains(UseCompatibilityTRC_DoUse)) {
+        result |= 0x0040;
+      }
+      if (flags.contains(SetTextColor_AsSpecified)) {
+        result |= 0x0020;
+      }
+      if (flags.contains(ConditionalProcessing_DoPerformCP)) {
+        result |= 0x0010;
+      }
+      if (flags.contains(ResourceObjectInclude_DoIncludeResource)) {
+        result |= 0x0008;
+      }
+      if (flags.contains(RelativeBaselinePosition_RelativePosition)) {
+        result |= 0x0004;
+      }
 
       return UtilBinaryDecoding.intToByteArray(result, 2);
     }

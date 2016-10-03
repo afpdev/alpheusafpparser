@@ -152,13 +152,19 @@ public class PTD_PresentationTextDataDescriptor_Format2 extends StructuredField 
   }
 
   public void addControlSequence(PTOCAControlSequence controlSequence) {
-    if (controlSequence == null) return;
-    if (controlSequences == null) controlSequences = new ArrayList<PTOCAControlSequence>();
+    if (controlSequence == null) {
+      return;
+    }
+    if (controlSequences == null) {
+      controlSequences = new ArrayList<PTOCAControlSequence>();
+    }
     controlSequences.add(controlSequence);
   }
 
   public void remoceControlSequence(PTOCAControlSequence controlSequence) {
-    if (controlSequences == null) return;
+    if (controlSequences == null) {
+      return;
+    }
     controlSequences.remove(controlSequence);
   }
 }

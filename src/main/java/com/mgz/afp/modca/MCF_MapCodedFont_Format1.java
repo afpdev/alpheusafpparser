@@ -68,7 +68,9 @@ public class MCF_MapCodedFont_Format1 extends StructuredField {
     baos.write(lengthOfRepeatingGroup);
     baos.write(reserved1_3);
     if (repeatingGroups != null) {
-      for (MCF_RepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+      for (MCF_RepeatingGroup rg : repeatingGroups) {
+        rg.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());
@@ -99,14 +101,19 @@ public class MCF_MapCodedFont_Format1 extends StructuredField {
   }
 
   public void addRepeatingGroup(MCF_RepeatingGroup repeatingGroup) {
-    if (repeatingGroup == null) return;
-    if (this.repeatingGroups == null)
+    if (repeatingGroup == null) {
+      return;
+    }
+    if (this.repeatingGroups == null) {
       repeatingGroups = new ArrayList<MCF_MapCodedFont_Format1.MCF_RepeatingGroup>();
+    }
     repeatingGroups.add(repeatingGroup);
   }
 
   public void removeRepeatingGroup(MCF_RepeatingGroup repeatingGroup) {
-    if (this.repeatingGroups == null) return;
+    if (this.repeatingGroups == null) {
+      return;
+    }
     repeatingGroups.remove(repeatingGroup);
   }
 
@@ -173,16 +180,24 @@ public class MCF_MapCodedFont_Format1 extends StructuredField {
       os.write(reserved1);
       os.write(codedFontSectionID);
       os.write(reserved3);
-      if (codedFontName != null)
+      if (codedFontName != null) {
         os.write(UtilCharacterEncoding.stringToByteArray(codedFontName, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
-      else os.write(codedFontNullName);
-      if (codePageName != null)
+      } else {
+        os.write(codedFontNullName);
+      }
+      if (codePageName != null) {
         os.write(UtilCharacterEncoding.stringToByteArray(codePageName, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
-      else os.write(codePageNullName);
-      if (fontCharacterSetName != null)
+      } else {
+        os.write(codePageNullName);
+      }
+      if (fontCharacterSetName != null) {
         os.write(UtilCharacterEncoding.stringToByteArray(fontCharacterSetName, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
-      else os.write(fontCharacterSetNullName);
-      if (characterRotation != null) os.write(characterRotation.toBytes());
+      } else {
+        os.write(fontCharacterSetNullName);
+      }
+      if (characterRotation != null) {
+        os.write(characterRotation.toBytes());
+      }
     }
 
     public short getCodedFontLocalID() {

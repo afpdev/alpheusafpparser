@@ -50,7 +50,9 @@ public class MPG_MapPage extends StructuredFieldBaseRepeatingGroups {
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    for (IRepeatingGroup rg : repeatingGroups) {
+      rg.writeAFP(baos, config);
+    }
     writeFullStructuredField(os, baos.toByteArray());
   }
 

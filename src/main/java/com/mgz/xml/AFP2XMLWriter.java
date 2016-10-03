@@ -29,11 +29,11 @@ import java.io.OutputStream;
 public class AFP2XMLWriter {
 
   public static void writeXML(OutputStream osw, StructuredField sf, AFPParserConfiguration conf) throws JAXBException {
-      JAXBContext jaxbContext = JAXBContext.newInstance(sf.getClass());
-      Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-      // output pretty printed
-      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+    JAXBContext jaxbContext = JAXBContext.newInstance(sf.getClass());
+    Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+    // output pretty printed
+    jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-      jaxbMarshaller.marshal(sf, osw);
+    jaxbMarshaller.marshal(sf, osw);
   }
 }

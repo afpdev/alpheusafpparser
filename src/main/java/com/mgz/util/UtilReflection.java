@@ -30,12 +30,13 @@ import java.util.*;
 public class UtilReflection {
 
   public static final Comparator<Field> comparatorFields = new FieldComparator();
+  private static AFPField annotationAFPField;
   public static final AFPField defaultAFPFieldAnnotation = getAFPFieldDefaultAnnotation();
 
-  private static AFPField annotationAFPField;
-
   public static Object getFieldValue(Field field, Object instance) throws AFPParserException {
-    if (instance == null) return null;
+    if (instance == null) {
+      return null;
+    }
 
     String errMsg = "";
 
@@ -61,7 +62,7 @@ public class UtilReflection {
           returnValue = method.invoke(instance);
         } catch (Throwable e) {
           throw new AFPParserException("Failed to get value of field " + field.getName()
-          + "\n" + errMsg,e);
+              + "\n" + errMsg, e);
         }
         return returnValue;
       }
@@ -70,7 +71,7 @@ public class UtilReflection {
     return null;
   }
 
-  public static void setFieldValue(Field field, Object instance, Object value) throws AFPParserException{
+  public static void setFieldValue(Field field, Object instance, Object value) throws AFPParserException {
     // Try to set value by accessing the field.
     try {
       boolean isAccessable = field.isAccessible();
@@ -78,27 +79,31 @@ public class UtilReflection {
       field.set(instance, value);
       field.setAccessible(isAccessable);
     } catch (IllegalArgumentException | IllegalAccessException e1) {
-      throw new AFPParserException("Failed to set value.",e1);
+      throw new AFPParserException("Failed to set value.", e1);
     }
   }
 
   public static boolean isNumeric(Class<?> fieldType) {
     return Number.class.isAssignableFrom(fieldType)
-            || fieldType.isPrimitive() && (
-            double.class.isAssignableFrom(fieldType)
-                    || float.class.isAssignableFrom(fieldType)
-                    || long.class.isAssignableFrom(fieldType)
-                    || int.class.isAssignableFrom(fieldType)
-                    || short.class.isAssignableFrom(fieldType)
-                    || byte.class.isAssignableFrom(fieldType)
+        || fieldType.isPrimitive() && (
+        double.class.isAssignableFrom(fieldType)
+            || float.class.isAssignableFrom(fieldType)
+            || long.class.isAssignableFrom(fieldType)
+            || int.class.isAssignableFrom(fieldType)
+            || short.class.isAssignableFrom(fieldType)
+            || byte.class.isAssignableFrom(fieldType)
     );
   }
 
   public static boolean isAFPType(Class<?> clazz) {
     while (clazz != null && clazz != Object.class) {
-      if (clazz.getAnnotation(AFPType.class) != null) return true;
+      if (clazz.getAnnotation(AFPType.class) != null) {
+        return true;
+      }
       for (Field field : clazz.getDeclaredFields()) {
-        if (field.getAnnotation(AFPField.class) != null) return true;
+        if (field.getAnnotation(AFPField.class) != null) {
+          return true;
+        }
       }
       clazz = clazz.getSuperclass();
     }
@@ -106,7 +111,9 @@ public class UtilReflection {
   }
 
   public static AFPField getAFPFieldDefaultAnnotation() {
-    if (annotationAFPField != null) return annotationAFPField;
+    if (annotationAFPField != null) {
+      return annotationAFPField;
+    }
 
     AFPFieldAnnotationBearer afpFieldAnnotationBearer = new AFPFieldAnnotationBearer();
     return annotationAFPField = afpFieldAnnotationBearer.getClass().getAnnotation(AFPField.class);
@@ -125,14 +132,21 @@ public class UtilReflection {
     List<Field> listOfFields = new ArrayList<Field>();
 
     for (Class<?> c : listOfClasses) {
-      if (defaultAnnotation == null)
+      if (defaultAnnotation == null) {
         defaultAnnotation = c.getAnnotation(AFPType.class) != null ? defaultAFPFieldAnnotation : defaultAnnotation;
+      }
 
       for (Field field : c.getDeclaredFields()) {
-        if (Modifier.isStatic(field.getModifiers())) continue;
+        if (Modifier.isStatic(field.getModifiers())) {
+          continue;
+        }
         AFPField annotation = field.getAnnotation(AFPField.class);
-        if (annotation == null) annotation = defaultAnnotation;
-        if (annotation == null || annotation.isHidden()) continue;
+        if (annotation == null) {
+          annotation = defaultAnnotation;
+        }
+        if (annotation == null || annotation.isHidden()) {
+          continue;
+        }
 
         listOfFields.add(field);
       }
@@ -158,8 +172,11 @@ public class UtilReflection {
 
     private static Integer getOrder(String fieldName) {
       Integer order = specialOrderedFields.get(fieldName);
-      if (order == null) return Integer.valueOf(100);
-      else return order;
+      if (order == null) {
+        return Integer.valueOf(100);
+      } else {
+        return order;
+      }
     }
 
     @Override

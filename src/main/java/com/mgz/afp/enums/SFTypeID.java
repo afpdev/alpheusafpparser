@@ -191,8 +191,8 @@ public enum SFTypeID {
 
     for (SFTypeID sfTypeID : SFTypeID.values()) {
       if (sfTypeID.sfClass.val == sfClass
-              && sfTypeID.sfType.val == sfType
-              && sfTypeID.sfCategory.val == sfCategory) {
+          && sfTypeID.sfType.val == sfType
+          && sfTypeID.sfCategory.val == sfCategory) {
         return sfTypeID;
       }
     }

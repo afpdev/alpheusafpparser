@@ -68,7 +68,9 @@ public class PFC_PresentationFidelityControl extends StructuredFieldBaseTriplets
     baos.write(flag.toByte());
     baos.write(reserved2_3);
     if (triplets != null) {
-      for (Triplet t : triplets) t.writeAFP(baos, config);
+      for (Triplet t : triplets) {
+        t.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());
@@ -103,13 +105,19 @@ public class PFC_PresentationFidelityControl extends StructuredFieldBaseTriplets
     DoNotResetFidelityControlsToDefault;
 
     public static PFC_Flag valueOf(byte flagByte) {
-      if ((flagByte & 0x80) == 0) return ResetFidelityControlsToDefault;
-      else return DoNotResetFidelityControlsToDefault;
+      if ((flagByte & 0x80) == 0) {
+        return ResetFidelityControlsToDefault;
+      } else {
+        return DoNotResetFidelityControlsToDefault;
+      }
     }
 
     public int toByte() {
-      if (this == ResetFidelityControlsToDefault) return 0x00;
-      else return 0x80;
+      if (this == ResetFidelityControlsToDefault) {
+        return 0x00;
+      } else {
+        return 0x80;
+      }
     }
   }
 }

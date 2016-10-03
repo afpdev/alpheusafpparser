@@ -32,7 +32,9 @@ public class StructuredFieldTest {
   @Test
   public void testAllSFTypeIDDefined() {
     for (SFTypeID a : SFTypeID.values()) {
-      if (a == SFTypeID.Undefined) continue;
+      if (a == SFTypeID.Undefined) {
+        continue;
+      }
       assertFalse(a.name() + "'s SFClass is undefined.", a.getSfClass() == SFClass.Undefined);
       assertFalse(a.name() + "'s SFType is undefined.", a.getSfType() == SFType.Undefined);
       assertFalse(a.name() + "'s SGCategory is undefined.", a.getSfCategory() == SFCategory.Undefined);
@@ -43,16 +45,18 @@ public class StructuredFieldTest {
   public void testUniqueSFTypeIDComponentes() {
     for (SFTypeID a : SFTypeID.values()) {
       for (SFTypeID b : SFTypeID.values()) {
-        if (a == b) continue;
+        if (a == b) {
+          continue;
+        }
         assertFalse(
-                a.name() + "=" + b.name() + ":"
-                        + " class:" + a.getSfClass() + "==" + b.getSfClass()
-                        + " type:" + a.getSfType() + "==" + b.getSfType()
-                        + " cat:" + a.getSfCategory() + "==" + b.getSfCategory()
-                ,
-                a.getSfClass() == b.getSfClass()
-                        && a.getSfType() == b.getSfType()
-                        && a.getSfCategory() == b.getSfCategory()
+            a.name() + "=" + b.name() + ":"
+                + " class:" + a.getSfClass() + "==" + b.getSfClass()
+                + " type:" + a.getSfType() + "==" + b.getSfType()
+                + " cat:" + a.getSfCategory() + "==" + b.getSfCategory()
+            ,
+            a.getSfClass() == b.getSfClass()
+                && a.getSfType() == b.getSfType()
+                && a.getSfCategory() == b.getSfCategory()
         );
       }
     }
@@ -61,17 +65,19 @@ public class StructuredFieldTest {
   @Test
   public void testNoUndefinedComponents() {
     for (SFTypeID a : SFTypeID.values()) {
-      if (a == SFTypeID.Undefined) continue;
+      if (a == SFTypeID.Undefined) {
+        continue;
+      }
       assertFalse(
-              "Undefined: " + a.name() + ":"
-                      + " class:" + a.getSfClass()
-                      + " type:" + a.getSfType()
-                      + " cat:" + a.getSfCategory(),
+          "Undefined: " + a.name() + ":"
+              + " class:" + a.getSfClass()
+              + " type:" + a.getSfType()
+              + " cat:" + a.getSfCategory(),
 
 
-              a.getSfClass() == SFClass.Undefined
-                      || a.getSfType() == SFType.Undefined
-                      || a.getSfCategory() == SFCategory.Undefined
+          a.getSfClass() == SFClass.Undefined
+              || a.getSfType() == SFType.Undefined
+              || a.getSfCategory() == SFCategory.Undefined
       );
 
     }

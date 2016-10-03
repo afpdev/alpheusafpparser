@@ -74,8 +74,9 @@ public class BDA_BarCodeData extends StructuredField {
       } else {
         parametersData = null;
       }
-      if (parametersData != null)
+      if (parametersData != null) {
         parameterDataLength = parametersData.decodeAFP(sfData, 5, -1);
+      }
     }
 
     if (actualLength > (5 + parameterDataLength)) {
@@ -112,11 +113,14 @@ public class BDA_BarCodeData extends StructuredField {
    * exclusive {@link BarCodeFlag}.
    */
   public void addBarCodeFlag(BarCodeFlag barCodeFlag) {
-    if (barCodeFlags == null) barCodeFlags = EnumSet.noneOf(BarCodeFlag.class);
-    if (barCodeFlag == BarCodeFlag.PositionHRIBelow)
+    if (barCodeFlags == null) {
+      barCodeFlags = EnumSet.noneOf(BarCodeFlag.class);
+    }
+    if (barCodeFlag == BarCodeFlag.PositionHRIBelow) {
       barCodeFlags.remove(BarCodeFlag.PositionHRIAbove);
-    else if (barCodeFlag == BarCodeFlag.PositionHRIAbove)
+    } else if (barCodeFlag == BarCodeFlag.PositionHRIAbove) {
       barCodeFlags.remove(BarCodeFlag.PositionHRIBelow);
+    }
     barCodeFlags.add(barCodeFlag);
   }
 
@@ -153,12 +157,23 @@ public class BDA_BarCodeData extends StructuredField {
     public static EnumSet<BarCodeFlag> valueOf(int flagByte) {
       EnumSet<BarCodeFlag> result = EnumSet.noneOf(BarCodeFlag.class);
 
-      if ((flagByte & 0x80) != 0) result.add(HRINotPresent);
-      if ((flagByte & 0x40) != 0) result.add(PositionHRIBelow);
-      else if ((flagByte & 0x20) != 0) result.add(PositionHRIAbove);
-      if ((flagByte & 0x08) != 0) result.add(SSCASTAsteriskIsPresent);
-      if ((flagByte & 0x04) != 0) result.add(SuppressBarCodeSymbol);
-      if ((flagByte & 0x02) != 0) result.add(SuppressAndAdjustBlanks);
+      if ((flagByte & 0x80) != 0) {
+        result.add(HRINotPresent);
+      }
+      if ((flagByte & 0x40) != 0) {
+        result.add(PositionHRIBelow);
+      } else if ((flagByte & 0x20) != 0) {
+        result.add(PositionHRIAbove);
+      }
+      if ((flagByte & 0x08) != 0) {
+        result.add(SSCASTAsteriskIsPresent);
+      }
+      if ((flagByte & 0x04) != 0) {
+        result.add(SuppressBarCodeSymbol);
+      }
+      if ((flagByte & 0x02) != 0) {
+        result.add(SuppressAndAdjustBlanks);
+      }
 
       return result;
     }
@@ -169,12 +184,23 @@ public class BDA_BarCodeData extends StructuredField {
     public static int toByte(EnumSet<BarCodeFlag> flags) {
       int result = 0;
 
-      if (flags.contains(HRINotPresent)) result += 0x80;
-      if (flags.contains(PositionHRIBelow)) result += 0x40;
-      else if (flags.contains(PositionHRIAbove)) result += 0x20;
-      if (flags.contains(SSCASTAsteriskIsPresent)) result += 0x08;
-      if (flags.contains(SuppressBarCodeSymbol)) result += 0x04;
-      if (flags.contains(SuppressAndAdjustBlanks)) result += 0x02;
+      if (flags.contains(HRINotPresent)) {
+        result += 0x80;
+      }
+      if (flags.contains(PositionHRIBelow)) {
+        result += 0x40;
+      } else if (flags.contains(PositionHRIAbove)) {
+        result += 0x20;
+      }
+      if (flags.contains(SSCASTAsteriskIsPresent)) {
+        result += 0x08;
+      }
+      if (flags.contains(SuppressBarCodeSymbol)) {
+        result += 0x04;
+      }
+      if (flags.contains(SuppressAndAdjustBlanks)) {
+        result += 0x02;
+      }
 
       return result;
     }
@@ -215,13 +241,18 @@ public class BDA_BarCodeData extends StructuredField {
     }
 
     public void addControlFlag(ControlFlag controlFlag) {
-      if (this.controlFlags == null) controlFlags = EnumSet.noneOf(ControlFlag.class);
+      if (this.controlFlags == null) {
+        controlFlags = EnumSet.noneOf(ControlFlag.class);
+      }
       controlFlags.add(controlFlag);
     }
 
     public void removeControlFlag(ControlFlag controlFlag) {
-      if (this.controlFlags == null) return;
-      else this.controlFlags.remove(controlFlag);
+      if (this.controlFlags == null) {
+        return;
+      } else {
+        this.controlFlags.remove(controlFlag);
+      }
     }
 
     public enum ControlFlag {
@@ -241,10 +272,10 @@ public class BDA_BarCodeData extends StructuredField {
 
       public static int toByte(EnumSet<ControlFlag> controlFlags) {
         int result = 0;
-        if (controlFlags.contains(ConvertEBCDICToASCII)){
+        if (controlFlags.contains(ConvertEBCDICToASCII)) {
           result += 0x80;
         }
-        if (controlFlags.contains(IgnoreAllEscapeSequences)){
+        if (controlFlags.contains(IgnoreAllEscapeSequences)) {
           result += 0x40;
         }
         return result;
@@ -332,21 +363,23 @@ public class BDA_BarCodeData extends StructuredField {
      * @param specialFunctionFlag flag to set.
      */
     public void addSpecialFunctionFlag(SpecialFunctionFlag specialFunctionFlag) {
-      if (specialFunctionFlags == null)
+      if (specialFunctionFlags == null) {
         specialFunctionFlags = EnumSet.noneOf(SpecialFunctionFlag.class);
+      }
 
-      if (specialFunctionFlag == SpecialFunctionFlag.UseMacro06HeaderTrailer)
+      if (specialFunctionFlag == SpecialFunctionFlag.UseMacro06HeaderTrailer) {
         specialFunctionFlags.remove(SpecialFunctionFlag.UseMacro05HeaderTrailer);
-      else if (specialFunctionFlag == SpecialFunctionFlag.UseMacro05HeaderTrailer)
+      } else if (specialFunctionFlag == SpecialFunctionFlag.UseMacro05HeaderTrailer) {
         specialFunctionFlags.remove(SpecialFunctionFlag.UseMacro06HeaderTrailer);
+      }
       if (specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeAutoEncoding
-              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeBase256
-              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeEDIFACT
-              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeX12
-              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeText
-              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeC40
-              || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeASCII
-              ) {
+          || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeBase256
+          || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeEDIFACT
+          || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeX12
+          || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeText
+          || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeC40
+          || specialFunctionFlag == SpecialFunctionFlag.EncodationSchemeASCII
+          ) {
         specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeAutoEncoding);
         specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeBase256);
         specialFunctionFlags.remove(SpecialFunctionFlag.EncodationSchemeEDIFACT);
@@ -360,8 +393,11 @@ public class BDA_BarCodeData extends StructuredField {
     }
 
     public void removeSpecialFunctionFlag(SpecialFunctionFlag specialFunctionFlag) {
-      if (specialFunctionFlags == null) return;
-      else specialFunctionFlags.remove(specialFunctionFlag);
+      if (specialFunctionFlags == null) {
+        return;
+      } else {
+        specialFunctionFlags.remove(specialFunctionFlag);
+      }
     }
 
     public enum SpecialFunctionFlag {
@@ -380,35 +416,76 @@ public class BDA_BarCodeData extends StructuredField {
 
       public static EnumSet<SpecialFunctionFlag> valueOf(int flagByte) {
         EnumSet<SpecialFunctionFlag> result = EnumSet.noneOf(SpecialFunctionFlag.class);
-        if ((flagByte & 0x80) != 0) result.add(SymbolConfirmsToGS1Standard);
-        if ((flagByte & 0x40) != 0) result.add(SymbolConfirmsToIndustryStandard);
-        if ((flagByte & 0x20) != 0) result.add(SymbolEncodesAMessage);
-        if ((flagByte & 0x10) != 0) result.add(UseMacro06HeaderTrailer);
-        if ((flagByte & 0x08) != 0) result.add(UseMacro05HeaderTrailer);
-        if ((flagByte & 0x07) != 0) result.add(EncodationSchemeAutoEncoding);
-        if ((flagByte & 0x06) != 0) result.add(EncodationSchemeBase256);
-        if ((flagByte & 0x05) != 0) result.add(EncodationSchemeEDIFACT);
-        if ((flagByte & 0x04) != 0) result.add(EncodationSchemeX12);
-        if ((flagByte & 0x03) != 0) result.add(EncodationSchemeText);
-        if ((flagByte & 0x02) != 0) result.add(EncodationSchemeC40);
-        if ((flagByte & 0x01) != 0) result.add(EncodationSchemeASCII);
+        if ((flagByte & 0x80) != 0) {
+          result.add(SymbolConfirmsToGS1Standard);
+        }
+        if ((flagByte & 0x40) != 0) {
+          result.add(SymbolConfirmsToIndustryStandard);
+        }
+        if ((flagByte & 0x20) != 0) {
+          result.add(SymbolEncodesAMessage);
+        }
+        if ((flagByte & 0x10) != 0) {
+          result.add(UseMacro06HeaderTrailer);
+        }
+        if ((flagByte & 0x08) != 0) {
+          result.add(UseMacro05HeaderTrailer);
+        }
+        if ((flagByte & 0x07) != 0) {
+          result.add(EncodationSchemeAutoEncoding);
+        }
+        if ((flagByte & 0x06) != 0) {
+          result.add(EncodationSchemeBase256);
+        }
+        if ((flagByte & 0x05) != 0) {
+          result.add(EncodationSchemeEDIFACT);
+        }
+        if ((flagByte & 0x04) != 0) {
+          result.add(EncodationSchemeX12);
+        }
+        if ((flagByte & 0x03) != 0) {
+          result.add(EncodationSchemeText);
+        }
+        if ((flagByte & 0x02) != 0) {
+          result.add(EncodationSchemeC40);
+        }
+        if ((flagByte & 0x01) != 0) {
+          result.add(EncodationSchemeASCII);
+        }
         return result;
       }
 
       public static int toByte(EnumSet<SpecialFunctionFlag> specialFunctionFlags) {
         int result = 0;
-        if (specialFunctionFlags.contains(SymbolConfirmsToGS1Standard)) result |= 0x80;
-        if (specialFunctionFlags.contains(SymbolConfirmsToIndustryStandard)) result |= 0x40;
-        if (specialFunctionFlags.contains(SymbolEncodesAMessage)) result |= 0x20;
-        if (specialFunctionFlags.contains(UseMacro06HeaderTrailer)) result |= 0x10;
-        else if (specialFunctionFlags.contains(UseMacro05HeaderTrailer)) result |= 0x08;
-        if (specialFunctionFlags.contains(EncodationSchemeAutoEncoding)) result |= 0x07;
-        else if (specialFunctionFlags.contains(EncodationSchemeBase256)) result |= 0x06;
-        else if (specialFunctionFlags.contains(EncodationSchemeEDIFACT)) result |= 0x05;
-        else if (specialFunctionFlags.contains(EncodationSchemeX12)) result |= 0x04;
-        else if (specialFunctionFlags.contains(EncodationSchemeText)) result |= 0x03;
-        else if (specialFunctionFlags.contains(EncodationSchemeC40)) result |= 0x02;
-        else if (specialFunctionFlags.contains(EncodationSchemeASCII)) result |= 0x01;
+        if (specialFunctionFlags.contains(SymbolConfirmsToGS1Standard)) {
+          result |= 0x80;
+        }
+        if (specialFunctionFlags.contains(SymbolConfirmsToIndustryStandard)) {
+          result |= 0x40;
+        }
+        if (specialFunctionFlags.contains(SymbolEncodesAMessage)) {
+          result |= 0x20;
+        }
+        if (specialFunctionFlags.contains(UseMacro06HeaderTrailer)) {
+          result |= 0x10;
+        } else if (specialFunctionFlags.contains(UseMacro05HeaderTrailer)) {
+          result |= 0x08;
+        }
+        if (specialFunctionFlags.contains(EncodationSchemeAutoEncoding)) {
+          result |= 0x07;
+        } else if (specialFunctionFlags.contains(EncodationSchemeBase256)) {
+          result |= 0x06;
+        } else if (specialFunctionFlags.contains(EncodationSchemeEDIFACT)) {
+          result |= 0x05;
+        } else if (specialFunctionFlags.contains(EncodationSchemeX12)) {
+          result |= 0x04;
+        } else if (specialFunctionFlags.contains(EncodationSchemeText)) {
+          result |= 0x03;
+        } else if (specialFunctionFlags.contains(EncodationSchemeC40)) {
+          result |= 0x02;
+        } else if (specialFunctionFlags.contains(EncodationSchemeASCII)) {
+          result |= 0x01;
+        }
         return result;
       }
     }
@@ -442,21 +519,34 @@ public class BDA_BarCodeData extends StructuredField {
       Mode2, Mode3, Mode4, Mode5, Mode6;
 
       public static SymbolMode valueOf(byte symbolModeCode) {
-        if (symbolModeCode == 0x02) return Mode2;
-        else if (symbolModeCode == 0x03) return Mode3;
-        else if (symbolModeCode == 0x04) return Mode4;
-        else if (symbolModeCode == 0x05) return Mode5;
-        else if (symbolModeCode == 0x06) return Mode6;
+        if (symbolModeCode == 0x02) {
+          return Mode2;
+        } else if (symbolModeCode == 0x03) {
+          return Mode3;
+        } else if (symbolModeCode == 0x04) {
+          return Mode4;
+        } else if (symbolModeCode == 0x05) {
+          return Mode5;
+        } else if (symbolModeCode == 0x06) {
+          return Mode6;
+        }
         return null;
       }
 
       public int toByte() {
-        if (this == Mode2) return 0x02;
-        else if (this == Mode3) return 0x03;
-        else if (this == Mode4) return 0x04;
-        else if (this == Mode5) return 0x05;
-        else if (this == Mode6) return 0x06;
-        else return 0x00;
+        if (this == Mode2) {
+          return 0x02;
+        } else if (this == Mode3) {
+          return 0x03;
+        } else if (this == Mode4) {
+          return 0x04;
+        } else if (this == Mode5) {
+          return 0x05;
+        } else if (this == Mode6) {
+          return 0x06;
+        } else {
+          return 0x00;
+        }
       }
     }
 
@@ -465,13 +555,19 @@ public class BDA_BarCodeData extends StructuredField {
       VerticalZipperPatternOnRight;
 
       public static SpecialFunctionFlag valueOf(byte code) {
-        if (code == 0x00) return NoZipperPattern;
-        else return VerticalZipperPatternOnRight;
+        if (code == 0x00) {
+          return NoZipperPattern;
+        } else {
+          return VerticalZipperPatternOnRight;
+        }
       }
 
       public int toByte() {
-        if (this == NoZipperPattern) return 0x00;
-        else return 0x80;
+        if (this == NoZipperPattern) {
+          return 0x00;
+        } else {
+          return 0x80;
+        }
       }
     }
   }
@@ -561,8 +657,11 @@ public class BDA_BarCodeData extends StructuredField {
       }
 
       public static Conversion valueOf(byte conversionCode) {
-        for (Conversion conversion : values())
-          if (conversion.code == conversionCode) return conversion;
+        for (Conversion conversion : values()) {
+          if (conversion.code == conversionCode) {
+            return conversion;
+          }
+        }
         return NoConversion;
       }
 
@@ -576,8 +675,11 @@ public class BDA_BarCodeData extends StructuredField {
       LevelL, LevelM, LevelQ, LevelH;
 
       public static ErrorCorrectionLevel valueOf(byte leveCode) {
-        for (ErrorCorrectionLevel level : values())
-          if (level.ordinal() == leveCode) return level;
+        for (ErrorCorrectionLevel level : values()) {
+          if (level.ordinal() == leveCode) {
+            return level;
+          }
+        }
         return null;
       }
 
@@ -591,13 +693,19 @@ public class BDA_BarCodeData extends StructuredField {
       symbolConformsToIndustriyStandard;
 
       public static SpecialFunctionFlag valueOf(short code) {
-        if (code == 0x80) return symbolConformsToUCC_EANCode;
-        else return symbolConformsToIndustriyStandard;
+        if (code == 0x80) {
+          return symbolConformsToUCC_EANCode;
+        } else {
+          return symbolConformsToIndustriyStandard;
+        }
       }
 
       public int toByte() {
-        if (this == symbolConformsToUCC_EANCode) return 0x80;
-        else return 0x40;
+        if (this == symbolConformsToUCC_EANCode) {
+          return 0x80;
+        } else {
+          return 0x40;
+        }
 
       }
     }

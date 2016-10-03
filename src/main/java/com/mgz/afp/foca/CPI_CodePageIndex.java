@@ -137,9 +137,15 @@ public class CPI_CodePageIndex extends StructuredField {
     public static EnumSet<GraphicCharacterUseFlag> valueOf(int flagByte) {
       EnumSet<GraphicCharacterUseFlag> result = EnumSet.noneOf(GraphicCharacterUseFlag.class);
 
-      if ((flagByte & 0x80) != 0) result.add(InvalidCodedCharacter);
-      if ((flagByte & 0x40) != 0) result.add(NoPresentation);
-      if ((flagByte & 0x20) != 0) result.add(NoIncrement);
+      if ((flagByte & 0x80) != 0) {
+        result.add(InvalidCodedCharacter);
+      }
+      if ((flagByte & 0x40) != 0) {
+        result.add(NoPresentation);
+      }
+      if ((flagByte & 0x20) != 0) {
+        result.add(NoIncrement);
+      }
 
       return result;
     }
@@ -147,9 +153,15 @@ public class CPI_CodePageIndex extends StructuredField {
     public static int toByte(EnumSet<GraphicCharacterUseFlag> flags) {
       int result = 0;
 
-      if (flags.contains(InvalidCodedCharacter)) result += 0x80;
-      if (flags.contains(NoPresentation)) result += 0x40;
-      if (flags.contains(NoIncrement)) result += 0x20;
+      if (flags.contains(InvalidCodedCharacter)) {
+        result += 0x80;
+      }
+      if (flags.contains(NoPresentation)) {
+        result += 0x40;
+      }
+      if (flags.contains(NoIncrement)) {
+        result += 0x20;
+      }
 
       return result;
     }
@@ -181,7 +193,7 @@ public class CPI_CodePageIndex extends StructuredField {
     }
 
     public void setGraphicCharacterUseFlags(
-            EnumSet<GraphicCharacterUseFlag> graphicCharacterUseFlags) {
+        EnumSet<GraphicCharacterUseFlag> graphicCharacterUseFlags) {
       this.graphicCharacterUseFlags = graphicCharacterUseFlags;
     }
 

@@ -71,20 +71,25 @@ public class FNP_FontPosition extends StructuredField {
   }
 
   public void addFNPRepeatingGroup(FNP_RepeatingGroup rg) {
-    if (rg == null) return;
-    if (this.repeatingGroups == null)
+    if (rg == null) {
+      return;
+    }
+    if (this.repeatingGroups == null) {
       this.repeatingGroups = new ArrayList<FNP_RepeatingGroup>();
+    }
     repeatingGroups.add(rg);
   }
 
   public void removeRepeatingGroup(FNP_RepeatingGroup rg) {
-    if (this.repeatingGroups == null) return;
+    if (this.repeatingGroups == null) {
+      return;
+    }
     this.repeatingGroups.remove(rg);
   }
 
   public static class FNP_RepeatingGroup implements IAFPDecodeableWriteable {
     @AFPField(size = 2)
-    byte[] reserved0_1 = new byte[]{0x00, 0x00};
+    byte[] reserved0_1 = new byte[] {0x00, 0x00};
     @AFPField
     short lowercaseHeight;
     @AFPField
@@ -94,7 +99,7 @@ public class FNP_FontPosition extends StructuredField {
     @AFPField
     short maxDescenderDepth;
     @AFPField(size = 5)
-    byte[] reserved10_14 = new byte[]{0x00, 0x00, 0x00, 0x00, 0x00};
+    byte[] reserved10_14 = new byte[] {0x00, 0x00, 0x00, 0x00, 0x00};
     @AFPField
     short retired15 = 0x01;
     @AFPField

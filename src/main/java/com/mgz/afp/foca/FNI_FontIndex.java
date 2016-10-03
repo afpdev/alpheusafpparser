@@ -137,7 +137,7 @@ public class FNI_FontIndex extends StructuredField {
     @AFPField
     short descenderDepth;
     @AFPField(size = 2)
-    byte[] reserved14_15 = new byte[]{0x00, 0x00};
+    byte[] reserved14_15 = new byte[] {0x00, 0x00};
     @AFPField
     int fnmIndex;
     @AFPField
@@ -147,7 +147,7 @@ public class FNI_FontIndex extends StructuredField {
     @AFPField
     short CSpace;
     @AFPField(size = 2)
-    byte[] reserved24_25 = new byte[]{0x00, 0x00};
+    byte[] reserved24_25 = new byte[] {0x00, 0x00};
     @AFPField
     short baselineOffset;
 
@@ -214,7 +214,7 @@ public class FNI_FontIndex extends StructuredField {
     }
 
     public void setGraphicCharacterGlobalID_GCGID(
-            String graphicCharacterGlobalID_GCGID) {
+        String graphicCharacterGlobalID_GCGID) {
       this.graphicCharacterGlobalID_GCGID = graphicCharacterGlobalID_GCGID;
     }
 

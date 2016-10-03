@@ -85,8 +85,8 @@ public class StructuredFieldIntroducer {
       sfi.flagByte = SFFlag.valueOf(is.read());
 
       sfi.reserved = UtilBinaryDecoding.parseInt(is, 2);
-    }catch (IOException ioex){
-      throw new AFPParserException("Failed to decode SFI header.",ioex);
+    } catch (IOException ioex) {
+      throw new AFPParserException("Failed to decode SFI header.", ioex);
     }
 
     try {
@@ -97,8 +97,8 @@ public class StructuredFieldIntroducer {
           throw new AFPParserException("Failed to read SFI extension data.");
         }
       }
-    }catch (IOException ioex){
-      throw new AFPParserException("Failed to decode decode SFI extension data.",ioex);
+    } catch (IOException ioex) {
+      throw new AFPParserException("Failed to decode decode SFI extension data.", ioex);
     }
 
     return sfi;
@@ -106,14 +106,17 @@ public class StructuredFieldIntroducer {
 
   public byte[] toBytes() throws IOException {
     ByteArrayOutputStream b;
-    if (flagByte == null || !flagByte.contains(SFFlag.hasExtension))
+    if (flagByte == null || !flagByte.contains(SFFlag.hasExtension)) {
       b = new ByteArrayOutputStream(8);
-    else b = new ByteArrayOutputStream(8 + extenstionLength);
+    } else {
+      b = new ByteArrayOutputStream(8 + extenstionLength);
+    }
 
     b.write(UtilBinaryDecoding.intToByteArray(sfLength, 2));
-    if (sfTypeID != null) b.write(sfTypeID.toBytes());
-    else {
-      b.write(new byte[]{0, 0, 0});
+    if (sfTypeID != null) {
+      b.write(sfTypeID.toBytes());
+    } else {
+      b.write(new byte[] {0, 0, 0});
     }
     if (flagByte != null) {
       b.write(SFFlag.toByte(flagByte));
@@ -130,8 +133,11 @@ public class StructuredFieldIntroducer {
   }
 
   public int getLengthOfStructuredFieldIntroducerIncludingExtension() {
-    if (isFlagSet(SFFlag.hasExtension)) return 8;
-    else return 8 + extenstionLength;
+    if (isFlagSet(SFFlag.hasExtension)) {
+      return 8;
+    } else {
+      return 8 + extenstionLength;
+    }
   }
 
   public int getSFLength() {
@@ -144,6 +150,10 @@ public class StructuredFieldIntroducer {
 
   public short getExtensionLength() {
     return extenstionLength;
+  }
+
+  public byte[] getExtensionData() {
+    return extenstion;
   }
 
   /**
@@ -160,7 +170,9 @@ public class StructuredFieldIntroducer {
     }
     extenstion = sfiExtensionData;
     if (sfiExtensionData != null) {
-      if (flagByte == null) flagByte = EnumSet.noneOf(SFFlag.class);
+      if (flagByte == null) {
+        flagByte = EnumSet.noneOf(SFFlag.class);
+      }
       flagByte.add(SFFlag.hasExtension);
       extenstionLength = (short) (sfiExtensionData.length + 1);
     } else {
@@ -169,10 +181,6 @@ public class StructuredFieldIntroducer {
       }
       extenstionLength = (short) 0;
     }
-  }
-
-  public byte[] getExtensionData() {
-    return extenstion;
   }
 
   public int getReserved() {
@@ -184,17 +192,22 @@ public class StructuredFieldIntroducer {
   }
 
   public boolean isFlagSet(SFFlag flag) {
-    if (this.flagByte == null) return false;
-    else return flagByte.contains(flag);
+    if (this.flagByte == null) {
+      return false;
+    } else {
+      return flagByte.contains(flag);
+    }
   }
 
   public void setFlag(SFFlag flag) {
-    if (this.flagByte == null) flagByte = EnumSet.noneOf(SFFlag.class);
+    if (this.flagByte == null) {
+      flagByte = EnumSet.noneOf(SFFlag.class);
+    }
     flagByte.add(flag);
   }
 
   public void removeFlag(SFFlag flag) {
-    if (flagByte == null){
+    if (flagByte == null) {
       return;
     } else {
       flagByte.remove(flag);
@@ -241,7 +254,7 @@ public class StructuredFieldIntroducer {
   @Override
   public String toString() {
     return "StructuredFieldIntroducer{" +
-            "sfTypeID=" + sfTypeID +
-            '}';
+        "sfTypeID=" + sfTypeID +
+        '}';
   }
 }

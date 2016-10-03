@@ -38,14 +38,14 @@ public class AFPParser {
 
   private static String afpPackagePrefix = "com.mgz.afp.";
   private static String[] afpPackages = {
-          afpPackagePrefix + "modca.",
-          afpPackagePrefix + "ptoca.",
-          afpPackagePrefix + "foca.",
-          afpPackagePrefix + "ioca.",
-          afpPackagePrefix + "goca.",
-          afpPackagePrefix + "bcoca.",
-          afpPackagePrefix + "lineData.",
-          afpPackagePrefix + "modca_L."
+      afpPackagePrefix + "modca.",
+      afpPackagePrefix + "ptoca.",
+      afpPackagePrefix + "foca.",
+      afpPackagePrefix + "ioca.",
+      afpPackagePrefix + "goca.",
+      afpPackagePrefix + "bcoca.",
+      afpPackagePrefix + "lineData.",
+      afpPackagePrefix + "modca_L."
   };
   AFPParserConfiguration parserConf;
   long nrOfBytesRead;
@@ -61,7 +61,7 @@ public class AFPParser {
   public AFPParser(AFPParserConfiguration parserConfiguration) {
     nrOfBytesRead = 0;
     nrOfSFBuilt = 0;
-    nrOfErrSFBuilt =0;
+    nrOfErrSFBuilt = 0;
     parserConf = parserConfiguration;
   }
 
@@ -78,13 +78,17 @@ public class AFPParser {
       }
     }
 
-    if (sf == null) sf = new com.mgz.afp.base.Undefined();
+    if (sf == null) {
+      sf = new com.mgz.afp.base.Undefined();
+    }
     sf.setStructuredFieldIntroducer(sfi);
     return sf;
   }
 
   public static void reload(StructuredField sf) throws AFPParserException {
-    if (sf == null || sf.getStructuredFieldIntroducer() == null) return;
+    if (sf == null || sf.getStructuredFieldIntroducer() == null) {
+      return;
+    }
 
     StructuredFieldIntroducer sfi = sf.getStructuredFieldIntroducer();
     AFPParserConfiguration conf = sfi.getActualConfig();
@@ -98,7 +102,7 @@ public class AFPParser {
         conf.setInputStream(null);
         is = conf.getInputStream();
         long lenSFI = sfi.getFileOffset() + 1 + sfi.getLengthOfStructuredFieldIntroducerIncludingExtension();
-        if(is.skip(lenSFI)<lenSFI){
+        if (is.skip(lenSFI) < lenSFI) {
           throw new AFPParserException("Failed to skip over SF Introducer.");
         }
 
@@ -123,8 +127,9 @@ public class AFPParser {
           // Determine net payload.
           if (sfi.isFlagSet(SFFlag.isPadded)) {
             int lenOfPadding = grossPayload[grossPayload.length - 1];
-            if (lenOfPadding == 0)
+            if (lenOfPadding == 0) {
               lenOfPadding = UtilBinaryDecoding.parseInt(grossPayload, grossPayload.length - 3, 2);
+            }
 
             int lenOfSFData = lenOfGrossPayload - lenOfPadding;
 
@@ -144,10 +149,10 @@ public class AFPParser {
         }
 
       } catch (Throwable th) {
-        if(th instanceof AFPParserException){
-          throw (AFPParserException)th;
-        }else{
-          throw new AFPParserException("Reload failed.",th);
+        if (th instanceof AFPParserException) {
+          throw (AFPParserException) th;
+        } else {
+          throw new AFPParserException("Reload failed.", th);
         }
       } finally {
         if (is != null) {
@@ -155,7 +160,7 @@ public class AFPParser {
             is.close();
             conf.setInputStream(null);
           } catch (IOException e) {
-            throw new AFPParserException("Failed to close input stream.",e);
+            throw new AFPParserException("Failed to close input stream.", e);
           }
         }
       }
@@ -177,7 +182,9 @@ public class AFPParser {
       byte[] padding;
       do {
         tmp = is.read();
-        if (tmp != -1) nrOfBytesRead++;
+        if (tmp != -1) {
+          nrOfBytesRead++;
+        }
       }
       while (tmp != Constants.AFPBeginByte_0xA5 && tmp != -1); // Move to the begin of next SF, or EOF.
 
@@ -199,7 +206,7 @@ public class AFPParser {
           AFPParserConfiguration actualConf = parserConf.clone();
           actualConf.setInputStream(null);
           sfi.setActualConfig(actualConf);
-          if(is.skip(lenOfGrossPayload)<lenOfGrossPayload){
+          if (is.skip(lenOfGrossPayload) < lenOfGrossPayload) {
             throw new AFPParserException("Failed to skip payload while building shallow objects.");
           }
 
@@ -224,8 +231,9 @@ public class AFPParser {
               // Determine net payload.
               if (sfi.isFlagSet(SFFlag.isPadded)) {
                 int lenOfPadding = grossPayload[grossPayload.length - 1];
-                if (lenOfPadding == 0)
+                if (lenOfPadding == 0) {
                   lenOfPadding = UtilBinaryDecoding.parseInt(grossPayload, grossPayload.length - 3, 2);
+                }
 
                 int lenOfSFData = lenOfGrossPayload - lenOfPadding;
 
@@ -322,7 +330,7 @@ public class AFPParser {
       try {
         parserConf.inputStream.close();
       } catch (IOException e) {
-        throw new AFPParserException("Failed to close input stream.",e);
+        throw new AFPParserException("Failed to close input stream.", e);
       }
     }
   }

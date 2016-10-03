@@ -58,7 +58,9 @@ public class MFC_MediumFinishingControl extends StructuredFieldBaseTriplets {
     baos.write(reserved1);
     baos.write(boundaryConditionForSheetCollection.toByte());
     baos.write(scope.toByte());
-    for (Triplet t : triplets) t.writeAFP(baos, config);
+    for (Triplet t : triplets) {
+      t.writeAFP(baos, config);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -84,7 +86,7 @@ public class MFC_MediumFinishingControl extends StructuredFieldBaseTriplets {
   }
 
   public void setBoundaryConditionForSheetCollection(
-          MFC_BoundaryConditionForSheetCollection boundaryConditionForSheetCollection) {
+      MFC_BoundaryConditionForSheetCollection boundaryConditionForSheetCollection) {
     this.boundaryConditionForSheetCollection = boundaryConditionForSheetCollection;
   }
 
@@ -101,13 +103,19 @@ public class MFC_MediumFinishingControl extends StructuredFieldBaseTriplets {
     ProcessAsSpecified;
 
     public static MFC_Flag valueOf(byte codeByte) {
-      if (codeByte == 0x00) return ProcessAsNOP;
-      else return ProcessAsSpecified;
+      if (codeByte == 0x00) {
+        return ProcessAsNOP;
+      } else {
+        return ProcessAsSpecified;
+      }
     }
 
     public int toByte() {
-      if (this == ProcessAsNOP) return 0x00;
-      else return 0x80;
+      if (this == ProcessAsNOP) {
+        return 0x00;
+      } else {
+        return 0x80;
+      }
     }
   }
 
@@ -117,8 +125,11 @@ public class MFC_MediumFinishingControl extends StructuredFieldBaseTriplets {
     ContinueSheetCollection;
 
     public static MFC_BoundaryConditionForSheetCollection valueOf(byte codeByte) {
-      for (MFC_BoundaryConditionForSheetCollection c : values())
-        if (codeByte == c.ordinal()) return c;
+      for (MFC_BoundaryConditionForSheetCollection c : values()) {
+        if (codeByte == c.ordinal()) {
+          return c;
+        }
+      }
       return null;
     }
 
@@ -136,7 +147,11 @@ public class MFC_MediumFinishingControl extends StructuredFieldBaseTriplets {
     PrintjobLevel_RETIRED;
 
     public static MFC_Scope valueOf(byte codeByte) {
-      for (MFC_Scope c : values()) if (codeByte == (c.ordinal() + 1)) return c;
+      for (MFC_Scope c : values()) {
+        if (codeByte == (c.ordinal() + 1)) {
+          return c;
+        }
+      }
       return null;
     }
 

@@ -52,7 +52,9 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
   byte[] padding;
 
   public static void checkDataLength(byte[] sfData, int offset, int length, int minLength) throws AFPParserException {
-    if (length == -1) length = sfData.length - offset;
+    if (length == -1) {
+      length = sfData.length - offset;
+    }
     if (sfData == null || sfData.length == 0 || offset >= sfData.length) {
       throw new AFPParserException("Offset is greater than the size of the given data.");
     }
@@ -94,7 +96,7 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
    *                                  field.
    */
   public void setStructuredFieldIntroducer(
-          StructuredFieldIntroducer structuredFieldIntroducer) {
+      StructuredFieldIntroducer structuredFieldIntroducer) {
     this.structuredFieldIntroducer = structuredFieldIntroducer;
   }
 
@@ -117,14 +119,19 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
    */
   public void setPadding(byte[] padding) {
     this.padding = padding;
-    if (padding != null && padding.length == 0) padding = null;
-    if (padding != null) structuredFieldIntroducer.setFlag(SFFlag.isPadded);
-    else structuredFieldIntroducer.removeFlag(SFFlag.isPadded);
+    if (padding != null && padding.length == 0) {
+      padding = null;
+    }
+    if (padding != null) {
+      structuredFieldIntroducer.setFlag(SFFlag.isPadded);
+    } else {
+      structuredFieldIntroducer.removeFlag(SFFlag.isPadded);
+    }
   }
 
   /**
    * Writes out the SFI, the given net payload, and padding data.<br>
-   *
+   * <p>
    * Sets the length byte[0,1] of resulting SF Data and updates the {@link
    * StructuredFieldIntroducer#sfLength}.
    *
@@ -142,11 +149,15 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
       baos.write(netPayloadWithoutSFIandPadding);
     }
 
-    if (padding != null) baos.write(padding);
+    if (padding != null) {
+      baos.write(padding);
+    }
 
     byte[] sfData = baos.toByteArray();
     byte[] lenBytes = UtilBinaryDecoding.intToByteArray(sfData.length, 2);
-    for (int i = 0; i < lenBytes.length; i++) sfData[i] = lenBytes[i];
+    for (int i = 0; i < lenBytes.length; i++) {
+      sfData[i] = lenBytes[i];
+    }
     structuredFieldIntroducer.setSFLength(sfData.length);
 
     os.write(Constants.AFPBeginByte_0xA5);
@@ -188,9 +199,11 @@ public abstract class StructuredField implements IAFPDecodeableWriteable {
   }
 
   public boolean isShallow() {
-    if (structuredFieldIntroducer == null || structuredFieldIntroducer.actualConfig == null)
+    if (structuredFieldIntroducer == null || structuredFieldIntroducer.actualConfig == null) {
       return false;
-    else return structuredFieldIntroducer.actualConfig.isBuildShallow();
+    } else {
+      return structuredFieldIntroducer.actualConfig.isBuildShallow();
+    }
   }
 
   @Override

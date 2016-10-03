@@ -108,24 +108,35 @@ public class FNC_FontControl extends StructuredField {
     rasterPatternDataCount = UtilBinaryDecoding.parseInt(sfData, offset + 17, 3);
     fnmRepeatinGroupLength = sfData[offset + 21];
 
-    if (actualLength >= 26)
+    if (actualLength >= 26) {
       shapeResolutionXUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 24, 2);
-    else shapeResolutionXUnitsPerUnitBase = 0;
+    } else {
+      shapeResolutionXUnitsPerUnitBase = 0;
+    }
 
-    if (actualLength >= 28)
+    if (actualLength >= 28) {
       shapeResolutionYUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 26, 2);
-    else shapeResolutionYUnitsPerUnitBase = 0;
+    } else {
+      shapeResolutionYUnitsPerUnitBase = 0;
+    }
 
-    if (actualLength >= 32)
+    if (actualLength >= 32) {
       outlinePatternDataCount = UtilBinaryDecoding.parseLong(sfData, offset + 28, 4);
-    else outlinePatternDataCount = 0;
+    } else {
+      outlinePatternDataCount = 0;
+    }
 
-    if (actualLength >= 42)
+    if (actualLength >= 42) {
       fnnIBMNameGCGIDCount = UtilBinaryDecoding.parseInt(sfData, offset + 40, 2);
-    else fnnIBMNameGCGIDCount = 0;
+    } else {
+      fnnIBMNameGCGIDCount = 0;
+    }
 
-    if (actualLength >= 43) triplets = TripletParser.parseTriplets(sfData, 42, -1, config);
-    else triplets = null;
+    if (actualLength >= 43) {
+      triplets = TripletParser.parseTriplets(sfData, 42, -1, config);
+    } else {
+      triplets = null;
+    }
   }
 
   @Override
@@ -151,16 +162,16 @@ public class FNC_FontControl extends StructuredField {
 
     // Optional data:
     if ((
-            this.xUnitBase == FontUnitBase.BaseIsFixedAt10Inches
-                    && this.yUnitBase == FontUnitBase.BaseIsFixedAt10Inches
-                    && xUnitsPerUnitBase == 0x0000
-                    && yUnitsPerUnitBase == 0x0000
+        this.xUnitBase == FontUnitBase.BaseIsFixedAt10Inches
+            && this.yUnitBase == FontUnitBase.BaseIsFixedAt10Inches
+            && xUnitsPerUnitBase == 0x0000
+            && yUnitsPerUnitBase == 0x0000
     ) || (
-            this.xUnitBase == FontUnitBase.BaseIsRelativ
-                    && this.yUnitBase == FontUnitBase.BaseIsRelativ
-                    && xUnitsPerUnitBase == 0x0000
-                    && yUnitsPerUnitBase == 0x0000)
-            ) {
+        this.xUnitBase == FontUnitBase.BaseIsRelativ
+            && this.yUnitBase == FontUnitBase.BaseIsRelativ
+            && xUnitsPerUnitBase == 0x0000
+            && yUnitsPerUnitBase == 0x0000)
+        ) {
       // Done, no optional data et all.
     } else {
       baos.write(ShapeResolutionXUnitBase10Inches);
@@ -175,7 +186,9 @@ public class FNC_FontControl extends StructuredField {
         baos.write(UtilBinaryDecoding.intToByteArray(fnnIBMNameGCGIDCount, 2));
       }
       if (triplets != null) {
-        for (Triplet t : triplets) t.writeAFP(baos, config);
+        for (Triplet t : triplets) {
+          t.writeAFP(baos, config);
+        }
       }
     }
 
@@ -187,7 +200,7 @@ public class FNC_FontControl extends StructuredField {
   }
 
   public void setPatternTechnologyIdentifier(
-          PatternTechnologyIdentifier patternTechnologyIdentifier) {
+      PatternTechnologyIdentifier patternTechnologyIdentifier) {
     this.patternTechnologyIdentifier = patternTechnologyIdentifier;
   }
 
@@ -268,7 +281,7 @@ public class FNC_FontControl extends StructuredField {
   }
 
   public void setRasterPatternDataAlignment(
-          RasterPatternDataAlignment rasterPatternDataAlignment) {
+      RasterPatternDataAlignment rasterPatternDataAlignment) {
     this.rasterPatternDataAlignment = rasterPatternDataAlignment;
   }
 
@@ -301,7 +314,7 @@ public class FNC_FontControl extends StructuredField {
   }
 
   public void setShapeResolutionXUnitBase10Inches(
-          byte shapeResolutionXUnitBase10Inches) {
+      byte shapeResolutionXUnitBase10Inches) {
     ShapeResolutionXUnitBase10Inches = shapeResolutionXUnitBase10Inches;
   }
 
@@ -310,7 +323,7 @@ public class FNC_FontControl extends StructuredField {
   }
 
   public void setShapeResolutionYUnitBase10Inches(
-          byte shapeResolutionYUnitBase10Inches) {
+      byte shapeResolutionYUnitBase10Inches) {
     ShapeResolutionYUnitBase10Inches = shapeResolutionYUnitBase10Inches;
   }
 
@@ -319,7 +332,7 @@ public class FNC_FontControl extends StructuredField {
   }
 
   public void setShapeResolutionXUnitsPerUnitBase(
-          short shapeResolutionXUnitsPerUnitBase) {
+      short shapeResolutionXUnitsPerUnitBase) {
     this.shapeResolutionXUnitsPerUnitBase = shapeResolutionXUnitsPerUnitBase;
   }
 
@@ -328,7 +341,7 @@ public class FNC_FontControl extends StructuredField {
   }
 
   public void setShapeResolutionYUnitsPerUnitBase(
-          short shapeResolutionYUnitsPerUnitBase) {
+      short shapeResolutionYUnitsPerUnitBase) {
     this.shapeResolutionYUnitsPerUnitBase = shapeResolutionYUnitsPerUnitBase;
   }
 
@@ -431,9 +444,11 @@ public class FNC_FontControl extends StructuredField {
     }
 
     public static PatternTechnologyIdentifier valueOf(byte patternTechnologyIdentifierByte) {
-      for (PatternTechnologyIdentifier pti : values())
-        if (pti.patternTechnologyIdentifierByte == patternTechnologyIdentifierByte)
+      for (PatternTechnologyIdentifier pti : values()) {
+        if (pti.patternTechnologyIdentifierByte == patternTechnologyIdentifierByte) {
           return pti;
+        }
+      }
       return null;
     }
 
@@ -450,10 +465,18 @@ public class FNC_FontControl extends StructuredField {
 
     public static EnumSet<FNC_FontUseFlag> valueOf(byte fontUseFlagByte) {
       EnumSet<FNC_FontUseFlag> result = EnumSet.noneOf(FNC_FontUseFlag.class);
-      if (((fontUseFlagByte & 0xFF) & 0x80) > 0) result.add(MICRPrinting);
-      if (((fontUseFlagByte & 0xFF) & 0x40) > 0) result.add(ExtensionFont);
-      if (((fontUseFlagByte & 0xFF) & 0x08) > 0) result.add(RetiredDoNotShiftBaseLineOffset);
-      if (((fontUseFlagByte & 0xFF) & 0x02) > 0) result.add(UniformRasterPatternSize);
+      if (((fontUseFlagByte & 0xFF) & 0x80) > 0) {
+        result.add(MICRPrinting);
+      }
+      if (((fontUseFlagByte & 0xFF) & 0x40) > 0) {
+        result.add(ExtensionFont);
+      }
+      if (((fontUseFlagByte & 0xFF) & 0x08) > 0) {
+        result.add(RetiredDoNotShiftBaseLineOffset);
+      }
+      if (((fontUseFlagByte & 0xFF) & 0x02) > 0) {
+        result.add(UniformRasterPatternSize);
+      }
 
       return result;
     }
@@ -461,10 +484,18 @@ public class FNC_FontControl extends StructuredField {
     public static byte toByte(EnumSet<FNC_FontUseFlag> fontUseFlags) {
       byte result = 0;
 
-      if (fontUseFlags.contains(MICRPrinting)) result |= 0x80;
-      if (fontUseFlags.contains(ExtensionFont)) result |= 0x40;
-      if (fontUseFlags.contains(RetiredDoNotShiftBaseLineOffset)) result |= 0x08;
-      if (fontUseFlags.contains(UniformRasterPatternSize)) result |= 0x02;
+      if (fontUseFlags.contains(MICRPrinting)) {
+        result |= 0x80;
+      }
+      if (fontUseFlags.contains(ExtensionFont)) {
+        result |= 0x40;
+      }
+      if (fontUseFlags.contains(RetiredDoNotShiftBaseLineOffset)) {
+        result |= 0x08;
+      }
+      if (fontUseFlags.contains(UniformRasterPatternSize)) {
+        result |= 0x02;
+      }
 
       return result;
     }
@@ -475,14 +506,22 @@ public class FNC_FontControl extends StructuredField {
     BaseIsRelativ;
 
     public static FontUnitBase valueOf(byte fontUnitBaseByte) {
-      if (fontUnitBaseByte == 0x00) return BaseIsFixedAt10Inches;
-      if (fontUnitBaseByte == 0x02) return BaseIsRelativ;
+      if (fontUnitBaseByte == 0x00) {
+        return BaseIsFixedAt10Inches;
+      }
+      if (fontUnitBaseByte == 0x02) {
+        return BaseIsRelativ;
+      }
       return null;
     }
 
     public byte toByte() {
-      if (this == BaseIsFixedAt10Inches) return 0x00;
-      if (this == BaseIsRelativ) return 0x02;
+      if (this == BaseIsFixedAt10Inches) {
+        return 0x00;
+      }
+      if (this == BaseIsRelativ) {
+        return 0x02;
+      }
       return 0x00;
     }
   }
@@ -499,8 +538,11 @@ public class FNC_FontControl extends StructuredField {
     }
 
     public static RasterPatternDataAlignment valueOf(byte rasterPatternAlignmentCode) {
-      for (RasterPatternDataAlignment rpda : values())
-        if (rasterPatternAlignmentCode == rpda.rasterPatternAlignmentByte) return rpda;
+      for (RasterPatternDataAlignment rpda : values()) {
+        if (rasterPatternAlignmentCode == rpda.rasterPatternAlignmentByte) {
+          return rpda;
+        }
+      }
       return null;
     }
 

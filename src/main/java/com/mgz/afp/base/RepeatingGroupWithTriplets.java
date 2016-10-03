@@ -48,8 +48,12 @@ public class RepeatingGroupWithTriplets extends RepeatingGroupBase implements IH
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-    super.writeAFP(os,config);
-    if (triplets != null) for (Triplet t : triplets) t.writeAFP(os, config);
+    super.writeAFP(os, config);
+    if (triplets != null) {
+      for (Triplet t : triplets) {
+        t.writeAFP(os, config);
+      }
+    }
   }
 
   @Override
@@ -64,14 +68,21 @@ public class RepeatingGroupWithTriplets extends RepeatingGroupBase implements IH
 
   @Override
   public void addTriplet(Triplet triplet) {
-    if (triplet == null) return;
-    if (triplets == null) triplets = new ArrayList<Triplet>();
+    if (triplet == null) {
+      return;
+    }
+    if (triplets == null) {
+      triplets = new ArrayList<Triplet>();
+    }
     triplets.add(triplet);
   }
 
   @Override
   public void removeTriplet(Triplet triplet) {
-    if (triplets == null) return;
-    else triplets.add(triplet);
+    if (triplets == null) {
+      return;
+    } else {
+      triplets.add(triplet);
+    }
   }
 }

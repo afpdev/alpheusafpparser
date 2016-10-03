@@ -121,7 +121,11 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(fieldNumber, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(additionalBaselineIncrement, 2));
     baos.write(reserved49_61);
-    if (triplets != null) for (Triplet t : triplets) t.writeAFP(baos, config);
+    if (triplets != null) {
+      for (Triplet t : triplets) {
+        t.writeAFP(baos, config);
+      }
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -243,7 +247,7 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
   }
 
   public void setConditionalProcessingRCDPointer(
-          int conditionalProcessingRCDPointer) {
+      int conditionalProcessingRCDPointer) {
     this.conditionalProcessingRCDPointer = conditionalProcessingRCDPointer;
   }
 
@@ -373,46 +377,92 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
 
       // (0) 0x800000 reserved.
       // (1) 0x400000 reserved.
-      if ((flagBytes & 0x200000) != 0) result.add(GenerateInlinePosition_NewPosition);
-      else result.add(GenerateInlinePosition_CurrentPosition);
-      if ((flagBytes & 0x100000) != 0) result.add(GenerateBaselinePosition_NewPosition);
-      else result.add(GenerateBaselinePosition_CurrentPosition);
-      if ((flagBytes & 0x080000) != 0) result.add(GenerateFontChange_AsSpecified);
-      else result.add(GenerateFontChange_TRC_MRC_Default);
-      if ((flagBytes & 0x040000) != 0) result.add(GenerateSuppression_TextIsSuppressible);
-      else result.add(GenerateSuppression_TextIsNotSuppressible);
-      if ((flagBytes & 0x020000) != 0) result.add(FieldXMD_Field);
-      else result.add(FieldXMD_Element);
-      if ((flagBytes & 0x010000) != 0) result.add(UseFixedData_DoPresent);
-      else result.add(UseFixedData_DoNotPresent);
+      if ((flagBytes & 0x200000) != 0) {
+        result.add(GenerateInlinePosition_NewPosition);
+      } else {
+        result.add(GenerateInlinePosition_CurrentPosition);
+      }
+      if ((flagBytes & 0x100000) != 0) {
+        result.add(GenerateBaselinePosition_NewPosition);
+      } else {
+        result.add(GenerateBaselinePosition_CurrentPosition);
+      }
+      if ((flagBytes & 0x080000) != 0) {
+        result.add(GenerateFontChange_AsSpecified);
+      } else {
+        result.add(GenerateFontChange_TRC_MRC_Default);
+      }
+      if ((flagBytes & 0x040000) != 0) {
+        result.add(GenerateSuppression_TextIsSuppressible);
+      } else {
+        result.add(GenerateSuppression_TextIsNotSuppressible);
+      }
+      if ((flagBytes & 0x020000) != 0) {
+        result.add(FieldXMD_Field);
+      } else {
+        result.add(FieldXMD_Element);
+      }
+      if ((flagBytes & 0x010000) != 0) {
+        result.add(UseFixedData_DoPresent);
+      } else {
+        result.add(UseFixedData_DoNotPresent);
+      }
       // 0x008000 is not used.
       // 0x004000 is not used.
-      if ((flagBytes & 0x002000) != 0) result.add(AttributeXMD_Attribute);
-      else result.add(AttributeXMD_Element);
-      if ((flagBytes & 0x001000) != 0) result.add(ConditionalProcessing_DoPerformCP);
-      else result.add(ConditionalProcessing_DoNotPerformCP);
+      if ((flagBytes & 0x002000) != 0) {
+        result.add(AttributeXMD_Attribute);
+      } else {
+        result.add(AttributeXMD_Element);
+      }
+      if ((flagBytes & 0x001000) != 0) {
+        result.add(ConditionalProcessing_DoPerformCP);
+      } else {
+        result.add(ConditionalProcessing_DoNotPerformCP);
+      }
       // 0x000800 is not used.
-      if ((flagBytes & 0x000400) != 0) result.add(RelativeBaselinePosition_RelativePosition);
-      else result.add(RelativeBaselinePosition_AbsolutePosition);
+      if ((flagBytes & 0x000400) != 0) {
+        result.add(RelativeBaselinePosition_RelativePosition);
+      } else {
+        result.add(RelativeBaselinePosition_AbsolutePosition);
+      }
       // 0x000200 is not used.
       // 0x000100 is not used.
-      if ((flagBytes & 0x000080) != 0) result.add(NewPage_LogicalPageEject);
-      else result.add(NewPage_NoEffect);
-      if ((flagBytes & 0x000040) != 0) result.add(PrintPageNumber_PrintPageNumber);
-      else result.add(PrintPageNumber_NoEffect);
-      if ((flagBytes & 0x000020) != 0)
+      if ((flagBytes & 0x000080) != 0) {
+        result.add(NewPage_LogicalPageEject);
+      } else {
+        result.add(NewPage_NoEffect);
+      }
+      if ((flagBytes & 0x000040) != 0) {
+        result.add(PrintPageNumber_PrintPageNumber);
+      } else {
+        result.add(PrintPageNumber_NoEffect);
+      }
+      if ((flagBytes & 0x000020) != 0) {
         result.add(ResetPageNumber_ResetPageNumberToSpecifiedValue);
-      else result.add(ResetPageNumber_NoEffect);
-      if ((flagBytes & 0x000010) != 0) result.add(GroupIndicator_SaveGroupHeader);
-      else result.add(GroupIndicator_InputDataIsNotPartOfAGroup);
-      if ((flagBytes & 0x000008) != 0) result.add(FieldDelimeterSize_2Bytes);
-      else result.add(FieldDelimeterSize_1Byte);
-      if ((flagBytes & 0x000004) != 0) result.add(UseStartTag_DoSelectStartTag);
-      else result.add(UseStartTag_DoNotSelectStartTag);
+      } else {
+        result.add(ResetPageNumber_NoEffect);
+      }
+      if ((flagBytes & 0x000010) != 0) {
+        result.add(GroupIndicator_SaveGroupHeader);
+      } else {
+        result.add(GroupIndicator_InputDataIsNotPartOfAGroup);
+      }
+      if ((flagBytes & 0x000008) != 0) {
+        result.add(FieldDelimeterSize_2Bytes);
+      } else {
+        result.add(FieldDelimeterSize_1Byte);
+      }
+      if ((flagBytes & 0x000004) != 0) {
+        result.add(UseStartTag_DoSelectStartTag);
+      } else {
+        result.add(UseStartTag_DoNotSelectStartTag);
+      }
       // 0x000002 is not used.
-      if ((flagBytes & 0x000001) != 0)
+      if ((flagBytes & 0x000001) != 0) {
         result.add(HaiderTrailerContinued_IsAContinuationOfHeaderTrailer);
-      else result.add(HaiderTrailerContinued_IsNotAContinuationOfHeaderTrailer);
+      } else {
+        result.add(HaiderTrailerContinued_IsNotAContinuationOfHeaderTrailer);
+      }
 
       return result;
     }
@@ -422,29 +472,60 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
 
       // 0x800000 is not used.
       // 0x400000 is not used.
-      if (flags.contains(GenerateInlinePosition_NewPosition)) result |= 0x200000;
-      if (flags.contains(GenerateBaselinePosition_NewPosition)) result |= 0x100000;
-      if (flags.contains(GenerateFontChange_AsSpecified)) result |= 0x080000;
-      if (flags.contains(GenerateSuppression_TextIsSuppressible)) result |= 0x040000;
-      if (flags.contains(FieldXMD_Field)) result |= 0x020000;
-      if (flags.contains(UseFixedData_DoPresent)) result |= 0x010000;
+      if (flags.contains(GenerateInlinePosition_NewPosition)) {
+        result |= 0x200000;
+      }
+      if (flags.contains(GenerateBaselinePosition_NewPosition)) {
+        result |= 0x100000;
+      }
+      if (flags.contains(GenerateFontChange_AsSpecified)) {
+        result |= 0x080000;
+      }
+      if (flags.contains(GenerateSuppression_TextIsSuppressible)) {
+        result |= 0x040000;
+      }
+      if (flags.contains(FieldXMD_Field)) {
+        result |= 0x020000;
+      }
+      if (flags.contains(UseFixedData_DoPresent)) {
+        result |= 0x010000;
+      }
       // 0x008000 is not used.
       // 0x004000 is not used.
-      if (flags.contains(AttributeXMD_Attribute)) result |= 0x002000;
-      if (flags.contains(ConditionalProcessing_DoPerformCP)) result |= 0x001000;
+      if (flags.contains(AttributeXMD_Attribute)) {
+        result |= 0x002000;
+      }
+      if (flags.contains(ConditionalProcessing_DoPerformCP)) {
+        result |= 0x001000;
+      }
       // 0x000800 is not used.
-      if (flags.contains(RelativeBaselinePosition_RelativePosition)) result |= 0x000400;
+      if (flags.contains(RelativeBaselinePosition_RelativePosition)) {
+        result |= 0x000400;
+      }
       // 0x000200 is not used.
       // 0x000100 is not used.
-      if (flags.contains(NewPage_LogicalPageEject)) result |= 0x000080;
-      if (flags.contains(PrintPageNumber_PrintPageNumber)) result |= 0x000040;
-      if (flags.contains(ResetPageNumber_ResetPageNumberToSpecifiedValue)) result |= 0x000020;
-      if (flags.contains(GroupIndicator_SaveGroupHeader)) result |= 0x000010;
-      if (flags.contains(FieldDelimeterSize_2Bytes)) result |= 0x000008;
-      if (flags.contains(UseStartTag_DoSelectStartTag)) result |= 0x000004;
+      if (flags.contains(NewPage_LogicalPageEject)) {
+        result |= 0x000080;
+      }
+      if (flags.contains(PrintPageNumber_PrintPageNumber)) {
+        result |= 0x000040;
+      }
+      if (flags.contains(ResetPageNumber_ResetPageNumberToSpecifiedValue)) {
+        result |= 0x000020;
+      }
+      if (flags.contains(GroupIndicator_SaveGroupHeader)) {
+        result |= 0x000010;
+      }
+      if (flags.contains(FieldDelimeterSize_2Bytes)) {
+        result |= 0x000008;
+      }
+      if (flags.contains(UseStartTag_DoSelectStartTag)) {
+        result |= 0x000004;
+      }
       // 0x000002 is not used.
-      if (flags.contains(HaiderTrailerContinued_IsAContinuationOfHeaderTrailer))
+      if (flags.contains(HaiderTrailerContinued_IsAContinuationOfHeaderTrailer)) {
         result |= 0x000001;
+      }
 
       return UtilBinaryDecoding.intToByteArray(result, 3);
     }

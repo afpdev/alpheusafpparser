@@ -39,11 +39,16 @@ public class UtilFile {
       try {
         is = new FileInputStream(file);
         dis = new DigestInputStream(is, md);
-        while (dis.read(buffer) > -1) ;
+        while (dis.read(buffer) > -1) {
+          ;
+        }
       } finally {
         try {
-          if (dis != null) dis.close();
-          else if (is != null) is.close();
+          if (dis != null) {
+            dis.close();
+          } else if (is != null) {
+            is.close();
+          }
         } catch (IOException e) {
         }
       }

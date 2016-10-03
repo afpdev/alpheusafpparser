@@ -43,7 +43,7 @@ public class BRS_BeginResource extends StructuredFieldBaseName {
 
     int actualLength = getActualLength(sfData, offset, length);
     if (actualLength > 8) {
-      reserved8_9 = new byte[]{sfData[offset + 8], sfData[offset + 9]};
+      reserved8_9 = new byte[] {sfData[offset + 8], sfData[offset + 9]};
     } else {
       reserved8_9 = null;
     }
@@ -58,7 +58,9 @@ public class BRS_BeginResource extends StructuredFieldBaseName {
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
-    if (reserved8_9 != null) baos.write(reserved8_9);
+    if (reserved8_9 != null) {
+      baos.write(reserved8_9);
+    }
     if (triplets != null) {
       for (Triplet triplet : triplets) {
         triplet.writeAFP(baos, config);
@@ -76,13 +78,19 @@ public class BRS_BeginResource extends StructuredFieldBaseName {
   }
 
   public final void addTriplet(Triplet triplet) {
-    if (triplet == null) return;
-    if (triplets == null) triplets = new ArrayList<Triplet>();
+    if (triplet == null) {
+      return;
+    }
+    if (triplets == null) {
+      triplets = new ArrayList<Triplet>();
+    }
     triplets.add(triplet);
   }
 
   public final void removeTriplet(Triplet triplet) {
-    if (triplet == null || triplets == null) return;
+    if (triplet == null || triplets == null) {
+      return;
+    }
     triplets.remove(triplet);
   }
 

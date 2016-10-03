@@ -38,8 +38,12 @@ public enum AFPReferenceCoordinateSystem {
   }
 
   public int toByte() {
-    if (this == AsDefined_PageOverlayIPS) return 0x00;
-    else if (this == Standard) return 0x01;
-    else return 0x05;
+    if (this == AsDefined_PageOverlayIPS) {
+      return 0x00;
+    } else if (this == Standard) {
+      return 0x01;
+    } else {
+      return 0x05;
+    }
   }
 }

@@ -65,7 +65,9 @@ public class MPS_MapPageSegment extends StructuredFieldBaseRepeatingGroups {
     baos.write(lengthOfRepeatingGroup);
     baos.write(reserved1_3);
     if (repeatingGroups != null) {
-      for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+      for (IRepeatingGroup rg : repeatingGroups) {
+        rg.writeAFP(baos, config);
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());

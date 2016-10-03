@@ -64,7 +64,9 @@ public class PPO_PreprocessPresentationObject extends StructuredFieldBaseRepeati
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for (IRepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    for (IRepeatingGroup rg : repeatingGroups) {
+      rg.writeAFP(baos, config);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -97,7 +99,9 @@ public class PPO_PreprocessPresentationObject extends StructuredFieldBaseRepeati
       os.write(PPO_Flag.toByte(flags));
       os.write(UtilBinaryDecoding.intToByteArray(xOrigin, 3));
       os.write(UtilBinaryDecoding.intToByteArray(yOrigin, 3));
-      for (Triplet t : triplets) t.writeAFP(os, config);
+      for (Triplet t : triplets) {
+        t.writeAFP(os, config);
+      }
     }
 
     /**
@@ -106,7 +110,9 @@ public class PPO_PreprocessPresentationObject extends StructuredFieldBaseRepeati
      * @param flag {@link PPO_Flag} to set.
      */
     public void setFlag(PPO_Flag flag) {
-      if (flags == null) flags = EnumSet.noneOf(PPO_Flag.class);
+      if (flags == null) {
+        flags = EnumSet.noneOf(PPO_Flag.class);
+      }
       PPO_Flag.setFlag(flags, flag);
     }
 
@@ -171,26 +177,51 @@ public class PPO_PreprocessPresentationObject extends StructuredFieldBaseRepeati
 
       public static EnumSet<PPO_Flag> valueOf(short flagByte) {
         EnumSet<PPO_Flag> result = EnumSet.noneOf(PPO_Flag.class);
-        if ((flagByte & 0x80) == 0) result.add(ObjectOrientation_0Deg_DoNotPreprocess);
-        else result.add(ObjectOrientation_0Deg_Preprocess);
-        if ((flagByte & 0x40) == 0) result.add(ObjectOrientation_90Deg_DoNotPreprocess);
-        else result.add(ObjectOrientation_90Deg_Preprocess);
-        if ((flagByte & 0x20) == 0) result.add(ObjectOrientation_180Deg_DoNotPreprocess);
-        else result.add(ObjectOrientation_180Deg_Preprocess);
-        if ((flagByte & 0x10) == 0) result.add(ObjectOrientation_270Deg_DoNotPreprocess);
-        else result.add(ObjectOrientation_270Deg_Preprocess);
-        if ((flagByte & 0x08) == 0) result.add(PreprocessObjects_OnlySelected);
-        else result.add(PreprocessObjects_All);
+        if ((flagByte & 0x80) == 0) {
+          result.add(ObjectOrientation_0Deg_DoNotPreprocess);
+        } else {
+          result.add(ObjectOrientation_0Deg_Preprocess);
+        }
+        if ((flagByte & 0x40) == 0) {
+          result.add(ObjectOrientation_90Deg_DoNotPreprocess);
+        } else {
+          result.add(ObjectOrientation_90Deg_Preprocess);
+        }
+        if ((flagByte & 0x20) == 0) {
+          result.add(ObjectOrientation_180Deg_DoNotPreprocess);
+        } else {
+          result.add(ObjectOrientation_180Deg_Preprocess);
+        }
+        if ((flagByte & 0x10) == 0) {
+          result.add(ObjectOrientation_270Deg_DoNotPreprocess);
+        } else {
+          result.add(ObjectOrientation_270Deg_Preprocess);
+        }
+        if ((flagByte & 0x08) == 0) {
+          result.add(PreprocessObjects_OnlySelected);
+        } else {
+          result.add(PreprocessObjects_All);
+        }
         return result;
       }
 
       public static int toByte(EnumSet<PPO_Flag> flags) {
         int result = 0;
-        if (flags.contains(ObjectOrientation_0Deg_Preprocess)) result |= 0x80;
-        if (flags.contains(ObjectOrientation_90Deg_Preprocess)) result |= 0x40;
-        if (flags.contains(ObjectOrientation_180Deg_Preprocess)) result |= 0x20;
-        if (flags.contains(ObjectOrientation_270Deg_Preprocess)) result |= 0x10;
-        if (flags.contains(PreprocessObjects_All)) result |= 0x08;
+        if (flags.contains(ObjectOrientation_0Deg_Preprocess)) {
+          result |= 0x80;
+        }
+        if (flags.contains(ObjectOrientation_90Deg_Preprocess)) {
+          result |= 0x40;
+        }
+        if (flags.contains(ObjectOrientation_180Deg_Preprocess)) {
+          result |= 0x20;
+        }
+        if (flags.contains(ObjectOrientation_270Deg_Preprocess)) {
+          result |= 0x10;
+        }
+        if (flags.contains(PreprocessObjects_All)) {
+          result |= 0x08;
+        }
         return result;
       }
 

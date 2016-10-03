@@ -72,7 +72,9 @@ public class LLE_LinkLogicalElement extends StructuredField {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     baos.write(linkType.toByte());
     baos.write(reserved1);
-    for (LLE_RepeatingGroup rg : repeatingGroups) rg.writeAFP(baos, config);
+    for (LLE_RepeatingGroup rg : repeatingGroups) {
+      rg.writeAFP(baos, config);
+    }
     ;
 
     writeFullStructuredField(os, baos.toByteArray());
@@ -103,15 +105,21 @@ public class LLE_LinkLogicalElement extends StructuredField {
   }
 
   public void addRepeatingGroup(LLE_RepeatingGroup repeatingGroup) {
-    if (repeatingGroup == null) return;
-    if (repeatingGroups == null)
+    if (repeatingGroup == null) {
+      return;
+    }
+    if (repeatingGroups == null) {
       repeatingGroups = new ArrayList<LLE_LinkLogicalElement.LLE_RepeatingGroup>();
+    }
     repeatingGroups.add(repeatingGroup);
   }
 
   public void removeRepeatingGroup(LLE_RepeatingGroup repeatingGroup) {
-    if (repeatingGroups == null) return;
-    else repeatingGroups.remove(repeatingGroup);
+    if (repeatingGroups == null) {
+      return;
+    } else {
+      repeatingGroups.remove(repeatingGroup);
+    }
   }
 
   /**
@@ -123,7 +131,11 @@ public class LLE_LinkLogicalElement extends StructuredField {
     AppendLink;
 
     public static LLE_LinkType valueOf(byte linkTypeByte) {
-      for (LLE_LinkType lt : values()) if (lt.ordinal() == (linkTypeByte - 1)) return lt;
+      for (LLE_LinkType lt : values()) {
+        if (lt.ordinal() == (linkTypeByte - 1)) {
+          return lt;
+        }
+      }
       return null;
     }
 
@@ -154,7 +166,9 @@ public class LLE_LinkLogicalElement extends StructuredField {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       baos.write(repeatingGroupFunction.toByte());
       if (triplets != null) {
-        for (Triplet t : triplets) t.writeAFP(baos, config);
+        for (Triplet t : triplets) {
+          t.writeAFP(baos, config);
+        }
       }
       lengthOfRepeatingGroup = baos.size() + 2;
 
@@ -174,14 +188,20 @@ public class LLE_LinkLogicalElement extends StructuredField {
 
     @Override
     public void addTriplet(Triplet triplet) {
-      if (triplet == null) return;
-      if (triplets == null) triplets = new ArrayList<Triplet>();
+      if (triplet == null) {
+        return;
+      }
+      if (triplets == null) {
+        triplets = new ArrayList<Triplet>();
+      }
       triplets.add(triplet);
     }
 
     @Override
     public void removeTriplet(Triplet triplet) {
-      if (triplets == null) return;
+      if (triplets == null) {
+        return;
+      }
       triplets.remove(triplet);
     }
 
@@ -198,7 +218,7 @@ public class LLE_LinkLogicalElement extends StructuredField {
     }
 
     public void setRepeatingGroupFunction(
-            LLE_RepeatingGroupFunction repeatingGroupFunction) {
+        LLE_RepeatingGroupFunction repeatingGroupFunction) {
       this.repeatingGroupFunction = repeatingGroupFunction;
     }
 
@@ -208,8 +228,11 @@ public class LLE_LinkLogicalElement extends StructuredField {
       LinkTargetSpecification;
 
       public static LLE_RepeatingGroupFunction valueOf(byte linkTypeByte) {
-        for (LLE_RepeatingGroupFunction lt : values())
-          if (lt.ordinal() == (linkTypeByte - 1)) return lt;
+        for (LLE_RepeatingGroupFunction lt : values()) {
+          if (lt.ordinal() == (linkTypeByte - 1)) {
+            return lt;
+          }
+        }
         return null;
       }
 

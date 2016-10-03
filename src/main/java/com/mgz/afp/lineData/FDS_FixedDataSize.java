@@ -58,7 +58,7 @@ public class FDS_FixedDataSize extends StructuredField {
    * Sets the number of data bytes in following FDX structured fields.
    */
   public void setNumberOfDataBytesInFollowingFDX(
-          int numberOfDataBytesInFollowingFDX) {
+      int numberOfDataBytesInFollowingFDX) {
     this.numberOfDataBytesInFollowingFDX = numberOfDataBytesInFollowingFDX;
   }
 }
