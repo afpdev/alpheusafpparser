@@ -16,7 +16,7 @@ deployment
 junit
 generated_build.xml
 .idea/
-
+src/test/resources/afp/
 
 # Created by https://www.gitignore.io/api/gradle,intellij,maven
 
