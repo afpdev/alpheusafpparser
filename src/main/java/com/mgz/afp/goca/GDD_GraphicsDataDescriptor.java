@@ -39,7 +39,7 @@ public class GDD_GraphicsDataDescriptor extends StructuredField {
     gddParameters = new ArrayList<GDD_Parameter>();
 
     int pos = 0;
-    while (pos < actualLength) {
+    while (0 <= pos && pos < actualLength) {
       int paramLength = UtilBinaryDecoding.parseShort(sfData, offset + pos, 2) + 1;
 
       GDD_Parameter gddParameter = GDD_Parameter.buildGDDParameter(sfData, offset + pos, paramLength, config);
