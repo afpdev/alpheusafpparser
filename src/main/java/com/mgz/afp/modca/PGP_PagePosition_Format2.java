@@ -108,12 +108,12 @@ public class PGP_PagePosition_Format2 extends StructuredFieldBaseRepeatingGroups
       yOrigin = UtilBinaryDecoding.parseInt(sfData, offset + 4, 3);
       xRotation = AFPOrientation.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 7, 2));
       sheetSideAndPartitionSelection = PGP_SheetSideAndPartitionSelection.valueOf(sfData[offset + 9]);
-      if (repeatingGroupLength > 10) {
+      if (repeatingGroupLength > 10 && sfData.length > offset + 10) {
         flags = PGP_RGFlag.valueOf(sfData[offset + 10]);
       } else {
         flags = null;
       }
-      if (repeatingGroupLength > 11) {
+      if (repeatingGroupLength > 11 && sfData.length > offset + 11) {
         pageModififationControlID = sfData[offset + 11];
       } else {
         pageModififationControlID = null;
