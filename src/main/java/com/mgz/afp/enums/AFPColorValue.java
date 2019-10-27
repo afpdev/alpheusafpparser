@@ -85,6 +85,10 @@ public enum AFPColorValue {
     return code & 0xFF;
   }
 
+  public int[] toRgb() {
+    return new int[] {red, green, blue};
+  }
+
   public byte[] toByte2() {
     return UtilBinaryDecoding.intToByteArray(code, 2);
   }

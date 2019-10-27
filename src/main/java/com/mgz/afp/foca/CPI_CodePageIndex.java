@@ -116,6 +116,10 @@ public class CPI_CodePageIndex extends StructuredField {
     writeFullStructuredField(os, baos.toByteArray());
   }
 
+  public List<CPI_RepeatingGroup> getRepeatingGroups() {
+    return repeatingGroups;
+  }
+
   public enum GraphicCharacterUseFlag {
     /**
      * When this flag is set, the character is an invalid coded character (see “Invalid Coded

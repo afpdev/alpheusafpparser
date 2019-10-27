@@ -63,6 +63,10 @@ public class FNM_FontPatternsMap extends StructuredField {
     writeFullStructuredField(os, baos.toByteArray());
   }
 
+  public List<FNM_RepeatingGroup> getRepeatingGroups() {
+    return repeatingGroups;
+  }
+
   public static class FNM_RepeatingGroup implements IAFPDecodeableWriteable {
     @AFPField
     short characterBoxWidth;
