@@ -18,13 +18,13 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
 package com.mgz.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.BitSet;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UtilBinaryDecodingTest {
 
@@ -47,14 +47,14 @@ public class UtilBinaryDecodingTest {
 
     byte[] result = UtilBinaryDecoding.bitSetToByteArray(bitSet, 2);
 
-    assertEquals("bitSet size different", bytes.length * 8, bitSet.length());
+    assertEquals(bytes.length * 8, bitSet.length(), "bitSet size different");
 
-    assertEquals("byte array length different", bytes.length, result.length);
+    assertEquals(bytes.length, result.length, "byte array length different");
 
     int byteLen = bitSet.length() / 8;
     for (int i = 0; i < byteLen; i++) {
       for (int j = 0; j <= 7; j++) {
-        assertTrue("bit " + (i * 8 + j) + "differs", bitSet.get(i * 8 + j) == ((bytes[i] & (0x01 << (7 - j))) != 0));
+        assertTrue(bitSet.get(i * 8 + j) == ((bytes[i] & (0x01 << (7 - j))) != 0), "bit " + (i * 8 + j) + "differs");
       }
     }
 

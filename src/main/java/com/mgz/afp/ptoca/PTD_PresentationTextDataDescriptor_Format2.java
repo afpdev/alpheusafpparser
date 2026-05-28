@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.ptoca;
 
 import com.mgz.afp.base.StructuredField;
@@ -37,11 +38,10 @@ public class PTD_PresentationTextDataDescriptor_Format2 extends StructuredField 
   AFPUnitBase yUnitBase;
   short xUnitsPerUnitBase;
   short yUnitsPerUnitBase;
-  short xSize;
-  short ySize;
+  int xSize;
+  int ySize;
   byte[] reserved12_13;
   List<PTOCAControlSequence> controlSequences;
-
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -51,16 +51,16 @@ public class PTD_PresentationTextDataDescriptor_Format2 extends StructuredField 
     yUnitBase = AFPUnitBase.valueOf(sfData[offset + 1]);
     xUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 2, 2);
     yUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 4, 2);
-    xSize = UtilBinaryDecoding.parseShort(sfData, offset + 7, 2);
-    ySize = UtilBinaryDecoding.parseShort(sfData, offset + 10, 2);
+    xSize = UtilBinaryDecoding.parseInt(sfData, offset + 6, 3);
+    ySize = UtilBinaryDecoding.parseInt(sfData, offset + 9, 3);
 
     int actualLength = StructuredField.getActualLength(sfData, offset, length);
-    if (actualLength > 13) {
+    if (actualLength >= 14) {
       reserved12_13 = new byte[2];
-      System.arraycopy(sfData, offset + 12, reserved12_13, 0, reserved12_13.length);
+      System.arraycopy(sfData, offset + 12, reserved12_13, 0, 2);
 
-      if (actualLength > 15) {
-        controlSequences = PTOCAControlSequenceParser.parseControlSequences(sfData, offset + 15, -1, config);
+      if (actualLength > 14) {
+        controlSequences = PTOCAControlSequenceParser.parseControlSequences(sfData, offset + 14, -1, config);
       } else {
         controlSequences = null;
       }
@@ -78,10 +78,16 @@ public class PTD_PresentationTextDataDescriptor_Format2 extends StructuredField 
     baos.write(yUnitBase.toByte());
     baos.write(UtilBinaryDecoding.shortToByteArray(xUnitsPerUnitBase, 2));
     baos.write(UtilBinaryDecoding.shortToByteArray(yUnitsPerUnitBase, 2));
-    baos.write(UtilBinaryDecoding.shortToByteArray(xSize, 3));
-    baos.write(UtilBinaryDecoding.shortToByteArray(ySize, 3));
-    if (reserved12_13 != null) {
-      baos.write(reserved12_13, 0, 2);
+    baos.write(UtilBinaryDecoding.intToByteArray(xSize, 3));
+    baos.write(UtilBinaryDecoding.intToByteArray(ySize, 3));
+    baos.write(reserved12_13 != null ? reserved12_13 : new byte[2]);
+    if (controlSequences != null) {
+      for (PTOCAControlSequence cs : controlSequences) {
+        ByteArrayOutputStream csBaos = new ByteArrayOutputStream();
+        cs.writeAFP(csBaos, config);
+        baos.write(cs.getCsi().toBytes());
+        baos.write(csBaos.toByteArray());
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());
@@ -119,19 +125,19 @@ public class PTD_PresentationTextDataDescriptor_Format2 extends StructuredField 
     this.yUnitsPerUnitBase = yUnitsPerUnitBase;
   }
 
-  public short getxSize() {
+  public int getxSize() {
     return xSize;
   }
 
-  public void setxSize(short xSize) {
+  public void setxSize(int xSize) {
     this.xSize = xSize;
   }
 
-  public short getySize() {
+  public int getySize() {
     return ySize;
   }
 
-  public void setySize(short ySize) {
+  public void setySize(int ySize) {
     this.ySize = ySize;
   }
 
@@ -143,12 +149,12 @@ public class PTD_PresentationTextDataDescriptor_Format2 extends StructuredField 
     this.reserved12_13 = reserved12_13;
   }
 
-  public List<PTOCAControlSequence> getControlSeqences() {
+  public List<PTOCAControlSequence> getControlSequences() {
     return controlSequences;
   }
 
-  public void setControlSeqences(List<PTOCAControlSequence> controlSeqences) {
-    this.controlSequences = controlSeqences;
+  public void setControlSequences(List<PTOCAControlSequence> controlSequences) {
+    this.controlSequences = controlSequences;
   }
 
   public void addControlSequence(PTOCAControlSequence controlSequence) {
@@ -161,7 +167,7 @@ public class PTD_PresentationTextDataDescriptor_Format2 extends StructuredField 
     controlSequences.add(controlSequence);
   }
 
-  public void remoceControlSequence(PTOCAControlSequence controlSequence) {
+  public void removeControlSequence(PTOCAControlSequence controlSequence) {
     if (controlSequences == null) {
       return;
     }

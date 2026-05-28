@@ -1,0 +1,159 @@
+(* AFP EBNF: Phase 3 - MO:DCA Document Structure *)
+
+import "primitives.ebnf"
+import "sfi.ebnf"
+import "triplets.ebnf"
+
+(* Generic Structured Field with specific TypeID *)
+SF(type_id)       = SFLength, type_id, FlagByte, Reserved2B, [ SFIExtension ], { Triplet }, [ Padding ] ;
+
+(* Structured Field Type IDs *)
+BPF_ID            = X'D3', X'A8', X'A5' ;
+EPF_ID            = X'D3', X'A9', X'A5' ;
+BRG_ID            = X'D3', X'A8', X'C6' ;
+ERG_ID            = X'D3', X'A9', X'C6' ;
+BDI_ID            = X'D3', X'A8', X'A7' ;
+EDI_ID            = X'D3', X'A9', X'A7' ;
+BDT_ID            = X'D3', X'A8', X'A8' ;
+EDT_ID            = X'D3', X'A9', X'A8' ;
+BNG_ID            = X'D3', X'A8', X'AD' ;
+ENG_ID            = X'D3', X'A9', X'AD' ;
+BPG_ID            = X'D3', X'A8', X'AF' ;
+EPG_ID            = X'D3', X'A9', X'AF' ;
+BAG_ID            = X'D3', X'A8', X'C9' ;
+EAG_ID            = X'D3', X'A9', X'C9' ;
+BSG_ID            = X'D3', X'A8', X'D9' ;
+ESG_ID            = X'D3', X'A9', X'D9' ;
+BMM_ID            = X'D3', X'A8', X'CC' ;
+EMM_ID            = X'D3', X'A9', X'CC' ;
+BOG_ID            = X'D3', X'A8', X'C7' ;
+EOG_ID            = X'D3', X'A9', X'C7' ;
+BIM_ID            = X'D3', X'A8', X'FB' ;
+EIM_ID            = X'D3', X'A9', X'FB' ;
+BOC_ID            = X'D3', X'A8', X'92' ;
+EOC_ID            = X'D3', X'A9', X'92' ;
+
+(* Top Level: Print File *)
+PrintFile         = [ SF(BPF_ID) ],
+                    [ ResourceGroup ],
+                    { DocumentIndex, Document | Document },
+                    [ SF(EPF_ID) ] ;
+
+(* Resource Group (External or Internal) *)
+ResourceGroup     = SF(BRG_ID),
+                    { ResourceObject },
+                    SF(ERG_ID) ;
+
+ResourceObject    = Overlay | PageSegment | FormMap | BarCodeObject | GraphicsObject | ImageObject | ObjectContainer | PresentationTextObject | Document ;
+
+(* Document Structure *)
+Document          = SF(BDT_ID),
+                    { MetadataObject },
+                    { InvokeMediumMap },
+                    { IncludePage },
+                    { LinkLogicalElement },
+                    { MediumMap },
+                    { ResourceEnvironmentGroup },
+                    { Page | PageGroup },
+                    SF(EDT_ID) ;
+
+(* Document Index *)
+DocumentIndex     = SF(BDI_ID),
+                    { IndexElement },
+                    { LinkLogicalElement },
+                    { TagLogicalElement },
+                    SF(EDI_ID) ;
+
+(* Page Group *)
+PageGroup         = SF(BNG_ID),
+                    { TagLogicalElement },
+                    { MetadataObject },
+                    { InvokeMediumMap },
+                    { IncludePage },
+                    { LinkLogicalElement },
+                    { MediumMap },
+                    { ResourceEnvironmentGroup },
+                    { Page | PageGroup },
+                    SF(ENG_ID) ;
+
+(* Page Structure *)
+Page              = SF(BPG_ID),
+                    ActiveEnvironmentGroup,
+                    { PageContent },
+                    SF(EPG_ID) ;
+
+PageContent       = IncludeObject | IncludePage | IncludePageOverlay | IncludePageSegment | LinkLogicalElement | TagLogicalElement | BarCodeObject | GraphicsObject | ImageObject | ObjectContainer | PresentationTextObject ;
+
+(* Active Environment Group *)
+ActiveEnvironmentGroup = SF(BAG_ID),
+                         { AEG_Content },
+                         SF(EAG_ID) ;
+
+AEG_Content       = PresentationEnvironmentControl | MapCodedFont | MapDataResource | MapPage | MapPageOverlay | MapPageSegment | PageDescriptor | ObjectAreaDescriptor | ObjectAreaPosition | PresentationTextDataDescriptor ;
+
+(* Resource Environment Group *)
+ResourceEnvironmentGroup = SF(BSG_ID),
+                           { MDR | MPO | PPO },
+                           SF(ESG_ID) ;
+
+(* Medium Map *)
+MediumMap         = SF(BMM_ID),
+                    { MetadataObject | MMO | MPO | MMT | MMD | MDR | PGP | MDD | MCC | MMC | PMC | MFC | PEC },
+                    SF(EMM_ID) ;
+
+(* Data Objects (Example: Image Object) *)
+ImageObject       = SF(BIM_ID),
+                    ObjectEnvironmentGroup,
+                    { MetadataObject },
+                    { ImagePictureData },
+                    SF(EIM_ID) ;
+
+ObjectEnvironmentGroup = SF(BOG_ID),
+                         { PEC | OBD | OBP | MIO | MDR | IDD },
+                         SF(EOG_ID) ;
+
+(* Placeholders for Structured Fields (Phase 4) *)
+MetadataObject    = ObjectContainer ; (* MO Type *)
+InvokeMediumMap   = byte ; (* Placeholder for IMM SF *)
+IncludePage       = byte ; (* Placeholder for IPG SF *)
+LinkLogicalElement = byte ; (* Placeholder for LLE SF *)
+TagLogicalElement  = byte ; (* Placeholder for TLE SF *)
+IndexElement       = byte ; (* Placeholder for IEL SF *)
+IncludeObject      = byte ; (* Placeholder for IOB SF *)
+IncludePageOverlay = byte ; (* Placeholder for IPO SF *)
+IncludePageSegment = byte ; (* Placeholder for IPS SF *)
+PresentationTextObject = byte ; (* Placeholder for BPT/EPT *)
+Overlay            = byte ; (* Placeholder for BMO/EMO *)
+PageSegment        = byte ; (* Placeholder for BPS/EPS *)
+FormMap            = byte ; (* Placeholder for BFM/EFM *)
+BarCodeObject      = byte ; (* Placeholder for BCA/ECA *)
+GraphicsObject     = byte ; (* Placeholder for BGA/EGA *)
+ObjectContainer    = byte ; (* Placeholder for BOC/EOC *)
+ImagePictureData   = byte ; (* Placeholder for IPD SF *)
+MDR                = byte ; (* Placeholder for MDR SF *)
+MPO                = byte ; (* Placeholder for MPO SF *)
+PPO                = byte ; (* Placeholder for PPO SF *)
+MMO                = byte ; (* Placeholder for MMO SF *)
+MMT                = byte ; (* Placeholder for MMT SF *)
+MMD                = byte ; (* Placeholder for MMD SF *)
+PGP                = byte ; (* Placeholder for PGP SF *)
+MDD                = byte ; (* Placeholder for MDD SF *)
+MCC                = byte ; (* Placeholder for MCC SF *)
+MMC                = byte ; (* Placeholder for MMC SF *)
+PMC                = byte ; (* Placeholder for PMC SF *)
+MFC                = byte ; (* Placeholder for MFC SF *)
+PEC                = byte ; (* Placeholder for PEC SF *)
+PresentationEnvironmentControl = PEC ;
+MapCodedFont       = byte ; (* Placeholder for MCF SF *)
+MapDataResource    = MDR ;
+MapPage            = byte ; (* Placeholder for MPG SF *)
+MapPageOverlay     = MPO ;
+MapPageSegment     = byte ; (* Placeholder for MPS SF *)
+PageDescriptor     = byte ; (* Placeholder for PGD SF *)
+ObjectAreaDescriptor = byte ; (* Placeholder for OBD SF *)
+ObjectAreaPosition = byte ; (* Placeholder for OBP SF *)
+PresentationTextDataDescriptor = byte ; (* Placeholder for PTD SF *)
+MIO                = byte ; (* Placeholder for MIO SF *)
+IDD                = byte ; (* Placeholder for IDD SF *)
+OBD                = ObjectAreaDescriptor ;
+OBP                = ObjectAreaPosition ;

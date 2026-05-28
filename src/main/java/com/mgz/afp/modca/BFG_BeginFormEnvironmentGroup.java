@@ -16,11 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.modca;
 
-import com.mgz.afp.base.StructuredFieldBaseName;
+import com.mgz.afp.base.StructuredFieldBaseNameAndTriplets;
 
-
-public class BFG_BeginFormEnvironmentGroup extends StructuredFieldBaseName {
+public class BFG_BeginFormEnvironmentGroup extends StructuredFieldBaseNameAndTriplets {
 
 }

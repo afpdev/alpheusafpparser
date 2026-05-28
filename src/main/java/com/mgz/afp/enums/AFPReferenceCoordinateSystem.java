@@ -16,16 +16,34 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.enums;
 
 /**
- * MO:DCA, page 301.<br> <br> Specifies the reference coordinate system.
+ * MO:DCA, page 301.
+ * <p>
+ * Specifies the reference coordinate system.
  */
 public enum AFPReferenceCoordinateSystem {
+  /**
+   * Reference coordinate system as defined in the Page/Overlay or include page segment.
+   */
   AsDefined_PageOverlayIPS,
+  /**
+   * Standard reference coordinate system.
+   */
   Standard,
+  /**
+   * Retired reference coordinate system.
+   */
   Retired;
 
+  /**
+   * Returns the {@link AFPReferenceCoordinateSystem} for the given byte code.
+   *
+   * @param codeByte the byte code
+   * @return the corresponding {@link AFPReferenceCoordinateSystem}, or null if unknown
+   */
   public static AFPReferenceCoordinateSystem valueOf(byte codeByte) {
     if (codeByte == 0x00) {
       return AsDefined_PageOverlayIPS;
@@ -37,6 +55,11 @@ public enum AFPReferenceCoordinateSystem {
     return null;
   }
 
+  /**
+   * Returns the byte code of this coordinate system.
+   *
+   * @return the byte code
+   */
   public int toByte() {
     if (this == AsDefined_PageOverlayIPS) {
       return 0x00;

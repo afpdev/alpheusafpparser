@@ -23,20 +23,18 @@ import com.mgz.afp.base.StructuredFieldIntroducer;
 import com.mgz.afp.parser.AFPParser;
 import com.mgz.afp.parser.AFPParserConfiguration;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.security.DigestInputStream;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
  Links to publicly available AFP files that can be used for testing:
@@ -60,14 +58,13 @@ import static org.junit.Assert.*;
  If you know other publicly available AFP files, please send a link to following email
  address so I can add it to this list: afpdev@mogozine.com
 */
-@Ignore
 public class AFPParserTest {
   private static File[] filesSuite = {};
 
-  @BeforeClass
+  @BeforeAll
   public static void onlyOnce() throws Exception {
     filesSuite = FilesSuite.getAfpFiles();
-    assertTrue("No AFP Testiles found", filesSuite != null && filesSuite.length > 0);
+    assertTrue(filesSuite != null && filesSuite.length > 0, "No AFP Testiles found");
   }
 
   @Test
@@ -93,7 +90,9 @@ public class AFPParserTest {
         pc.getInputStream().close();
 
       } finally {
-        pc.getInputStream().close();
+        if (pc.getInputStream() != null) {
+          pc.getInputStream().close();
+        }
       }
     }
   }
@@ -126,11 +125,11 @@ public class AFPParserTest {
             sf.writeAFP(bytesSerialized, pc);
 
             assertArrayEquals(
+                bytesOriginal, bytesSerialized.toByteArray(),
                 afpFile.getName() + " 0x"
                     + Long.toHexString(sf.getStructuredFieldIntroducer().getFileOffset()) + " " + sf.getClass().getSimpleName() + "\n"
                     + "Original:\n" + Arrays.toString(bytesOriginal) + "\n"
-                    + "Serialized:\n" + Arrays.toString(bytesSerialized.toByteArray()) + "\n",
-                bytesOriginal, bytesSerialized.toByteArray()
+                    + "Serialized:\n" + Arrays.toString(bytesSerialized.toByteArray()) + "\n"
             );
           }
 
@@ -175,11 +174,11 @@ public class AFPParserTest {
             sf.writeAFP(bytesSerialized, pc);
 
             assertArrayEquals(
+                bytesOriginal, bytesSerialized.toByteArray(),
                 afpFile.getName() + " 0x"
                     + Long.toHexString(sf.getStructuredFieldIntroducer().getFileOffset()) + " " + sf.getClass().getSimpleName() + "\n"
                     + "Original:\n" + Arrays.toString(bytesOriginal) + "\n"
-                    + "Serialized:\n" + Arrays.toString(bytesSerialized.toByteArray()) + "\n",
-                bytesOriginal, bytesSerialized.toByteArray()
+                    + "Serialized:\n" + Arrays.toString(bytesSerialized.toByteArray()) + "\n"
             );
           }
 

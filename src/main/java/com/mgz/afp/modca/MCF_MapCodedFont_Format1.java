@@ -16,7 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
+
 package com.mgz.afp.modca;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.annotations.AFPType;
@@ -28,6 +31,7 @@ import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
 import com.mgz.util.UtilCharacterEncoding;
 
+import javax.xml.bind.annotation.XmlType;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,18 +43,23 @@ public class MCF_MapCodedFont_Format1 extends StructuredField {
   byte[] reserved1_3 = new byte[3];
   List<MCF_RepeatingGroup> repeatingGroups;
 
-
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    int actualLength = getActualLength(sfData, offset, length);
+    if (actualLength < 4) {
+      throw new AFPParserException("MCF1 payload too short: " + actualLength);
+    }
     lengthOfRepeatingGroup = UtilBinaryDecoding.parseShort(sfData, offset, 1);
     reserved1_3 = new byte[3];
     System.arraycopy(sfData, offset + 1, reserved1_3, 0, reserved1_3.length);
 
-    int actualLength = getActualLength(sfData, offset, length);
     if (actualLength > 4) {
+      if (lengthOfRepeatingGroup <= 0) {
+        throw new AFPParserException("Invalid length of repeating group: " + lengthOfRepeatingGroup);
+      }
       repeatingGroups = new ArrayList<MCF_MapCodedFont_Format1.MCF_RepeatingGroup>((actualLength - 4) / lengthOfRepeatingGroup);
       int pos = 4;
-      while (pos < actualLength) {
+      while (pos + lengthOfRepeatingGroup <= actualLength) {
         MCF_RepeatingGroup rg = new MCF_RepeatingGroup();
         rg.decodeAFP(sfData, offset + pos, lengthOfRepeatingGroup, config);
         repeatingGroups.add(rg);
@@ -60,7 +69,6 @@ public class MCF_MapCodedFont_Format1 extends StructuredField {
       repeatingGroups = null;
     }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
@@ -118,6 +126,8 @@ public class MCF_MapCodedFont_Format1 extends StructuredField {
   }
 
   @AFPType
+  @XmlRootElement
+  @XmlType(name = "mcf1RepeatingGroup")
   public static class MCF_RepeatingGroup implements IAFPDecodeableWriteable {
     short codedFontLocalID;
     byte reserved1 = 0x00;
@@ -172,7 +182,6 @@ public class MCF_MapCodedFont_Format1 extends StructuredField {
         characterRotation = null;
       }
     }
-
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {

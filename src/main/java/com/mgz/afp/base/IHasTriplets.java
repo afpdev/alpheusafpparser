@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.base;
 
 import com.mgz.afp.triplets.Triplet;
@@ -29,11 +30,15 @@ public interface IHasTriplets {
 
   /**
    * Returns the list of {@link Triplet}s.
+   *
+   * @return the list of triplets
    */
   List<Triplet> getTriplets();
 
   /**
    * Sets the list of {@link Triplet}s.
+   *
+   * @param triplets the list of triplets
    */
   void setTriplets(List<Triplet> triplets);
 

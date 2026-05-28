@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.foca;
 
 import com.mgz.afp.base.StructuredField;
@@ -29,64 +30,64 @@ import com.mgz.util.UtilCharacterEncoding;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.EnumSet;
 
 /**
  * The Code Page Control (CPC) contains information about the code page.
  */
 public class CPC_CodePageControl extends StructuredField {
-  private static final Charset cpIBM500 = Constants.cpIBM500;
 
   /**
+   * Default graphic character global identifier.
+   * <p>
    * "This parameter is EBCDIC encoded using CPGID 500 (International #5) and GCSGID 103
    * (International DP 94 (ASCII))."
    */
   @AFPField
-  String defaultGraphicCharacterGlobalID;
+  private String defaultGraphicCharacterGlobalID;
   @AFPField
-  EnumSet<DefaultCharacterUseFlag> defaultCharacterUseFlags;
+  private EnumSet<DefaultCharacterUseFlag> defaultCharacterUseFlags;
   @AFPField
-  CPIRepeatingGroupLength cpiRepeatingGroupLength;
+  private CPIRepeatingGroupLength cpiRepeatingGroupLength;
   @AFPField
-  short spaceCharacterSectionNumber;
+  private short spaceCharacterSectionNumber;
   @AFPField
-  short spaceCharacterCodePoint;
+  private short spaceCharacterCodePoint;
   @AFPField
-  EnumSet<CodePageUseFlag> codePageUseFlags;
+  private EnumSet<CodePageUseFlag> codePageUseFlags;
   @AFPField
-  long unicodeScalarValue;
+  private long unicodeScalarValue;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length,
                         AFPParserConfiguration config) throws AFPParserException {
+    var actualLength = getActualLength(sfData, offset, length);
     checkDataLength(sfData, offset, length, 13);
 
-    defaultGraphicCharacterGlobalID = new String(sfData, 0, 8, cpIBM500);
-    defaultCharacterUseFlags = DefaultCharacterUseFlag.valueOf(sfData[8] & 0xFF);
-    cpiRepeatingGroupLength = CPIRepeatingGroupLength.valueOf(sfData[9] & 0xFF);
-    spaceCharacterSectionNumber = UtilBinaryDecoding.parseShort(sfData, offset + 10, 1);
-    spaceCharacterCodePoint = UtilBinaryDecoding.parseShort(sfData, offset + 11, 1);
-    codePageUseFlags = CodePageUseFlag.valueOf(sfData[12] & 0xFF);
-    if (cpiRepeatingGroupLength == CPIRepeatingGroupLength.SingleByteCodePageUnicodeScalarValues
-        || cpiRepeatingGroupLength == CPIRepeatingGroupLength.DoubleByteCodePageUnicodeScalarValues) {
-      unicodeScalarValue = UtilBinaryDecoding.parseLong(sfData, 13, 4);
+    defaultGraphicCharacterGlobalID = new String(sfData, offset, 8, config.getAfpCharSet()).trim();
+    defaultCharacterUseFlags = DefaultCharacterUseFlag.valueOf(sfData[offset + 8] & 0xFF);
+    cpiRepeatingGroupLength = CPIRepeatingGroupLength.valueOf(sfData[offset + 9] & 0xFF);
+    spaceCharacterSectionNumber = (short) (sfData[offset + 10] & 0xFF);
+    spaceCharacterCodePoint = (short) (sfData[offset + 11] & 0xFF);
+    codePageUseFlags = CodePageUseFlag.valueOf(sfData[offset + 12] & 0xFF);
+    if (cpiRepeatingGroupLength != null && cpiRepeatingGroupLength.isUnicodeScalarValues()
+        && actualLength >= 17) {
+      unicodeScalarValue = UtilBinaryDecoding.parseLong(sfData, offset + 13, 4);
     }
 
   }
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    var baos = new ByteArrayOutputStream();
 
-    baos.write(UtilCharacterEncoding.stringToByteArray(defaultGraphicCharacterGlobalID, cpIBM500, 8, Constants.EBCDIC_ID_FILLER));
+    baos.write(UtilCharacterEncoding.stringToByteArray(defaultGraphicCharacterGlobalID, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
     baos.write(DefaultCharacterUseFlag.toByte(defaultCharacterUseFlags));
-    baos.write(cpiRepeatingGroupLength.val);
+    baos.write(cpiRepeatingGroupLength != null ? cpiRepeatingGroupLength.val : 0x0A);
     baos.write(UtilBinaryDecoding.shortToByteArray(spaceCharacterSectionNumber, 1));
     baos.write(UtilBinaryDecoding.shortToByteArray(spaceCharacterCodePoint, 1));
     baos.write(CodePageUseFlag.toByte(codePageUseFlags));
-    if (cpiRepeatingGroupLength == CPIRepeatingGroupLength.SingleByteCodePageUnicodeScalarValues
-        || cpiRepeatingGroupLength == CPIRepeatingGroupLength.DoubleByteCodePageUnicodeScalarValues) {
+    if (cpiRepeatingGroupLength != null && cpiRepeatingGroupLength.isUnicodeScalarValues()) {
       baos.write(UtilBinaryDecoding.longToByteArray(unicodeScalarValue, 4));
     }
 
@@ -154,24 +155,20 @@ public class CPC_CodePageControl extends StructuredField {
 
   public enum DefaultCharacterUseFlag {
     /**
-     * When this flag is set, the character is an invalid coded character (see “Invalid Coded
-     * Character” on page 112). When this flag bit is set to B'0' (off), the character is a valid
-     * coded character.
+     * When this flag is set, the character is an invalid coded character.
      */
     InvalidCodedCharacter,
     /**
-     * When this flag is set, the character not to be printed (see “No Presentation” on page 113).
-     * When this flag bit is set to B'0' (off), the character is to be printed.
+     * When this flag is set, the character not to be printed.
      */
     NoPresentation,
     /**
-     * When this flag bit is set, the print position is not to be incremented (see “No Increment” on
-     * page 112). When this flag bit is set to B'0' (off), the print position is to be incremented.
+     * When this flag bit is set, the print position is not to be incremented.
      */
     NoIncrement;
 
     public static EnumSet<DefaultCharacterUseFlag> valueOf(int flagByte) {
-      EnumSet<DefaultCharacterUseFlag> result = EnumSet.noneOf(DefaultCharacterUseFlag.class);
+      var result = EnumSet.noneOf(DefaultCharacterUseFlag.class);
 
       if ((flagByte & 0x80) != 0) {
         result.add(InvalidCodedCharacter);
@@ -187,7 +184,10 @@ public class CPC_CodePageControl extends StructuredField {
     }
 
     public static int toByte(EnumSet<DefaultCharacterUseFlag> flags) {
-      int result = 0;
+      var result = 0;
+      if (flags == null) {
+        return result;
+      }
 
       if (flags.contains(InvalidCodedCharacter)) {
         result += 0x80;
@@ -216,7 +216,7 @@ public class CPC_CodePageControl extends StructuredField {
     }
 
     public static CPIRepeatingGroupLength valueOf(int cpiRepeatingGroupLengthByte) {
-      for (CPIRepeatingGroupLength cpiRGL : values()) {
+      for (var cpiRGL : values()) {
         if (cpiRGL.val == cpiRepeatingGroupLengthByte) {
           return cpiRGL;
         }
@@ -237,34 +237,23 @@ public class CPC_CodePageControl extends StructuredField {
     }
 
     public boolean isUnicodeScalarValues() {
-      if (this == SingleByteCodePageUnicodeScalarValues || this == DoubleByteCodePageUnicodeScalarValues) {
-        return true;
-      } else {
-        return false;
-      }
+      return this == SingleByteCodePageUnicodeScalarValues || this == DoubleByteCodePageUnicodeScalarValues;
     }
   }
 
   public enum CodePageUseFlag {
     /**
      * When this flag bit is set to B'1' (on), the CPI repeating groups are sorted in ascending code
-     * point order. When this flag bit is set to B'0' (off), the CPI repeating groups are sorted in
-     * ascending character ID order.
+     * point order.
      */
     SortOrder,
     /**
-     * This flag is used to enable variable spacing. When the flag is set, the PTOCA variable space
-     * increment is used whenever the code point for the variable space character is encountered.
-     * Some AFP products, such as DCF, use variable spacing for text justification and therefore
-     * require this flag to be set. When the flag is not set, all PTOCA SVI control sequences are
-     * ignored and the space character is printed as defined in the accompanying font whenever the
-     * variable space code point is encountered. If a code page is built that has this flag not set,
-     * it should not be used with AFP products that require the variable space function.
+     * This flag is used to enable variable spacing.
      */
     VariableSpaceEnable;
 
     public static EnumSet<CodePageUseFlag> valueOf(int flagByte) {
-      EnumSet<CodePageUseFlag> result = EnumSet.noneOf(CodePageUseFlag.class);
+      var result = EnumSet.noneOf(CodePageUseFlag.class);
 
       if ((flagByte & 0x80) != 0) {
         result.add(SortOrder);
@@ -277,7 +266,10 @@ public class CPC_CodePageControl extends StructuredField {
     }
 
     public static int toByte(EnumSet<CodePageUseFlag> flags) {
-      int result = 0;
+      var result = 0;
+      if (flags == null) {
+        return result;
+      }
 
       if (flags.contains(SortOrder)) {
         result += 0x80;

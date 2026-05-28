@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.lineData;
 
 import com.mgz.afp.base.StructuredFieldBaseTriplets;
@@ -101,18 +102,18 @@ public class LND_LineDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(baselinePosition, 2)); // Note: IF relative position value is signed short, if absolute position unsigned short.
     baos.write(inlineOrientation.toBytes());
     baos.write(baselineOrientation.toBytes());
-    baos.write(primaryFontLocalId);
+    baos.write(UtilBinaryDecoding.shortToByteArray(primaryFontLocalId, 1));
     baos.write(channelCode);
     baos.write(UtilBinaryDecoding.intToByteArray(nextLNDIfSkipping, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(nextLNDIfSpacing, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(nextLNDIfReusingData, 2));
     baos.write(UtilCharacterEncoding.stringToByteArray(suppressionTokenName, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
-    baos.write(shiftOutLocalFontID);
+    baos.write(UtilBinaryDecoding.shortToByteArray(shiftOutLocalFontID, 1));
     baos.write(UtilBinaryDecoding.intToByteArray(dataStartPosition, 4));
     baos.write(UtilBinaryDecoding.intToByteArray(dataLength, 2));
-    baos.write(textColor.toByte());
+    baos.write(textColor.toByte2());
     baos.write(UtilBinaryDecoding.intToByteArray(nextLNDIfConditionalProcessing, 2));
-    baos.write(subpageID);
+    baos.write(UtilBinaryDecoding.shortToByteArray(subpageID, 1));
     baos.write(UtilBinaryDecoding.intToByteArray(ccpIdentifier, 2));
 
     if (triplets != null) {

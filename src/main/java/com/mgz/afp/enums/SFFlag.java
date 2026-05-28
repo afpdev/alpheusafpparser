@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.enums;
 
 import java.util.EnumSet;
@@ -29,10 +30,10 @@ public enum SFFlag {
     EnumSet<SFFlag> result = EnumSet.noneOf(SFFlag.class);
 
     if ((flagByte & 0x80) != 0) {
-      result.add(isSegmented);
+      result.add(hasExtension);
     }
     if ((flagByte & 0x20) != 0) {
-      result.add(hasExtension);
+      result.add(isSegmented);
     }
     if ((flagByte & 0x08) != 0) {
       result.add(isPadded);
@@ -47,10 +48,10 @@ public enum SFFlag {
   public static int toByte(EnumSet<SFFlag> flags) {
     int result = 0;
 
-    if (flags.contains(isSegmented)) {
+    if (flags.contains(hasExtension)) {
       result += 0x80;
     }
-    if (flags.contains(hasExtension)) {
+    if (flags.contains(isSegmented)) {
       result += 0x20;
     }
     if (flags.contains(isPadded)) {

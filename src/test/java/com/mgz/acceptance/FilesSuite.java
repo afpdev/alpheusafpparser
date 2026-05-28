@@ -19,7 +19,11 @@ along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 package com.mgz.acceptance;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class FilesSuite {
@@ -31,19 +35,27 @@ public class FilesSuite {
     if (afpFiles == null) {
       synchronized (FilesSuite.class) {
         if (afpFiles == null) {
-          afpFiles = findFiles(new File("./src/test/resources/afp"));
+          try {
+            afpFiles = findFiles(new File("./src/test/resources/afp"));
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
         }
       }
     }
     return afpFiles;
   }
 
-  private static File[] findFiles(File root) {
-    return root.listFiles(new FileFilter() {
-      public boolean accept(File file) {
-        return file.isFile() && isAllowedExtension(file.getName());
-      }
-    });
+  private static File[] findFiles(File root) throws IOException {
+    try (java.util.stream.Stream<Path> stream = Files.walk(root.toPath())) {
+      List<File> files = stream
+          .filter(Files::isRegularFile)
+          .filter(path -> !path.toString().contains(File.separator + "external" + File.separator))
+          .filter(path -> isAllowedExtension(path.getFileName().toString()))
+          .map(Path::toFile)
+          .collect(Collectors.toList());
+      return files.toArray(new File[0]);
+    }
   }
 
   private static boolean isAllowedExtension(final String fileName) {

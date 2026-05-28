@@ -16,19 +16,35 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.base;
 
 import com.mgz.afp.base.annotations.AFPField;
 
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class StructuredFieldBaseRepeatingGroups extends StructuredField implements IHasRepeatingGroups {
   @AFPField
+  @XmlTransient
   protected List<IRepeatingGroup> repeatingGroups;
 
   @Override
+  public void reset() {
+    super.reset();
+    repeatingGroups = null;
+  }
+
+  @XmlTransient
+  @Override
   public final List<IRepeatingGroup> getRepeatingGroups() {
+    return repeatingGroups;
+  }
+
+  @XmlAnyElement(lax = true)
+  public final List<IRepeatingGroup> getRepeatingGroupsXml() {
     return repeatingGroups;
   }
 

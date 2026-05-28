@@ -16,12 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.exceptions;
 
 import com.mgz.afp.parser.AFPParserConfiguration;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 /**
  * Something that can be decoded from binary AFP data, and written to an {@link OutputStream} as
@@ -41,6 +43,26 @@ public interface IAFPDecodeableWriteable {
    */
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException;
 
+  /**
+   * Decodes the given AFP data from a {@link ByteBuffer}.<br> Parameter length specifies the length
+   * in bytes of the data to be decoded, beginning with position offset. If parameter length has a
+   * value of -1, the buffer is decoded from its current position up to its limit.
+   *
+   * @param buffer contains the AFP data to decode.
+   * @param offset the byte index position where the decoding should start.
+   * @param length the length in bytes of the data to be decoded, beginning with position offset.
+   * @param config contains parameter used for decoding.
+   * @throws AFPParserException if the given AFP data are invalid.
+   */
+  public default void decodeAFP(ByteBuffer buffer, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    int actualLength = length != -1 ? length : buffer.limit() - offset;
+    byte[] data = new byte[actualLength];
+    int oldPos = buffer.position();
+    buffer.position(offset);
+    buffer.get(data);
+    buffer.position(oldPos);
+    decodeAFP(data, 0, -1, config);
+  }
 
   /**
    * Writes the object to the given os encoded as AFP data.

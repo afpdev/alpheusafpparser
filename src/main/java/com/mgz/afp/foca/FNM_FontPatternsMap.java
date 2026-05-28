@@ -16,12 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.foca;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.exceptions.AFPParserException;
-import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
@@ -31,32 +31,59 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Font Patterns Map (FNM).
+ */
 public class FNM_FontPatternsMap extends StructuredField {
+
   @AFPField
-  List<FNM_RepeatingGroup> repeatingGroups;
+  private List<FNM_RepeatingGroup> repeatingGroups;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    int actualLength = getActualLength(sfData, offset, length);
+    var fnc = config.getCurrentFontControl();
+    if (fnc == null) {
+      fnc = new FNC_FontControl();
+      fnc.setFnmRepeatingGroupLength((byte) 8); // Default
+    }
+    var rgLen = fnc.getFnmRepeatingGroupLength() & 0xFF;
 
-    repeatingGroups = new ArrayList<FNM_FontPatternsMap.FNM_RepeatingGroup>();
+    var actualLength = getActualLength(sfData, offset, length);
+    repeatingGroups = new ArrayList<>();
 
-    int pos = 0;
-    while (pos < actualLength) {
-      FNM_RepeatingGroup rg = new FNM_RepeatingGroup();
-      rg.decodeAFP(sfData, offset + pos, actualLength - pos, config);
+    var pos = 0;
+    while (pos + rgLen <= actualLength) {
+      var rg = new FNM_RepeatingGroup();
+      rg.charDataOffset = UtilBinaryDecoding.parseLong(sfData, offset + pos, 4);
+      rg.charDataCount = UtilBinaryDecoding.parseLong(sfData, offset + pos + 4, 4);
       repeatingGroups.add(rg);
-      pos += 8;
+      pos += rgLen;
     }
   }
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    var fnc = config.getCurrentFontControl();
+    if (fnc == null) {
+      fnc = new FNC_FontControl();
+      fnc.setFnmRepeatingGroupLength((byte) 8);
+    }
+    var rgLen = fnc.getFnmRepeatingGroupLength() & 0xFF;
 
+    var baos = new ByteArrayOutputStream();
     if (repeatingGroups != null) {
-      for (FNM_RepeatingGroup rg : repeatingGroups) {
-        rg.writeAFP(baos, config);
+      for (var rg : repeatingGroups) {
+        var rgBaos = new ByteArrayOutputStream();
+        rgBaos.write(UtilBinaryDecoding.longToByteArray(rg.charDataOffset, 4));
+        rgBaos.write(UtilBinaryDecoding.longToByteArray(rg.charDataCount, 4));
+
+        var rgData = rgBaos.toByteArray();
+        if (rgData.length < rgLen) {
+          baos.write(rgData);
+          baos.write(new byte[rgLen - rgData.length]);
+        } else {
+          baos.write(rgData, 0, rgLen);
+        }
       }
     }
 
@@ -67,53 +94,33 @@ public class FNM_FontPatternsMap extends StructuredField {
     return repeatingGroups;
   }
 
-  public static class FNM_RepeatingGroup implements IAFPDecodeableWriteable {
-    @AFPField
-    short characterBoxWidth;
-    @AFPField
-    short characterBoxHeight;
-    @AFPField
-    long patternDataOffset;
-
-    @Override
-    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-      checkDataLength(sfData, offset, length, 8);
-      characterBoxWidth = UtilBinaryDecoding.parseShort(sfData, offset, 2);
-      characterBoxHeight = UtilBinaryDecoding.parseShort(sfData, offset + 2, 2);
-      patternDataOffset = UtilBinaryDecoding.parseLong(sfData, offset + 4, 4);
-    }
-
-    @Override
-    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      os.write(UtilBinaryDecoding.shortToByteArray(characterBoxWidth, 2));
-      os.write(UtilBinaryDecoding.shortToByteArray(characterBoxHeight, 2));
-      os.write(UtilBinaryDecoding.longToByteArray(patternDataOffset, 4));
-    }
-
-    public short getCharacterBoxWidth() {
-      return characterBoxWidth;
-    }
-
-    public void setCharacterBoxWidth(short characterBoxWidth) {
-      this.characterBoxWidth = characterBoxWidth;
-    }
-
-    public short getCharacterBoxHeight() {
-      return characterBoxHeight;
-    }
-
-    public void setCharacterBoxHeight(short characterBoxHeight) {
-      this.characterBoxHeight = characterBoxHeight;
-    }
-
-    public long getPatternDataOffset() {
-      return patternDataOffset;
-    }
-
-    public void setPatternDataOffset(long patternDataOffset) {
-      this.patternDataOffset = patternDataOffset;
-    }
+  public void setRepeatingGroups(List<FNM_RepeatingGroup> repeatingGroups) {
+    this.repeatingGroups = repeatingGroups;
   }
 
+  /**
+   * FNM Repeating Group.
+   */
+  public static class FNM_RepeatingGroup {
+    @AFPField
+    private long charDataOffset;
+    @AFPField
+    private long charDataCount;
 
+    public long getCharDataOffset() {
+      return charDataOffset;
+    }
+
+    public void setCharDataOffset(long charDataOffset) {
+      this.charDataOffset = charDataOffset;
+    }
+
+    public long getCharDataCount() {
+      return charDataCount;
+    }
+
+    public void setCharDataCount(long charDataCount) {
+      this.charDataCount = charDataCount;
+    }
+  }
 }

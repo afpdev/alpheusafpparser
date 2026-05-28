@@ -1,0 +1,35 @@
+@startuml
+skinparam componentStyle uml2
+
+package "Structured Field Introducer (SFI)" {
+  class SFI {
+    +SFLength: UBIN2
+    +SFTypeID: CODE3
+    +FlagByte: BITS1
+    +Reserved: 2 Bytes
+  }
+
+  class FlagByte {
+    bit 0: ExtFlag
+    bit 1: Reserved
+    bit 2: SegFlag
+    bit 3: Reserved
+    bit 4: PadFlag
+    bits 5-7: Reserved
+  }
+
+  class SFIExtension {
+    +ExtLength: UBIN1
+    +ExtData: Bytes
+  }
+
+  SFI *-- FlagByte
+  SFI o-- SFIExtension : "if ExtFlag=1"
+}
+
+note right of SFI
+  Total length: 8 bytes + optional extension
+  Maximum SF length: 32,767 bytes
+end note
+
+@enduml

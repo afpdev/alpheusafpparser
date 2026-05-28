@@ -24,8 +24,10 @@ import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.afp.writer.AFPWriterHumanReadable;
 import com.mgz.afp.writer.IAFPWriter;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,12 +37,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+@Execution(ExecutionMode.SAME_THREAD)
 public class AFPWriterTest {
 
   public static final Logger LOG = Logger.getLogger("AFPWriterTest");
   private static File[] filesSuite = {};
 
-  @BeforeClass
+  @BeforeAll
   public static void onlyOnce() throws Exception {
     if (FilesSuite.getAfpFiles() != null) {
       filesSuite = FilesSuite.getAfpFiles();
@@ -55,7 +58,7 @@ public class AFPWriterTest {
       OutputStream os = new FileOutputStream("./output/" + AFPWriterTest.class.getSimpleName() + ".tmp");
 
       for (File afpFile : filesSuite) {
-        LOG.log(Level.INFO, "File: {}", afpFile.getAbsolutePath());
+        LOG.log(Level.INFO, "File: {0}", afpFile.getAbsolutePath());
         pc.setInputStream(new FileInputStream(afpFile));
 
         AFPParser parser = new AFPParser(pc);

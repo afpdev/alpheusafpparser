@@ -16,12 +16,43 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.lineData;
 
-import com.mgz.afp.base.StructuredFieldBaseData;
+import com.mgz.afp.base.StructuredField;
+import com.mgz.afp.base.annotations.AFPField;
+import com.mgz.afp.exceptions.AFPParserException;
+import com.mgz.afp.parser.AFPParserConfiguration;
+import com.mgz.util.UtilBinaryDecoding;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * Programming Guide and Line Data Reference (ha3l3r04.pdf), page 87<br> <br>
+ * Programming Guide and Line Data Reference (ha3l3r04.pdf), page 87.<br> <br>
  */
-public class DXD_DataMapTransmitionSubcaseDescriptor extends StructuredFieldBaseData {
+public class DXD_DataMapTransmitionSubcaseDescriptor extends StructuredField {
+  @AFPField
+  private int constantData = 0x000100FF;
+
+  @Override
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    int actualLength = getActualLength(sfData, offset, length);
+    if (actualLength >= 4) {
+      constantData = UtilBinaryDecoding.parseInt(sfData, offset, 4);
+    }
+  }
+
+  @Override
+  public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    writeFullStructuredField(os, UtilBinaryDecoding.intToByteArray(constantData, 4));
+  }
+
+  public int getConstantData() {
+    return constantData;
+  }
+
+  public void setConstantData(int constantData) {
+    this.constantData = constantData;
+  }
 }

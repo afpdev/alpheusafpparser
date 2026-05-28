@@ -16,9 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
+
 package com.mgz.afp.modca;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mgz.afp.base.IRepeatingGroup;
+import com.mgz.afp.base.RepeatingGroupPool;
 import com.mgz.afp.base.StructuredFieldBaseRepeatingGroups;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
@@ -43,7 +47,10 @@ public class MSU_MapSuppression extends StructuredFieldBaseRepeatingGroups {
     if (actualLength > 0) {
       int pos = 0;
       while (pos < actualLength) {
-        MSU_RepeatingGroup rg = new MSU_RepeatingGroup();
+        MSU_RepeatingGroup rg = RepeatingGroupPool.acquire(MSU_RepeatingGroup.class);
+        if (rg == null) {
+          rg = new MSU_RepeatingGroup();
+        }
         rg.decodeAFP(sfData, offset + pos, actualLength - pos, config);
         addRepeatingGroup(rg);
         pos += 10;
@@ -52,7 +59,6 @@ public class MSU_MapSuppression extends StructuredFieldBaseRepeatingGroups {
       repeatingGroups = null;
     }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
@@ -66,10 +72,18 @@ public class MSU_MapSuppression extends StructuredFieldBaseRepeatingGroups {
     writeFullStructuredField(os, baos.toByteArray());
   }
 
+  @XmlRootElement
   public static class MSU_RepeatingGroup implements IRepeatingGroup {
     String nameOfTextSuppresstion;
     byte reserved8 = 0x00;
     byte localID;
+
+    @Override
+    public void reset() {
+      nameOfTextSuppresstion = null;
+      reserved8 = 0x00;
+      localID = 0x00;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -77,7 +91,6 @@ public class MSU_MapSuppression extends StructuredFieldBaseRepeatingGroups {
       reserved8 = sfData[offset + 8];
       localID = sfData[offset + 9];
     }
-
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {

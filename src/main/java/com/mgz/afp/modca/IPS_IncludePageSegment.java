@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.modca;
 
 import com.mgz.afp.base.StructuredFieldBaseTriplets;
@@ -29,7 +30,6 @@ import com.mgz.util.UtilCharacterEncoding;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
 
 /**
  * MO:DCA, page 220.<br> and Programming Guide and Line Data Reference(ha3l3r04.pdf), page 101.<br>
@@ -61,7 +61,6 @@ public class IPS_IncludePageSegment extends StructuredFieldBaseTriplets {
       triplets = null;
     }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {

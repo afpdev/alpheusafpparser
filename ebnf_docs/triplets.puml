@@ -1,0 +1,49 @@
+@startuml
+title AFP Triplets Structure (Phase 5)
+
+package "Base Triplet" {
+  class Triplet {
+    +TLength : UBIN1
+    +TripletID : CODE1
+    +TData : byte[]
+  }
+}
+
+package "Specific Triplets" {
+  class FQName {
+    +TLength
+    +ID = X'02'
+    +FQNameType : CODE1
+    +FQNameFormat : CODE1
+    +FQNameData : STRING
+  }
+
+  class MapOption {
+    +TLength
+    +ID = X'04'
+    +MapValue : CODE1
+  }
+
+  class ObjClassif {
+    +TLength
+    +ID = X'10'
+    +Reserved1B
+    +Class : CODE1
+    +Reserved2B
+    +StructFlags : BITS2
+    +RegObjID : byte[16]
+    +ObjTypeName : CHAR[32] [Optional]
+    +ObjVersion : CHAR[8] [Optional]
+    +CompName : CHAR[32] [Optional]
+  }
+}
+
+Triplet <|-- FQName
+Triplet <|-- MapOption
+Triplet <|-- ObjClassif
+
+note bottom of FQName : X'02' Fully Qualified Name
+note bottom of MapOption : X'04' Mapping Option
+note bottom of ObjClassif : X'10' Object Classification
+
+@enduml

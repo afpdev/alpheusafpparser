@@ -16,15 +16,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.exceptions;
 
+/**
+ * Exception thrown when the validation of an AFP structured field fails.
+ */
 public class AFPValidationException extends Exception {
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Constructor with message and cause.
+   *
+   * @param msg the detail message
+   * @param e   the cause
+   */
   public AFPValidationException(String msg, Throwable e) {
     super(msg, e);
   }
 
+  /**
+   * Constructor with message.
+   *
+   * @param msg the detail message
+   */
   public AFPValidationException(String msg) {
     super(msg);
   }

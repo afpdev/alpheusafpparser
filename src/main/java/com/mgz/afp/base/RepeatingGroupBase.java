@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.base;
 
 import com.mgz.afp.base.annotations.AFPType;
@@ -30,6 +31,11 @@ import java.io.OutputStream;
 @AFPType
 public class RepeatingGroupBase implements IRepeatingGroup {
   protected int repeatingGroupLength;
+
+  @Override
+  public void reset() {
+    repeatingGroupLength = 0;
+  }
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {

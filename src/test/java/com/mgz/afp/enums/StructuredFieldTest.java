@@ -22,10 +22,10 @@ import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.StructuredFieldIntroducer;
 import com.mgz.afp.parser.AFPParser;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class StructuredFieldTest {
@@ -35,9 +35,9 @@ public class StructuredFieldTest {
       if (a == SFTypeID.Undefined) {
         continue;
       }
-      assertFalse(a.name() + "'s SFClass is undefined.", a.getSfClass() == SFClass.Undefined);
-      assertFalse(a.name() + "'s SFType is undefined.", a.getSfType() == SFType.Undefined);
-      assertFalse(a.name() + "'s SGCategory is undefined.", a.getSfCategory() == SFCategory.Undefined);
+      assertFalse(a.getSfClass() == SFClass.Undefined, a.name() + "'s SFClass is undefined.");
+      assertFalse(a.getSfType() == SFType.Undefined, a.name() + "'s SFType is undefined.");
+      assertFalse(a.getSfCategory() == SFCategory.Undefined, a.name() + "'s SGCategory is undefined.");
     }
   }
 
@@ -49,14 +49,13 @@ public class StructuredFieldTest {
           continue;
         }
         assertFalse(
+            a.getSfClass() == b.getSfClass()
+                && a.getSfType() == b.getSfType()
+                && a.getSfCategory() == b.getSfCategory(),
             a.name() + "=" + b.name() + ":"
                 + " class:" + a.getSfClass() + "==" + b.getSfClass()
                 + " type:" + a.getSfType() + "==" + b.getSfType()
                 + " cat:" + a.getSfCategory() + "==" + b.getSfCategory()
-            ,
-            a.getSfClass() == b.getSfClass()
-                && a.getSfType() == b.getSfType()
-                && a.getSfCategory() == b.getSfCategory()
         );
       }
     }
@@ -69,15 +68,13 @@ public class StructuredFieldTest {
         continue;
       }
       assertFalse(
+          a.getSfClass() == SFClass.Undefined
+              || a.getSfType() == SFType.Undefined
+              || a.getSfCategory() == SFCategory.Undefined,
           "Undefined: " + a.name() + ":"
               + " class:" + a.getSfClass()
               + " type:" + a.getSfType()
-              + " cat:" + a.getSfCategory(),
-
-
-          a.getSfClass() == SFClass.Undefined
-              || a.getSfType() == SFType.Undefined
-              || a.getSfCategory() == SFCategory.Undefined
+              + " cat:" + a.getSfCategory()
       );
 
     }
@@ -91,7 +88,7 @@ public class StructuredFieldTest {
       sfi.setSFTypeID(sfTypeID);
       StructuredField sf1 = AFPParser.createSFInstance(sfi);
 
-      assertTrue(i + ": " + sf1.getClass().getSimpleName() + " != " + sfTypeID.name(), sf1.getClass().getSimpleName().equals(sfTypeID.name()));
+      assertTrue(sf1.getClass().getSimpleName().equals(sfTypeID.name()), i + ": " + sf1.getClass().getSimpleName() + " != " + sfTypeID.name());
       i++;
     }
   }

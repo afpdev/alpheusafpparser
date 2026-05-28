@@ -16,14 +16,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.modca_L;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
+import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -36,15 +39,58 @@ import java.io.OutputStream;
  * Each SDP defines a set of entries to be loaded into the color table.
  */
 public class CAT_ColorAttributeTable extends StructuredField {
+  @AFPField
   CAT_BasePart basePart;
+  @AFPField
+  byte[] otherData;
 
   @Override
-  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+  public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config)
+      throws AFPParserException {
+    int actualLength = getActualLength(sfData, offset, length);
+    if (actualLength >= 3) {
+      basePart = new CAT_BasePart();
+      basePart.decodeAFP(sfData, offset, 3, config);
+      if (actualLength > 3) {
+        otherData = new byte[actualLength - 3];
+        System.arraycopy(sfData, offset + 3, otherData, 0, actualLength - 3);
+      } else {
+        otherData = null;
+      }
+    } else {
+      basePart = null;
+      otherData = null;
+    }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+    if (basePart != null) {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      basePart.writeAFP(baos, config);
+      if (otherData != null) {
+        baos.write(otherData);
+      }
+      writeFullStructuredField(os, baos.toByteArray());
+    } else {
+      writeFullStructuredField(os, (byte[]) null);
+    }
+  }
+
+  public CAT_BasePart getBasePart() {
+    return basePart;
+  }
+
+  public void setBasePart(CAT_BasePart basePart) {
+    this.basePart = basePart;
+  }
+
+  public byte[] getOtherData() {
+    return otherData;
+  }
+
+  public void setOtherData(byte[] otherData) {
+    this.otherData = otherData;
   }
 
   /**
@@ -56,13 +102,13 @@ public class CAT_ColorAttributeTable extends StructuredField {
     short colorTableLocalID;
 
     @Override
-    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config)
+        throws AFPParserException {
       checkDataLength(sfData, offset, length, 3);
       resetLCTFlag = ResetLCTFlag.valueOf(sfData[offset]);
       reserved1 = sfData[offset + 1];
       colorTableLocalID = UtilBinaryDecoding.parseShort(sfData, offset + 2, 1);
     }
-
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {

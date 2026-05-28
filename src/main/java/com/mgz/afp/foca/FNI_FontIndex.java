@@ -16,214 +16,153 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.foca;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.exceptions.AFPParserException;
-import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
-import com.mgz.afp.foca.FNI_FontIndex.FNI_RepeatingGroup.ComparatorForFNIRepeatinGroups;
 import com.mgz.afp.parser.AFPParserConfiguration;
-import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
 import com.mgz.util.UtilCharacterEncoding;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-
+/**
+ * Font Index (FNI).
+ */
 public class FNI_FontIndex extends StructuredField {
-  /**
-   * Associated {@link FNC_FontControl} SF that specifies the repeating group length.
-   */
-  @AFPField
-  List<FNI_RepeatingGroup> repeatingGroups;
 
+  @AFPField
+  private List<FNI_RepeatingGroup> repeatingGroups;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    if (config.getCurrentFontControl() == null) {
-      throw new AFPParserException(AFPParserConfiguration.class.getSimpleName() + ": current font control is not set.");
+    var fnc = config.getCurrentFontControl();
+    if (fnc == null) {
+      fnc = new FNC_FontControl();
+      fnc.setFniRepeatingGroupLength((short) 28); // Default
     }
-    int repeatingGroupLength = config.getCurrentFontControl().fniRepeatingGroupLength;
-    int actualLength = getActualLength(sfData, offset, length);
+    var rgLen = fnc.getFniRepeatingGroupLength();
 
-    repeatingGroups = new ArrayList<FNI_RepeatingGroup>(actualLength / repeatingGroupLength);
+    var actualLength = getActualLength(sfData, offset, length);
+    repeatingGroups = new ArrayList<>();
 
-    int pos = 0;
-    while (pos < actualLength) {
-      FNI_RepeatingGroup repeatingGroup = new FNI_RepeatingGroup();
-      repeatingGroup.decodeAFP(sfData, offset + pos, repeatingGroupLength, config);
-      repeatingGroups.add(repeatingGroup);
+    var pos = 0;
+    while (pos + rgLen <= actualLength) {
+      var rg = new FNI_RepeatingGroup();
+      rg.gcgid = new String(sfData, offset + pos, 8, config.getAfpCharSet()).trim();
+      rg.charIncrement = UtilBinaryDecoding.parseShort(sfData, offset + pos + 8, 2);
+      rg.ascenderHeight = UtilBinaryDecoding.parseShort(sfData, offset + pos + 10, 2);
+      rg.descenderDepth = UtilBinaryDecoding.parseShort(sfData, offset + pos + 12, 2);
+      rg.kernableCharacterFlags = (short) (sfData[offset + pos + 14] & 0xFF);
+      rg.reserved15 = sfData[offset + pos + 15];
+      rg.aSpace = UtilBinaryDecoding.parseShort(sfData, offset + pos + 16, 2);
+      rg.bSpace = UtilBinaryDecoding.parseShort(sfData, offset + pos + 18, 2);
+      rg.cSpace = UtilBinaryDecoding.parseShort(sfData, offset + pos + 20, 2);
+      rg.reserved22_23 = UtilBinaryDecoding.parseShort(sfData, offset + pos + 22, 2);
+      rg.baselineOffset = UtilBinaryDecoding.parseShort(sfData, offset + pos + 24, 2);
+      rg.reserved26_27 = UtilBinaryDecoding.parseShort(sfData, offset + pos + 26, 2);
 
-      pos += repeatingGroupLength;
+      repeatingGroups.add(rg);
+      pos += rgLen;
     }
-
   }
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    var fnc = config.getCurrentFontControl();
+    if (fnc == null) {
+      fnc = new FNC_FontControl();
+      fnc.setFniRepeatingGroupLength((short) 28);
+    }
+    var rgLen = fnc.getFniRepeatingGroupLength();
 
+    var baos = new ByteArrayOutputStream();
     if (repeatingGroups != null) {
-      if (repeatingGroups.size() > 1) {
-        synchronized (repeatingGroups) {
-          Collections.sort(repeatingGroups, new ComparatorForFNIRepeatinGroups());
+      for (var rg : repeatingGroups) {
+        var rgBaos = new ByteArrayOutputStream();
+        rgBaos.write(UtilCharacterEncoding.stringToByteArray(rg.gcgid, config.getAfpCharSet(), 8, (byte)0x40));
+        rgBaos.write(UtilBinaryDecoding.shortToByteArray(rg.charIncrement, 2));
+        rgBaos.write(UtilBinaryDecoding.shortToByteArray(rg.ascenderHeight, 2));
+        rgBaos.write(UtilBinaryDecoding.shortToByteArray(rg.descenderDepth, 2));
+        rgBaos.write(rg.kernableCharacterFlags);
+        rgBaos.write(rg.reserved15);
+        rgBaos.write(UtilBinaryDecoding.shortToByteArray(rg.aSpace, 2));
+        rgBaos.write(UtilBinaryDecoding.shortToByteArray(rg.bSpace, 2));
+        rgBaos.write(UtilBinaryDecoding.shortToByteArray(rg.cSpace, 2));
+        rgBaos.write(UtilBinaryDecoding.shortToByteArray(rg.reserved22_23, 2));
+        rgBaos.write(UtilBinaryDecoding.shortToByteArray(rg.baselineOffset, 2));
+        rgBaos.write(UtilBinaryDecoding.shortToByteArray(rg.reserved26_27, 2));
+
+        var rgData = rgBaos.toByteArray();
+        if (rgData.length < rgLen) {
+          baos.write(rgData);
+          baos.write(new byte[rgLen - rgData.length]);
+        } else {
+          baos.write(rgData, 0, rgLen);
         }
-      }
-      for (FNI_RepeatingGroup rg : repeatingGroups) {
-        rg.writeAFP(baos, config);
       }
     }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
 
-  /**
-   * Returns the list of {@link FNI_RepeatingGroup}s. The returning list is ordered by {@link
-   * FNI_RepeatingGroup#graphicCharacterGlobalID_GCGID}.
-   *
-   * @return ordered list of {@link FNI_RepeatingGroup}s.
-   */
   public List<FNI_RepeatingGroup> getRepeatingGroups() {
-    if (repeatingGroups != null && repeatingGroups.size() > 1) {
-      synchronized (repeatingGroups) {
-        Collections.sort(repeatingGroups, new ComparatorForFNIRepeatinGroups());
-      }
-    }
     return repeatingGroups;
   }
 
-  /**
-   * Set the list of {@link FNI_RepeatingGroup}s. Orderes the given list by {@link
-   * FNI_RepeatingGroup#graphicCharacterGlobalID_GCGID}.
-   *
-   * @param repeatingGroups list of {@link FNI_RepeatingGroup}s.
-   */
   public void setRepeatingGroups(List<FNI_RepeatingGroup> repeatingGroups) {
     this.repeatingGroups = repeatingGroups;
-    synchronized (repeatingGroups) {
-      Collections.sort(repeatingGroups, new ComparatorForFNIRepeatinGroups());
-    }
   }
 
   /**
-   * Adds the given {@link FNI_RepeatingGroup} to the list of repeating groups and orders the list
-   * by {@link FNI_RepeatingGroup#graphicCharacterGlobalID_GCGID}.
+   * FNI Repeating Group.
    */
-  public void addRepeatingGroup(FNI_RepeatingGroup repeatinGroup) {
-    if (repeatingGroups == null) {
-      repeatingGroups = new ArrayList<FNI_FontIndex.FNI_RepeatingGroup>();
-      repeatingGroups.add(repeatinGroup);
-    } else {
-      repeatingGroups.add(repeatinGroup);
-      synchronized (repeatingGroups) {
-        Collections.sort(repeatingGroups, new ComparatorForFNIRepeatinGroups());
-      }
-    }
-  }
+  public static class FNI_RepeatingGroup {
+    @AFPField
+    private String gcgid;
+    @AFPField
+    private short charIncrement;
+    @AFPField
+    private short ascenderHeight;
+    @AFPField
+    private short descenderDepth;
+    @AFPField
+    private short kernableCharacterFlags;
+    @AFPField
+    private byte reserved15;
+    @AFPField
+    private short aSpace;
+    @AFPField
+    private short bSpace;
+    @AFPField
+    private short cSpace;
+    @AFPField
+    private short reserved22_23;
+    @AFPField
+    private short baselineOffset;
+    @AFPField
+    private short reserved26_27;
 
-  public static class FNI_RepeatingGroup implements IAFPDecodeableWriteable {
-    @AFPField
-    volatile short repeatingGroupLength;
-    @AFPField
-    String graphicCharacterGlobalID_GCGID;
-    @AFPField
-    short characterIncrement;
-    @AFPField
-    short ascenderHeight;
-    @AFPField
-    short descenderDepth;
-    @AFPField(size = 2)
-    byte[] reserved14_15 = new byte[] {0x00, 0x00};
-    @AFPField
-    int fnmIndex;
-    @AFPField
-    short ASpace;
-    @AFPField
-    short BSpace;
-    @AFPField
-    short CSpace;
-    @AFPField(size = 2)
-    byte[] reserved24_25 = new byte[] {0x00, 0x00};
-    @AFPField
-    short baselineOffset;
-
-    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-      repeatingGroupLength = (short) (length != -1 ? length : sfData.length - offset);
-
-      graphicCharacterGlobalID_GCGID = new String(sfData, offset, 8, Constants.cpIBM500);
-      characterIncrement = UtilBinaryDecoding.parseShort(sfData, offset + 8, 2);
-      if (repeatingGroupLength > 10) {
-        ascenderHeight = UtilBinaryDecoding.parseShort(sfData, offset + 10, 2);
-        descenderDepth = UtilBinaryDecoding.parseShort(sfData, offset + 12, 2);
-        reserved14_15 = Constants.EMPTYBYTES_2;
-        fnmIndex = UtilBinaryDecoding.parseInt(sfData, offset + 16, 2);
-        ASpace = UtilBinaryDecoding.parseShort(sfData, offset + 18, 2);
-        BSpace = UtilBinaryDecoding.parseShort(sfData, offset + 20, 2);
-        CSpace = UtilBinaryDecoding.parseShort(sfData, offset + 22, 2);
-        reserved24_25 = Constants.EMPTYBYTES_2;
-        baselineOffset = UtilBinaryDecoding.parseShort(sfData, offset + 26, 2);
-      } else {
-        ascenderHeight = -1;
-        descenderDepth = -1;
-        reserved14_15 = null;
-        fnmIndex = -1;
-        ASpace = -1;
-        BSpace = -1;
-        CSpace = -1;
-        reserved24_25 = null;
-        baselineOffset = -1;
-      }
+    public String getGcgid() {
+      return gcgid;
     }
 
-    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      os.write(UtilCharacterEncoding.stringToByteArray(graphicCharacterGlobalID_GCGID, Constants.cpIBM500, 8, Constants.EBCDIC_ID_FILLER));
-      os.write(UtilBinaryDecoding.shortToByteArray(characterIncrement, 2));
-      if (repeatingGroupLength > 10) {
-        os.write(UtilBinaryDecoding.shortToByteArray(ascenderHeight, 2));
-        os.write(UtilBinaryDecoding.shortToByteArray(descenderDepth, 2));
-        os.write(reserved14_15);
-        os.write(UtilBinaryDecoding.intToByteArray(fnmIndex, 2));
-        os.write(UtilBinaryDecoding.shortToByteArray(ASpace, 2));
-        os.write(UtilBinaryDecoding.shortToByteArray(BSpace, 2));
-        os.write(UtilBinaryDecoding.shortToByteArray(CSpace, 2));
-        os.write(reserved24_25);
-        os.write(UtilBinaryDecoding.shortToByteArray(baselineOffset, 2));
-      }
+    public void setGcgid(String gcgid) {
+      this.gcgid = gcgid;
     }
 
-    public short getRepeatingGroupLength() {
-      return repeatingGroupLength;
+    public short getCharIncrement() {
+      return charIncrement;
     }
 
-    /**
-     * Sets the repeating group length. Use this only for newly created  {@link FNI_RepeatingGroup}
-     * where fields habe been set manually. If the {@link FNI_RepeatingGroup} is set by {@link
-     * #decodeAFP(byte[], int, int, AFPParserConfiguration)}, the repeating group length is
-     * determined by the parameters. The length of the repeating group has the
-     */
-    public void setRepeatingGroupLength(short repeatingGroupLength) {
-      this.repeatingGroupLength = repeatingGroupLength;
-    }
-
-    public String getGraphicCharacterGlobalID_GCGID() {
-      return graphicCharacterGlobalID_GCGID;
-    }
-
-    public void setGraphicCharacterGlobalID_GCGID(
-        String graphicCharacterGlobalID_GCGID) {
-      this.graphicCharacterGlobalID_GCGID = graphicCharacterGlobalID_GCGID;
-    }
-
-    public short getCharacterIncrement() {
-      return characterIncrement;
-    }
-
-    public void setCharacterIncrement(short characterIncrement) {
-      this.characterIncrement = characterIncrement;
+    public void setCharIncrement(short charIncrement) {
+      this.charIncrement = charIncrement;
     }
 
     public short getAscenderHeight() {
@@ -242,52 +181,44 @@ public class FNI_FontIndex extends StructuredField {
       this.descenderDepth = descenderDepth;
     }
 
-    public byte[] getReserved14_15() {
-      return reserved14_15;
+    public short getKernableCharacterFlags() {
+      return kernableCharacterFlags;
     }
 
-    public void setReserved14_15(byte[] reserved14_15) {
-      this.reserved14_15 = reserved14_15;
+    public void setKernableCharacterFlags(short kernableCharacterFlags) {
+      this.kernableCharacterFlags = kernableCharacterFlags;
     }
 
-    public int getFnmIndex() {
-      return fnmIndex;
+    public byte getReserved15() {
+      return reserved15;
     }
 
-    public void setFnmIndex(int fnmIndex) {
-      this.fnmIndex = fnmIndex;
+    public void setReserved15(byte reserved15) {
+      this.reserved15 = reserved15;
     }
 
     public short getASpace() {
-      return ASpace;
+      return aSpace;
     }
 
     public void setASpace(short aSpace) {
-      ASpace = aSpace;
+      this.aSpace = aSpace;
     }
 
     public short getBSpace() {
-      return BSpace;
+      return bSpace;
     }
 
     public void setBSpace(short bSpace) {
-      BSpace = bSpace;
+      this.bSpace = bSpace;
     }
 
     public short getCSpace() {
-      return CSpace;
+      return cSpace;
     }
 
     public void setCSpace(short cSpace) {
-      CSpace = cSpace;
-    }
-
-    public byte[] getReserved24_25() {
-      return reserved24_25;
-    }
-
-    public void setReserved24_25(byte[] reserved24_25) {
-      this.reserved24_25 = reserved24_25;
+      this.cSpace = cSpace;
     }
 
     public short getBaselineOffset() {
@@ -297,17 +228,5 @@ public class FNI_FontIndex extends StructuredField {
     public void setBaselineOffset(short baselineOffset) {
       this.baselineOffset = baselineOffset;
     }
-
-    /**
-     * Comparator used to sort {@link Collection}s of {@link FNI_RepeatingGroup}s by {@link
-     * FNI_RepeatingGroup#graphicCharacterGlobalID_GCGID}.
-     */
-    public static class ComparatorForFNIRepeatinGroups implements Comparator<FNI_RepeatingGroup> {
-      @Override
-      public int compare(FNI_RepeatingGroup o1, FNI_RepeatingGroup o2) {
-        return o1.graphicCharacterGlobalID_GCGID.compareTo(o2.graphicCharacterGlobalID_GCGID);
-      }
-    }
   }
-
 }

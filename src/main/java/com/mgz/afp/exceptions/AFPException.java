@@ -16,15 +16,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.exceptions;
 
+/**
+ * Base exception class for Alpheus AFP Parser.
+ */
 public class AFPException extends Exception {
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Constructs a new AFPException with the specified detail message and cause.
+   *
+   * @param msg the detail message
+   * @param e the cause
+   */
   public AFPException(String msg, Throwable e) {
     super(msg, e);
   }
 
+  /**
+   * Constructs a new AFPException with the specified detail message.
+   *
+   * @param msg the detail message
+   */
   public AFPException(String msg) {
     super(msg);
   }

@@ -16,11 +16,43 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.ioca;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.exceptions.AFPParserException;
-import com.mgz.afp.ioca.IPD_Segment.*;
+import com.mgz.afp.ioca.IPD_Segment;
+import com.mgz.afp.ioca.IPD_Segment.BandImage;
+import com.mgz.afp.ioca.IPD_Segment.BandImageData;
+import com.mgz.afp.ioca.IPD_Segment.BeginImageContent;
+import com.mgz.afp.ioca.IPD_Segment.BeginSegment;
+import com.mgz.afp.ioca.IPD_Segment.BeginTile;
+import com.mgz.afp.ioca.IPD_Segment.BeginTransparencyMask;
+import com.mgz.afp.ioca.IPD_Segment.EndImageContent;
+import com.mgz.afp.ioca.IPD_Segment.EndSegment;
+import com.mgz.afp.ioca.IPD_Segment.EndTile;
+import com.mgz.afp.ioca.IPD_Segment.EndTransparencyMask;
+import com.mgz.afp.ioca.IPD_Segment.ExternalAlgorithmSpecification;
+import com.mgz.afp.ioca.IPD_Segment.FunctionSetIdentification;
+import com.mgz.afp.ioca.IPD_Segment.IDESize;
+import com.mgz.afp.ioca.IPD_Segment.IDEStructure;
+import com.mgz.afp.ioca.IPD_Segment.IPD_SegmentExtended;
+import com.mgz.afp.ioca.IPD_Segment.IPD_SegmentType;
+import com.mgz.afp.ioca.IPD_Segment.ImageData;
+import com.mgz.afp.ioca.IPD_Segment.ImageEncoding;
+import com.mgz.afp.ioca.IPD_Segment.ImageLUTID;
+import com.mgz.afp.ioca.IPD_Segment.ImageSize;
+import com.mgz.afp.ioca.IPD_Segment.ImageSubsampling;
+import com.mgz.afp.ioca.IPD_Segment.IncludeTile;
+import com.mgz.afp.ioca.IPD_Segment.SetBilevelImageColor;
+import com.mgz.afp.ioca.IPD_Segment.SetExtendedBilevelImageColor;
+import com.mgz.afp.ioca.IPD_Segment.TilePosition;
+import com.mgz.afp.ioca.IPD_Segment.TileSetColor;
+import com.mgz.afp.ioca.IPD_Segment.TileSize;
+import com.mgz.afp.ioca.IPD_Segment.TileTOC;
+import com.mgz.afp.ioca.IPD_Segment.UnknownSegmentExtended;
+import com.mgz.afp.ioca.IPD_Segment.UnknownSegmentLong;
+import com.mgz.afp.ioca.IPD_Segment.nColorNames;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
@@ -28,10 +60,62 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class IPD_ImagePictureData extends StructuredField {
-  List<IPD_Segment> listOfSegments;
+
+  private static final EnumMap<IPD_SegmentType, Supplier<IPD_Segment>> SEGMENT_SUPPLIERS =
+      new EnumMap<>(IPD_SegmentType.class);
+
+  static {
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.BeginSegment, BeginSegment::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.EndSegment, EndSegment::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.BeginImageContent, BeginImageContent::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.EndImageContent, EndImageContent::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.ImageSize, ImageSize::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.ImageEncoding, ImageEncoding::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.IDESize, IDESize::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.ImageLUTID, ImageLUTID::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.BandImage, BandImage::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.IDEStructure, IDEStructure::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.ExternalAlgorithmSpecification, ExternalAlgorithmSpecification::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.ImageSubsampling, ImageSubsampling::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.BeginTile, BeginTile::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.EndTile, EndTile::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.TilePosition, TilePosition::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.TileSize, TileSize::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.TileSetColor, TileSetColor::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.SetExtendedBilevelImageColor, SetExtendedBilevelImageColor::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.SetBilevelImageColor, SetBilevelImageColor::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.FunctionSetIdentification, FunctionSetIdentification::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.IncludeTile, IncludeTile::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.TileTOC, TileTOC::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.BeginTransparencyMask, BeginTransparencyMask::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.EndTransparencyMask, EndTransparencyMask::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.ImageData, ImageData::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.BandImageData, BandImageData::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.nColorNames, nColorNames::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.UnknownIPDSegmentLong, UnknownSegmentLong::new);
+    SEGMENT_SUPPLIERS.put(IPD_SegmentType.UnknownIPDSegmentExtended, UnknownSegmentExtended::new);
+  }
+
+  private List<IPD_Segment> listOfSegments;
+
+  @Override
+  public void reset() {
+    super.reset();
+    listOfSegments = null;
+  }
+
+  public List<IPD_Segment> getListOfSegments() {
+    return listOfSegments;
+  }
+
+  public void setListOfSegments(List<IPD_Segment> listOfSegments) {
+    this.listOfSegments = listOfSegments;
+  }
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -41,120 +125,51 @@ public class IPD_ImagePictureData extends StructuredField {
     int pos = 0;
     while (pos < actualLength) {
       int segmentTypeCode = sfData[offset + pos] & 0xFF;
+
+      int introducerLen = 2;
       if (segmentTypeCode == 0xFE) {
+        if (pos + 4 > actualLength) {
+          throw new AFPParserException("Truncated extended IPD segment introducer at offset " + pos);
+        }
         segmentTypeCode = UtilBinaryDecoding.parseInt(sfData, offset + pos, 2);
+        introducerLen = 4;
+      } else {
+        if (pos + 2 > actualLength) {
+          throw new AFPParserException("Truncated IPD segment introducer at offset " + pos);
+        }
       }
       IPD_SegmentType segmentType = IPD_SegmentType.valueOf(segmentTypeCode);
 
-      IPD_Segment ipdSegment = null;
-      switch (segmentType) {
-        case BeginSegment: {
-          ipdSegment = new BeginSegment();
+      IPD_Segment ipdSegment = IpdSegmentPool.acquire(segmentType);
+      if (ipdSegment == null) {
+        var supplier = SEGMENT_SUPPLIERS.get(segmentType);
+        if (supplier == null) {
+          throw new AFPParserException("No supplier for IPD segment type: " + segmentType);
         }
-        break;
-        case EndSegment: {
-          ipdSegment = new EndSegment();
-        }
-        break;
-        case BeginImageContent: {
-          ipdSegment = new BeginImageContent();
-        }
-        break;
-        case EndImageContent: {
-          ipdSegment = new EndImageContent();
-        }
-        break;
-        case ImageSize: {
-          ipdSegment = new ImageSize();
-        }
-        break;
-        case ImageEncoding: {
-          ipdSegment = new ImageEncoding();
-        }
-        break;
-        case IDESize: {
-          ipdSegment = new IDESize();
-        }
-        break;
-        case BandImage: {
-          ipdSegment = new BandImage();
-        }
-        break;
-        case IDEStructure: {
-          ipdSegment = new IDEStructure();
-        }
-        break;
-        case ExternalAlgorithmSpecification: {
-          ipdSegment = new ExternalAlgorithmSpecification();
-        }
-        break;
-        case ImageSubsampling: {
-          ipdSegment = new ImageSubsampling();
-        }
-        break;
-        case BeginTile: {
-          ipdSegment = new BeginTile();
-        }
-        break;
-        case EndTile: {
-          ipdSegment = new EndTile();
-        }
-        break;
-        case TilePosition: {
-          ipdSegment = new TilePosition();
-        }
-        break;
-        case TileSize: {
-          ipdSegment = new TileSize();
-        }
-        break;
-        case TileSetColor: {
-          ipdSegment = new TileSetColor();
-        }
-        break;
-        case IncludeTile: {
-          ipdSegment = new IncludeTile();
-        }
-        break;
-        case TileTOC: {
-          ipdSegment = new TileTOC();
-        }
-        break;
-        case BeginTransparencyMask: {
-          ipdSegment = new BeginTransparencyMask();
-        }
-        break;
-        case EndTransparencyMask: {
-          ipdSegment = new EndTransparencyMask();
-        }
-        break;
-        case ImageData: {
-          ipdSegment = new ImageData();
-        }
-        break;
-        case BandImageData: {
-          ipdSegment = new BandImageData();
-        }
-        break;
-        case UnknownIPDSegmentLong: {
-          ipdSegment = new UnknownSegmentLong();
-        }
-        break;
-        case UnknownIPDSegmentExtended: {
-          ipdSegment = new UnknownSegmentExtended();
-        }
-        break;
+        ipdSegment = supplier.get();
       }
 
       ipdSegment.decodeAFP(sfData, offset + pos, actualLength - pos, config);
+
+      if (pos + introducerLen + ipdSegment.getLengthOfFollowingData() > actualLength) {
+        throw new AFPParserException("Truncated IPD segment payload at offset " + pos);
+      }
+
       listOfSegments.add(ipdSegment);
 
-      if (ipdSegment instanceof IPD_SegmentExtended) {
-        pos += (4 + ipdSegment.lengthOfFollowingData);
-      } else {
-        pos += (2 + ipdSegment.lengthOfFollowingData);
-      }
+      pos += (introducerLen + ipdSegment.getLengthOfFollowingData());
     }
+  }
+
+  @Override
+  public void release() {
+    if (listOfSegments != null) {
+      for (IPD_Segment segment : listOfSegments) {
+        segment.release();
+      }
+      listOfSegments = null;
+    }
+    super.release();
   }
 
   @Override
@@ -166,7 +181,7 @@ public class IPD_ImagePictureData extends StructuredField {
       }
       writeFullStructuredField(os, baos.toByteArray());
     } else {
-      writeFullStructuredField(os, null);
+      writeFullStructuredField(os, (byte[]) null);
     }
   }
 }

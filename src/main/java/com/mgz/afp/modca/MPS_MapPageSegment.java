@@ -16,9 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
+
 package com.mgz.afp.modca;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mgz.afp.base.IRepeatingGroup;
+import com.mgz.afp.base.RepeatingGroupPool;
 import com.mgz.afp.base.StructuredFieldBaseRepeatingGroups;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
@@ -48,7 +52,10 @@ public class MPS_MapPageSegment extends StructuredFieldBaseRepeatingGroups {
     if (actualLength > 4) {
       int pos = 4;
       while (pos < actualLength) {
-        MPS_RepeatingGroup rg = new MPS_RepeatingGroup();
+        MPS_RepeatingGroup rg = RepeatingGroupPool.acquire(MPS_RepeatingGroup.class);
+        if (rg == null) {
+          rg = new MPS_RepeatingGroup();
+        }
         rg.decodeAFP(sfData, offset + pos, actualLength - pos, config);
         addRepeatingGroup(rg);
         pos += lengthOfRepeatingGroup;
@@ -57,7 +64,6 @@ public class MPS_MapPageSegment extends StructuredFieldBaseRepeatingGroups {
       repeatingGroups = null;
     }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
@@ -89,9 +95,16 @@ public class MPS_MapPageSegment extends StructuredFieldBaseRepeatingGroups {
     this.reserved1_3 = reserved1_3;
   }
 
+  @XmlRootElement
   public static class MPS_RepeatingGroup implements IRepeatingGroup {
     byte[] reserved0_3 = new byte[4];
     String nameOfPageSegment;
+
+    @Override
+    public void reset() {
+      reserved0_3 = new byte[4];
+      nameOfPageSegment = null;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -100,7 +113,6 @@ public class MPS_MapPageSegment extends StructuredFieldBaseRepeatingGroups {
       System.arraycopy(sfData, offset, reserved0_3, 0, reserved0_3.length);
       nameOfPageSegment = new String(sfData, offset + 4, 8, config.getAfpCharSet());
     }
-
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {

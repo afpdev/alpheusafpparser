@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.enums;
 
 /**
@@ -45,6 +46,7 @@ public enum SFCategory {
   ProcessElement(0x90),
   ObjectContainer(0x92),
   PresentationText(0x9B),
+  ColorManagementResource(0xA2),
   PrintFile(0xA5),
   Index(0xA7),
   Document(0xA8),
@@ -75,17 +77,30 @@ public enum SFCategory {
 
   int val;
 
+  private static final SFCategory[] VAL_MAP = new SFCategory[256];
+
+  static {
+    for (SFCategory category : values()) {
+      VAL_MAP[category.val & 0xFF] = category;
+    }
+  }
+
   SFCategory(int val) {
     this.val = val;
   }
 
+  /**
+   * Returns the {@link SFCategory} for given byte value sfCategoryByte.
+   *
+   * @param sfCategoryByte the byte value
+   * @return the corresponding {@link SFCategory}, or {@link #Undefined} if not found
+   */
   public static SFCategory valueOf(int sfCategoryByte) {
-    for (SFCategory sfCategory : SFCategory.values()) {
-      if (sfCategory.val == sfCategoryByte) {
-        return sfCategory;
-      }
+    if (sfCategoryByte < 0 || sfCategoryByte > 255) {
+      return Undefined;
     }
-    return Undefined;
+    SFCategory category = VAL_MAP[sfCategoryByte];
+    return category != null ? category : Undefined;
   }
 
   public int toByte() {

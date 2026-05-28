@@ -1,0 +1,37 @@
+(* AFP EBNF: Phase 1 - Base Conventions & Primitive Types *)
+
+(* Basic Units *)
+bit               = "0" | "1" ;
+nibble            = bit, bit, bit, bit ;
+byte              = nibble, nibble ;
+
+(* Hexadecimal Representation *)
+hex_digit         = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+                  | "A" | "B" | "C" | "D" | "E" | "F" ;
+hex_byte          = "X'", hex_digit, hex_digit, "'" ;
+
+(* Unsigned Binary Integers (Big-Endian) *)
+UBIN1             = byte ;
+UBIN2             = byte, byte ;
+UBIN3             = byte, byte, byte ;
+UBIN4             = byte, byte, byte, byte ;
+
+(* Signed Binary Integers (Two's Complement, Big-Endian) *)
+SBIN1             = byte ;
+SBIN2             = byte, byte ;
+SBIN3             = byte, byte, byte ;
+SBIN4             = byte, byte, byte, byte ;
+
+(* Architectural Codes *)
+CODE1             = byte ;
+CODE2             = byte, byte ;
+CODE3             = byte, byte, byte ;
+
+(* Characters and Strings *)
+(* Note: CHAR usually implies EBCDIC in AFP, but can be ASCII in some contexts *)
+CHAR              = byte ;
+STRING            = { CHAR } ;
+
+(* Bit Fields *)
+BITS1             = bit, bit, bit, bit, bit, bit, bit, bit ;
+BITS2             = BITS1, BITS1 ;

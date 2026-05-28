@@ -16,7 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
+
 package com.mgz.afp.modca;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mgz.afp.base.IRepeatingGroup;
 import com.mgz.afp.base.RepeatingGroupWithTriplets;
@@ -39,13 +42,12 @@ public class MPG_MapPage extends StructuredFieldBaseRepeatingGroups {
     int actualLength = getActualLength(sfData, offset, length);
     int pos = 0;
     while (pos < actualLength) {
-      MPG_RepeatinGroup rg = new MPG_RepeatinGroup();
+      MPG_RepeatingGroup rg = new MPG_RepeatingGroup();
       rg.decodeAFP(sfData, offset + pos, actualLength - pos, config);
       addRepeatingGroup(rg);
       pos += rg.getRepeatingGroupLength();
     }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
@@ -56,6 +58,7 @@ public class MPG_MapPage extends StructuredFieldBaseRepeatingGroups {
     writeFullStructuredField(os, baos.toByteArray());
   }
 
-  public static class MPG_RepeatinGroup extends RepeatingGroupWithTriplets {
+  @XmlRootElement
+  public static class MPG_RepeatingGroup extends RepeatingGroupWithTriplets {
   }
 }

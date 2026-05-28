@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.parser;
 
 import com.mgz.afp.base.StructuredField;
@@ -26,9 +27,22 @@ import com.mgz.afp.foca.CPC_CodePageControl;
 import com.mgz.afp.foca.CPD_CodePageDescriptor;
 import com.mgz.afp.foca.FNC_FontControl;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.StandardOpenOption;
 import java.security.DigestInputStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The AFPParserConfiguration is used to configure the {@link AFPParser}, see {@link
@@ -36,6 +50,9 @@ import java.security.DigestInputStream;
  */
 public class AFPParserConfiguration implements Serializable, Cloneable {
   private static final long serialVersionUID = 1L;
+  /**
+   * Indicates if the parser owns the input stream and should close it upon finishing.
+   */
   protected boolean isParserOwnsInputStream;
   // Charset afpCharSet = Charset.forName("cp273"); // German.
   Charset afpCharSet = Charset.forName("cp500"); // CP500 is the default encoding.
@@ -44,11 +61,21 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
   boolean isParseToStructuredFieldsBaseData;
   boolean isBuildShallow;
   boolean escalateParsingErrors = true;
+  volatile boolean ptxDebug = false;
   File afpFile;
+  private transient ByteBuffer byteBuffer;
+  private transient AsynchronousFileChannel asyncFileChannel;
   private CPD_CodePageDescriptor currentCodePageDescriptor;
   private CPC_CodePageControl currentPageControl;
   private FNC_FontControl currentFontControl;
   private BDD_BarCodeDataDescriptor currentBarCodeDataDescriptor;
+  private Map<Short, Charset> codedFontLocalIdToCharsetMap = new ConcurrentHashMap<>();
+
+  /**
+   * Default constructor for AFPParserConfiguration.
+   */
+  public AFPParserConfiguration() {
+  }
 
   /**
    * Returns the {@link Charset} used to decode text contained in the AFP data stream (e.g.
@@ -92,7 +119,7 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
   /**
    * Returns the {@link InputStream} from where the parser reads the AFP data stream. If no input
    * stream is set this method tries to open the configured AFP file (see {@link #setAFPFile(File)})
-   * as buffered input stream.<br>
+   * as buffered input stream.
    *
    * @return the {@link InputStream} from where the parser reads the AFP data stream.
    * @throws IOException if the input stream is not set and the opening of the configured AFP file
@@ -117,10 +144,20 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
     this.inputStream = inputStream;
   }
 
+  /**
+   * Returns the current font control.
+   *
+   * @return the current {@link FNC_FontControl}
+   */
   public FNC_FontControl getCurrentFontControl() {
     return currentFontControl;
   }
 
+  /**
+   * Sets the current font control.
+   *
+   * @param fontControl the {@link FNC_FontControl} to set
+   */
   public void setCurrentFontControl(FNC_FontControl fontControl) {
     this.currentFontControl = fontControl;
   }
@@ -139,20 +176,33 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
   /**
    * If set to true the parser produces structured fields of type {@link StructuredFieldBaseData}.
    * {@link StructuredFieldBaseData} have a full blown {@link StructuredFieldIntroducer} but beside
-   * that provides only getter and setter for the structured fields's payload.<br> <br> This mode is
-   * especially usefull when dealing with AFP data that isn't fully compliant to AFP standards. In
-   * this mode, the parser is less restrictive, e.g. doesn't care if the length of the structured
-   * field or individual attribute values are valid according to AFP specifications.
+   * that provides only getter and setter for the structured fields's payload.
+   * <p>
+   * This mode is especially usefull when dealing with AFP data that isn't fully compliant to AFP
+   * standards. In this mode, the parser is less restrictive, e.g. doesn't care if the length of the
+   * structured field or individual attribute values are valid according to AFP specifications.
+   *
+   * @param isParseToStructuredFieldsBaseData true to parse to base data structured fields
    */
   public void setParseToStructuredFieldsBaseData(
       boolean isParseToStructuredFieldsBaseData) {
     this.isParseToStructuredFieldsBaseData = isParseToStructuredFieldsBaseData;
   }
 
+  /**
+   * Returns the current code page descriptor.
+   *
+   * @return the current {@link CPD_CodePageDescriptor}
+   */
   public CPD_CodePageDescriptor getCurrentCPD_CodePageDescriptor() {
     return currentCodePageDescriptor;
   }
 
+  /**
+   * Returns the current code page control.
+   *
+   * @return the current {@link CPC_CodePageControl}
+   */
   public CPC_CodePageControl getCurrentCodePageControl() {
     return currentPageControl;
   }
@@ -162,6 +212,8 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
    * only of {@link StructuredFieldIntroducer}, the value of all other fields remain undefined until
    * {@link AFPParser#reload(StructuredField)} is called. Shallow SFs require considerably less
    * memory than fully realized SFs.
+   *
+   * @return true if building shallow objects
    */
   public boolean isBuildShallow() {
     return isBuildShallow;
@@ -170,13 +222,38 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
   /**
    * If set to true the parser is building shallow {@link StructuredField}s. See {@link
    * #isBuildShallow()}.
+   *
+   * @param isBuildShallow true to build shallow objects
    */
   public void setBuildShallow(boolean isBuildShallow) {
     this.isBuildShallow = isBuildShallow;
   }
 
+  /**
+   * Returns whether parsing errors should be escalated.
+   *
+   * @return true if parsing errors should be escalated
+   */
   public boolean isEscalateParsingErrors() {
     return escalateParsingErrors;
+  }
+
+  /**
+   * Returns whether PTX debug statistics should be collected.
+   *
+   * @return true if PTX debug is enabled
+   */
+  public boolean isPtxDebug() {
+    return ptxDebug;
+  }
+
+  /**
+   * Enables or disables PTX debug statistics collection.
+   *
+   * @param ptxDebug true to enable PTX debug
+   */
+  public void setPtxDebug(boolean ptxDebug) {
+    this.ptxDebug = ptxDebug;
   }
 
   /**
@@ -203,38 +280,150 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
     }
   }
 
+  /**
+   * Returns the current bar code data descriptor.
+   *
+   * @return the current {@link BDD_BarCodeDataDescriptor}
+   */
   public BDD_BarCodeDataDescriptor getCurrentBarCodeDataDescriptor() {
     return currentBarCodeDataDescriptor;
   }
 
+  /**
+   * Sets the current bar code data descriptor.
+   *
+   * @param currentBarCodeDataDescriptor the {@link BDD_BarCodeDataDescriptor} to set
+   */
   public void setCurrentBarCodeDataDescriptor(
       BDD_BarCodeDataDescriptor currentBarCodeDataDescriptor) {
     this.currentBarCodeDataDescriptor = currentBarCodeDataDescriptor;
   }
 
+  /**
+   * Returns the current code page descriptor.
+   *
+   * @return the current {@link CPD_CodePageDescriptor}
+   */
   public CPD_CodePageDescriptor getCurrentCodePageDescriptor() {
     return currentCodePageDescriptor;
   }
 
+  /**
+   * Sets the current code page descriptor.
+   *
+   * @param currentCodePageDescriptor the {@link CPD_CodePageDescriptor} to set
+   */
   public void setCurrentCodePageDescriptor(
       CPD_CodePageDescriptor currentCodePageDescriptor) {
     this.currentCodePageDescriptor = currentCodePageDescriptor;
   }
 
+  /**
+   * Returns the current code page control.
+   *
+   * @return the current {@link CPC_CodePageControl}
+   */
   public CPC_CodePageControl getCurrentPageControl() {
     return currentPageControl;
   }
 
+  /**
+   * Sets the current code page control.
+   *
+   * @param currentPageControl the {@link CPC_CodePageControl} to set
+   */
   public void setCurrentPageControl(CPC_CodePageControl currentPageControl) {
     this.currentPageControl = currentPageControl;
   }
 
+  /**
+   * Returns the charset for the given local identifier (LID).
+   *
+   * @param lid the local identifier
+   * @return the {@link Charset} associated with the LID, or null if not found
+   */
+  public Charset getCharsetForLID(short lid) {
+    return codedFontLocalIdToCharsetMap.get(lid);
+  }
+
+  /**
+   * Adds a mapping between a local identifier (LID) and a charset.
+   *
+   * @param lid the local identifier
+   * @param cs  the {@link Charset} to map
+   */
+  public void addCodedFontCharsetMapping(short lid, Charset cs) {
+    codedFontLocalIdToCharsetMap.put(lid, cs);
+  }
+
+  /**
+   * Returns the AFP file being parsed.
+   *
+   * @return the AFP {@link File}
+   */
   public File getAFPFile() {
     return this.afpFile;
   }
 
+  /**
+   * Sets the AFP file to be parsed.
+   *
+   * @param afpFile the AFP {@link File} to set
+   */
   public void setAFPFile(File afpFile) {
     this.afpFile = afpFile;
+    this.byteBuffer = null;
+    this.asyncFileChannel = null;
+  }
+
+  /**
+   * Returns a {@link ByteBuffer} of the configured AFP file.
+   *
+   * @return the buffer, or null if no file is configured
+   * @throws IOException if mapping the file fails
+   */
+  public ByteBuffer getByteBuffer() throws IOException {
+    if (byteBuffer == null && afpFile != null) {
+      try (RandomAccessFile raf = new RandomAccessFile(afpFile, "r");
+           FileChannel fc = raf.getChannel()) {
+        byteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+      }
+    }
+    return byteBuffer;
+  }
+
+  /**
+   * Sets the {@link ByteBuffer} to be parsed.
+   *
+   * @param buffer the {@link ByteBuffer} to set
+   */
+  public void setByteBuffer(ByteBuffer buffer) {
+    this.byteBuffer = buffer;
+  }
+
+  /**
+   * Returns an {@link AsynchronousFileChannel} of the configured AFP file.
+   *
+   * @return the asynchronous channel, or null if no file is configured
+   * @throws IOException if opening the channel fails
+   */
+  public AsynchronousFileChannel getAsyncFileChannel() throws IOException {
+    if (asyncFileChannel == null && afpFile != null) {
+      asyncFileChannel = AsynchronousFileChannel.open(afpFile.toPath(), StandardOpenOption.READ);
+    }
+    return asyncFileChannel;
+  }
+
+  /**
+   * Closes the {@link AsynchronousFileChannel} if it is open.
+   *
+   * @throws IOException if closing the channel fails
+   */
+  public void closeAsyncFileChannel() throws IOException {
+    if (asyncFileChannel != null) {
+      asyncFileChannel.close();
+      asyncFileChannel = null;
+    }
   }
 
   /**
@@ -245,5 +434,6 @@ public class AFPParserConfiguration implements Serializable, Cloneable {
     currentCodePageDescriptor = null;
     currentFontControl = null;
     currentPageControl = null;
+    codedFontLocalIdToCharsetMap.clear();
   }
 }

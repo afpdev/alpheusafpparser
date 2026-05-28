@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.ptoca.controlSequence;
 
 import com.mgz.afp.base.StructuredField;
@@ -26,10 +27,9 @@ import com.mgz.util.UtilBinaryDecoding;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class Undefined extends PTOCAControlSequence {
+public final class Undefined extends PTOCAControlSequence {
   short undefinedControlSequenceFunctionType;
   byte[] data;
-
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {

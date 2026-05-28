@@ -16,8 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.base;
 
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlTransient;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.exceptions.AFPValidationException;
 import com.mgz.afp.parser.AFPParserConfiguration;
@@ -30,7 +33,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RepeatingGroupWithTriplets extends RepeatingGroupBase implements IHasTriplets {
+  @XmlTransient
   protected List<Triplet> triplets;
+
+  @Override
+  public void reset() {
+    super.reset();
+    triplets = null;
+  }
+
+  @XmlTransient
+  @Override
+  public List<Triplet> getTriplets() {
+    return triplets;
+  }
+
+  @XmlAnyElement(lax = true)
+  public List<Triplet> getTripletsXml() {
+    return triplets;
+  }
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -48,11 +69,6 @@ public class RepeatingGroupWithTriplets extends RepeatingGroupBase implements IH
         t.writeAFP(os, config);
       }
     }
-  }
-
-  @Override
-  public List<Triplet> getTriplets() {
-    return triplets;
   }
 
   @Override

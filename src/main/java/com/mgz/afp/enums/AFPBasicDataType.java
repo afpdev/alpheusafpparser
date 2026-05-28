@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.enums;
 
 public enum AFPBasicDataType {
@@ -24,7 +25,7 @@ public enum AFPBasicDataType {
    */
   CODE,
   /**
-   * Character string, which may consist of any code points
+   * Character string, which may consist of any code points.
    */
   CHAR,
   /**

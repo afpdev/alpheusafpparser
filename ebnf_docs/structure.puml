@@ -1,0 +1,85 @@
+@startuml
+skinparam componentStyle uml2
+
+package "MO:DCA Hierarchy" {
+  class PrintFile {
+    +BPF: Begin Print File
+    +EPF: End Print File
+  }
+
+  class ResourceGroup {
+    +BRG: Begin Resource Group
+    +ERG: End Resource Group
+  }
+
+  class Document {
+    +BDT: Begin Document
+    +EDT: End Document
+  }
+
+  class DocumentIndex {
+    +BDI: Begin Document Index
+    +EDI: End Document Index
+  }
+
+  class PageGroup {
+    +BNG: Begin Named Page Group
+    +ENG: End Named Page Group
+  }
+
+  class Page {
+    +BPG: Begin Page
+    +EPG: End Page
+  }
+
+  class AEG {
+    +BAG: Begin Active Environment Group
+    +EAG: End Active Environment Group
+  }
+
+  class REG {
+    +BSG: Begin Resource Env Group
+    +ESG: End Resource Env Group
+  }
+
+  class MediumMap {
+    +BMM: Begin Medium Map
+    +EMM: End Medium Map
+  }
+
+  class DataObject {
+    +BIM/BOC/...: Begin Object
+    +EIM/EOC/...: End Object
+  }
+
+  class OEG {
+    +BOG: Begin Object Env Group
+    +EOG: End Object Env Group
+  }
+
+  PrintFile *-- "0..1" ResourceGroup
+  PrintFile *-- "1..*" Document
+  PrintFile *-- "0..*" DocumentIndex
+
+  Document *-- "0..1" REG
+  Document *-- "0..*" Page
+  Document *-- "0..*" PageGroup
+  Document *-- "0..*" MediumMap
+
+  PageGroup *-- "0..*" Page
+  PageGroup *-- "0..*" PageGroup
+
+  Page *-- "1" AEG
+  Page *-- "0..*" DataObject
+
+  DataObject *-- "1" OEG
+
+  ResourceGroup *-- "0..*" DataObject
+  ResourceGroup *-- "0..*" Document
+}
+
+note top of PrintFile
+  Highest level container in AFP
+end note
+
+@enduml

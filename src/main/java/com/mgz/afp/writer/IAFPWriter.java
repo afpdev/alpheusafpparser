@@ -16,10 +16,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.writer;
 
 import com.mgz.afp.base.StructuredField;
 
+/**
+ * Interface for writing AFP structured fields.
+ */
 public interface IAFPWriter {
+  /**
+   * Returns a string representation of the given structured field.
+   *
+   * @param sf the structured field to write
+   * @return the string representation
+   */
   String writeSF(StructuredField sf);
 }

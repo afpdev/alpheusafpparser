@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.ioca;
 
 import com.mgz.afp.base.StructuredField;
@@ -28,7 +29,6 @@ import com.mgz.util.UtilBinaryDecoding;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 
 public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
 
@@ -50,7 +50,6 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
   public void setLengthOfFollowingData(short lengthOfFollowingData) {
     this.lengthOfFollowingData = lengthOfFollowingData;
   }
-
 
   public enum SelfDefiningFieldType {
     Unknown(0x00),
@@ -136,7 +135,6 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
     byte nrOfBitsComponent4;
     byte[] colorValue;
 
-
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       IDD_ImageDataDescriptor.checkDataLength(sfData, offset, length, 6);
@@ -145,7 +143,7 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
       reserved2 = UtilBinaryDecoding.parseShort(sfData, offset + 2, 1);
       colorSpace = AFPColorSpace.valueOf(sfData[offset + 3]);
       reserved4_7 = new byte[4];
-      System.arraycopy(sfData, offset + 5, reserved4_7, 0, 4);
+      System.arraycopy(sfData, offset + 4, reserved4_7, 0, 4);
       nrOfBitsComponent1 = sfData[offset + 8];
       nrOfBitsComponent2 = sfData[offset + 9];
       nrOfBitsComponent3 = sfData[offset + 10];
@@ -274,9 +272,11 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
     public enum FunctionSetIdentifier {
       FS10(0x0A),
       FS11(0x0B),
+      FS14(0x0E),
       FS40(0x28),
       FS42(0x2A),
-      FS45(0x2D);
+      FS45(0x2D),
+      FS48(0x30);
       int code;
 
       FunctionSetIdentifier(int fsCodeByte) {
@@ -300,7 +300,7 @@ public abstract class IDD_SelfDefiningField implements IAFPDecodeableWriteable {
 
   public static class UnknownSelfDefiningField extends IDD_SelfDefiningField {
     short unknownFieldType;
-    byte data[];
+    byte[] data;
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {

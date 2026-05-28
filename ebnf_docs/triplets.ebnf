@@ -1,0 +1,85 @@
+(* AFP EBNF: Phase 5 - Triplets Definitions *)
+
+import "primitives.ebnf"
+
+(* Base Triplet Structure *)
+Triplet           = FQName | MapOption | ObjClassif | GenericTriplet ;
+GenericTriplet    = TLength, TripletID, { byte } ;
+
+TLength           = UBIN1 ; (* Includes length byte and ID byte *)
+TripletID         = CODE1 ;
+
+(* X'02' Fully Qualified Name *)
+FQName            = TLength, X'02', FQNameType, FQNameFormat, FQNameData ;
+FQNameType        = CODE1 ; (* GlobalID_Use *)
+FQNameFormat      = CODE1 ; (* GlobalID_Format *)
+FQNameData        = STRING ;
+
+(* X'04' Mapping Option *)
+MapOption         = TLength, X'04', MapValue ;
+MapValue          = CODE1 ; (* DataObjecMapingOption *)
+
+(* X'10' Object Classification *)
+ObjClassif        = TLength, X'10', TReserved1B, Class, TReserved2B, StructFlags, RegObjID, [ ObjTypeName, [ ObjVersion, [ CompName ] ] ] ;
+TReserved1B       = X'00' ;
+Class             = CODE1 ; (* ObjectClass *)
+TReserved2B       = X'00', X'00' ;
+StructFlags       = BITS2 ; (* Structure Flags *)
+RegObjID          = byte * 16 ;
+ObjTypeName       = CHAR * 32 ;
+ObjVersion        = CHAR * 8 ;
+CompName          = CHAR * 32 ;
+
+(* Constants and Enums *)
+
+(* GlobalID_Use values for FQNameType *)
+GID_ReplaceFirst  = X'01' ;
+GID_FontFamily    = X'07' ;
+GID_FontTypeface  = X'08' ;
+GID_ResHierarchy  = X'09' ;
+GID_BeginResGrp   = X'0A' ;
+GID_Attribute     = X'0B' ;
+GID_ProcessElem   = X'0C' ;
+GID_BeginPgGrp    = X'0D' ;
+GID_MediaType     = X'11' ;
+GID_MediaDest     = X'12' ;
+GID_ColorMgmtRes  = X'41' ;
+GID_DOFontBase    = X'6E' ;
+GID_DOFontLinked  = X'7E' ;
+GID_BeginDoc      = X'83' ;
+GID_ResObjRef     = X'84' ;
+GID_CodePageName  = X'85' ;
+GID_FontCharSetName = X'86' ;
+GID_BeginPage     = X'87' ;
+GID_BeginMedMap   = X'8D' ;
+GID_CodedFontName = X'8E' ;
+GID_BeginDocIndex = X'98' ;
+GID_BeginOverlay  = X'B0' ;
+GID_DOIntRes      = X'BE' ;
+GID_IndexElem     = X'CA' ;
+GID_OtherObjData  = X'CE' ;
+GID_DOExtRes      = X'DE' ;
+
+(* GlobalID_Format values for FQNameFormat *)
+GIDF_CharString   = X'00' ;
+GIDF_OID          = X'10' ;
+GIDF_URL          = X'20' ;
+
+(* DataObjecMapingOption values for MapValue *)
+MAP_Position      = X'00' ;
+MAP_PosTrim       = X'10' ;
+MAP_ScaleToFit    = X'20' ;
+MAP_CenterTrim    = X'30' ;
+MAP_ImgPtToPel    = X'41' ;
+MAP_ImgPtToPelDD  = X'42' ;
+MAP_ReplicateTrim = X'50' ;
+MAP_ScaleToFill   = X'60' ;
+MAP_UP3iPrintData = X'70' ;
+
+(* ObjectClass values for Class *)
+OC_TimeInvPaginated = X'01' ;
+OC_TimeVarPres      = X'10' ;
+OC_ExecProg         = X'20' ;
+OC_SetupFile        = X'30' ;
+OC_SecRes           = X'40' ;
+OC_DOFont           = X'41' ;

@@ -1,0 +1,43 @@
+@startuml
+skinparam componentStyle uml2
+
+package "Input" {
+  [AFP InputStream] as AIS
+}
+
+package "com.mgz.afp.parser" {
+  [AFPParser] as AP
+  [TripletParser] as TP
+  [PTOCAControlSequenceParser] as PCP
+}
+
+package "com.mgz.afp.base" {
+  [AFPDocument] as AD
+  [StructuredField Implementations] as SF
+}
+
+package "Output Writers" {
+  [AFP2XMLWriter] as A2X
+  [AFPWriterHumanReadable] as AHR
+}
+
+package "Output" {
+  [XML OutputStream] as XOS
+  [Text OutputStream] as TOS
+}
+
+AIS --> AP : "AFP Bytes"
+AP --> SF : "Instantiates & Decodes"
+SF --> TP : "Triplet Bytes"
+TP --> SF : "Triplet Objects"
+SF --> PCP : "PTOCA Bytes"
+PCP --> SF : "Control Sequence Objects"
+
+SF --> AD : "Added to"
+AD --> A2X : "Input for XML conversion"
+SF --> AHR : "Input for human-readable output"
+
+A2X --> XOS : "XML Data Stream"
+AHR --> TOS : "JSON-like Text Stream"
+
+@enduml

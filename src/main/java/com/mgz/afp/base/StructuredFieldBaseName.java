@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.base;
 
 import com.mgz.afp.base.annotations.AFPField;
@@ -24,28 +25,35 @@ import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.Constants;
 import com.mgz.util.UtilCharacterEncoding;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 /**
  * The {@link Charset} used for de/encoding of the name is provided by {@link
- * AFPParserConfiguration#getAfpCharSet()}.
+ * AFPParserConfiguration#getAfpCharSet()}. This class complies with stateful encoding resolution
+ * by decoding the name during the {@code decodeAFP} phase using the active charset.
  */
 public abstract class StructuredFieldBaseName extends StructuredField implements IHasName {
   @AFPField(maxSize = 8)
   protected String name;
 
   @Override
+  public void reset() {
+    super.reset();
+    name = null;
+  }
+
+  @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     int actualLength = getActualLength(sfData, offset, length);
     if (actualLength >= 8) {
-      name = new String(sfData, 0, 8, config.getAfpCharSet());
+      name = new String(sfData, offset, 8, config.getAfpCharSet());
     } else {
       name = null;
     }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
@@ -54,13 +62,18 @@ public abstract class StructuredFieldBaseName extends StructuredField implements
           UtilCharacterEncoding.stringToByteArray(name, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER)
       );
     } else {
-      writeFullStructuredField(os, null);
+      writeFullStructuredField(os, (byte[]) null);
     }
   }
 
   @Override
   public final String getName() {
     return name;
+  }
+
+  @XmlElement(name = "text")
+  public String getText() {
+    return UtilCharacterEncoding.sanitizeForXml(name);
   }
 
   @Override

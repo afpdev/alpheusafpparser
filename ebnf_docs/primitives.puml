@@ -1,0 +1,49 @@
+@startuml
+package "AFP Primitive Types" {
+  class bit << (P, #ADD1B2) >>
+  class byte << (P, #ADD1B2) >>
+
+  package "Integers" {
+    class UBIN << (P, #ADD1B2) >> {
+      +UBIN1 (1 Byte)
+      +UBIN2 (2 Bytes)
+      +UBIN3 (3 Bytes)
+      +UBIN4 (4 Bytes)
+    }
+    class SBIN << (P, #ADD1B2) >> {
+      +SBIN1 (1 Byte)
+      +SBIN2 (2 Bytes)
+      +SBIN3 (3 Bytes)
+      +SBIN4 (4 Bytes)
+    }
+  }
+
+  package "Identifiers" {
+    class CODE << (P, #ADD1B2) >> {
+      +CODE1 (1 Byte)
+      +CODE2 (2 Bytes)
+      +CODE3 (3 Bytes)
+    }
+    class HEX << (P, #ADD1B2) >> {
+      +X'00' - X'FF'
+    }
+  }
+
+  package "Text" {
+    class CHAR << (P, #ADD1B2) >> {
+      +EBCDIC
+      +ASCII
+    }
+    class STRING << (P, #ADD1B2) >> {
+      +Sequence of CHAR
+    }
+  }
+}
+
+byte *-- "8" bit
+UBIN *-- byte
+SBIN *-- byte
+CODE *-- byte
+CHAR -- byte
+STRING *-- CHAR
+@enduml

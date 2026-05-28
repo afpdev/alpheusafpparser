@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.foca;
 
 import com.mgz.afp.base.StructuredField;
@@ -26,19 +27,19 @@ import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
 import com.mgz.util.UtilCharacterEncoding;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 public class CPD_CodePageDescriptor extends StructuredField {
-  private static final Charset cpIBM500 = Constants.cpIBM500;
   /**
    * This is the length of the IBM registered GCGID (AFP uses the eight-character identifier
    * format), or a user-assigned GCGID.
    */
   @AFPField
-  public short graphicCharacterGIDLength;
+  private short graphicCharacterGIDLength;
   /**
    * The character string assigned to this field is intended to aid the end user, who may need to
    * edit the code page, in identifying the set of characters represented by the code page. The name
@@ -77,15 +78,16 @@ public class CPD_CodePageDescriptor extends StructuredField {
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    checkDataLength(sfData, 0, -1, 42);
+    checkDataLength(sfData, offset, length, 42);
 
-    codePageDescription = new String(sfData, offset, 32, cpIBM500);
+    codePageDescription = new String(sfData, offset, 32, config.getAfpCharSet());
     graphicCharacterGIDLength = UtilBinaryDecoding.parseShort(sfData, offset + 32, 2);
     numberOfCodedGraphicCharactersAssigned = UtilBinaryDecoding.parseLong(sfData, offset + 34, 4);
     graphicCharacterSetGID = UtilBinaryDecoding.parseInt(sfData, offset + 38, 2);
     ;
     codePageGID = UtilBinaryDecoding.parseInt(sfData, offset + 40, 2);
-    if (length > 42 && sfData.length > offset + 42) {
+    int actualLength = getActualLength(sfData, offset, length);
+    if (actualLength > 42 && sfData.length > offset + 42) {
       encodingScheme = EncodingScheme.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 42, 2));
     } else {
       encodingScheme = null;
@@ -96,7 +98,7 @@ public class CPD_CodePageDescriptor extends StructuredField {
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    baos.write(UtilCharacterEncoding.stringToByteArray(codePageDescription, cpIBM500, 32, Constants.EBCDIC_ID_FILLER));
+    baos.write(UtilCharacterEncoding.stringToByteArray(codePageDescription, config.getAfpCharSet(), 32, Constants.EBCDIC_ID_FILLER));
     baos.write(UtilBinaryDecoding.shortToByteArray(graphicCharacterGIDLength, 2));
     baos.write(UtilBinaryDecoding.longToByteArray(numberOfCodedGraphicCharactersAssigned, 4));
     baos.write(UtilBinaryDecoding.intToByteArray(graphicCharacterSetGID, 2));
@@ -110,6 +112,11 @@ public class CPD_CodePageDescriptor extends StructuredField {
 
   public String getCodePageDescription() {
     return codePageDescription;
+  }
+
+  @XmlElement(name = "text")
+  public String getText() {
+    return UtilCharacterEncoding.sanitizeForXml(codePageDescription);
   }
 
   public void setCodePageDescription(String codePageDescription) {

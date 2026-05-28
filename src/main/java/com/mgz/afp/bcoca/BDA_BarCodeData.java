@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.bcoca;
 
 import com.mgz.afp.base.StructuredField;
@@ -24,8 +25,11 @@ import com.mgz.afp.bcoca.BDD_BarCodeDataDescriptor.BarCodeType;
 import com.mgz.afp.enums.SFFlag;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
+import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
+import com.mgz.util.UtilCharacterEncoding;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -49,6 +53,7 @@ public class BDA_BarCodeData extends StructuredField {
   ParametersData parametersData;
   @AFPField(isOptional = true, maxSize = 32759 - 5)
   byte[] barCodeData;
+  String text;
 
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     BDD_BarCodeDataDescriptor associatedBarCodeDataDescriptor = config.getCurrentBarCodeDataDescriptor();
@@ -82,8 +87,12 @@ public class BDA_BarCodeData extends StructuredField {
     if (actualLength > (5 + parameterDataLength)) {
       barCodeData = new byte[actualLength - (5 + parameterDataLength)];
       System.arraycopy(sfData, offset + (5 + parameterDataLength), barCodeData, 0, barCodeData.length);
+      if (UtilCharacterEncoding.isHumanReadable(barCodeData, config.getAfpCharSet())) {
+        text = new String(barCodeData, config.getAfpCharSet());
+      }
     } else {
       barCodeData = new byte[0];
+      text = null;
     }
   }
 
@@ -94,8 +103,12 @@ public class BDA_BarCodeData extends StructuredField {
     baos.write(BarCodeFlag.toByte(barCodeFlags));
     baos.write(UtilBinaryDecoding.intToByteArray(xOffset, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(yOffset, 2));
-    parametersData.writeAFP(baos, config);
-    baos.write(barCodeData);
+    if (parametersData != null) {
+      parametersData.writeAFP(baos, config);
+    }
+    if (barCodeData != null) {
+      baos.write(barCodeData);
+    }
 
     writeFullStructuredField(os, baos.toByteArray());
   }
@@ -138,6 +151,11 @@ public class BDA_BarCodeData extends StructuredField {
 
   public void setyOffset(int yOffset) {
     this.yOffset = yOffset;
+  }
+
+  @XmlElement(name = "text")
+  public String getText() {
+    return UtilCharacterEncoding.sanitizeForXml(text);
   }
 
   public enum BarCodeFlag {
@@ -669,7 +687,6 @@ public class BDA_BarCodeData extends StructuredField {
         return code;
       }
     }
-
 
     public enum ErrorCorrectionLevel {
       LevelL, LevelM, LevelQ, LevelH;

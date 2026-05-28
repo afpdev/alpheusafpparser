@@ -16,10 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.modca_L;
 
 import com.mgz.afp.base.StructuredFieldBaseNameAndTriplets;
 
-
+/**
+ * Begin Color Attribute Table (BCA) structured field.
+ */
 public class BCA_BeginColorAttributeTable extends StructuredFieldBaseNameAndTriplets {
+  /**
+   * Default constructor for BCA_BeginColorAttributeTable.
+   */
+  public BCA_BeginColorAttributeTable() {
+  }
 }

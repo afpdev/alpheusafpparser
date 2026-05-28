@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.foca;
 
 import com.mgz.afp.base.StructuredField;
@@ -30,49 +31,49 @@ import com.mgz.util.UtilCharacterEncoding;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * Code Page Index (CPI).
+ */
 public class CPI_CodePageIndex extends StructuredField {
-  private static final Charset cpIBM500 = Constants.cpIBM500;
 
   @AFPField
-  List<CPI_RepeatingGroup> repeatingGroups;
+  private List<CPI_RepeatingGroup> repeatingGroups;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    var cpc = config.getCurrentCodePageControl();
+    if (cpc == null) {
+      cpc = new CPC_CodePageControl(); // Fallback
+      cpc.setCpiRepeatingGroupLength(CPIRepeatingGroupLength.SingleByteCodePage);
+    }
+    var cpiRGLen = cpc.getCpiRepeatingGroupLength();
+    var nrOfBytes = cpiRGLen.nrOfBytes();
+    var baseRGSize = 9 + nrOfBytes;
 
+    var actualLength = getActualLength(sfData, offset, length);
+    if (actualLength >= baseRGSize) {
+      repeatingGroups = new ArrayList<>();
 
-    CPC_CodePageControl cpc = config.getCurrentCodePageControl();
-    CPIRepeatingGroupLength cpiRGLen = cpc.getCpiRepeatingGroupLength();
-    short nrOfBytes = cpiRGLen.nrOfBytes();
-    int minLength = 9 + nrOfBytes;
-
-    checkDataLength(sfData, offset, length, minLength);
-
-    int actualLength = getActualLength(sfData, offset, length);
-    if (actualLength > minLength) {
-      repeatingGroups = new ArrayList<CPI_RepeatingGroup>();
-
-      int pos = 0;
-      while (pos < actualLength) {
-
-        CPI_RepeatingGroup cpirg = new CPI_RepeatingGroup();
-        cpirg.graphicCharacterGID = new String(sfData, offset + pos, 8, cpIBM500);
+      var pos = 0;
+      while (pos + baseRGSize <= actualLength) {
+        var cpirg = new CPI_RepeatingGroup();
+        cpirg.graphicCharacterGID = new String(sfData, offset + pos, 8, config.getAfpCharSet()).trim();
         cpirg.graphicCharacterUseFlags = GraphicCharacterUseFlag.valueOf(sfData[offset + pos + 8] & 0xFF);
         cpirg.codePoint = UtilBinaryDecoding.parseInt(sfData, offset + pos + 9, nrOfBytes);
 
-        pos += minLength;
+        pos += baseRGSize;
 
         if (cpiRGLen.isUnicodeScalarValues() && pos < actualLength) {
-          short numberOfUnicodeScalarValues = UtilBinaryDecoding.parseShort(sfData, offset + pos, 1);
+          int numberOfUnicodeScalarValues = sfData[offset + pos] & 0xFF;
+          pos += 1;
           if (numberOfUnicodeScalarValues > 0) {
-            cpirg.unicodeScalarValues = new ArrayList<Long>(numberOfUnicodeScalarValues);
-            checkDataLength(sfData, offset, length, minLength + 1 + (numberOfUnicodeScalarValues * 4));
-            for (int i = 0; i < numberOfUnicodeScalarValues; i++) {
-              cpirg.unicodeScalarValues.add(Long.valueOf(UtilBinaryDecoding.parseLong(sfData, offset + pos, 4)));
+            cpirg.unicodeScalarValues = new ArrayList<>(numberOfUnicodeScalarValues);
+            for (int i = 0; i < numberOfUnicodeScalarValues && pos + 4 <= actualLength; i++) {
+              cpirg.unicodeScalarValues.add(UtilBinaryDecoding.parseLong(sfData, offset + pos, 4));
               pos += 4;
             }
           } else {
@@ -83,7 +84,6 @@ public class CPI_CodePageIndex extends StructuredField {
         }
 
         repeatingGroups.add(cpirg);
-
       }
     } else {
       repeatingGroups = null;
@@ -92,22 +92,28 @@ public class CPI_CodePageIndex extends StructuredField {
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-    CPC_CodePageControl cpc = config.getCurrentCodePageControl();
-    CPIRepeatingGroupLength cpiRGLen = cpc.getCpiRepeatingGroupLength();
-    short nrOfBytes = cpiRGLen.nrOfBytes();
+    var cpc = config.getCurrentCodePageControl();
+    if (cpc == null) {
+      cpc = new CPC_CodePageControl();
+      cpc.setCpiRepeatingGroupLength(CPIRepeatingGroupLength.SingleByteCodePage);
+    }
+    var cpiRGLen = cpc.getCpiRepeatingGroupLength();
+    var nrOfBytes = cpiRGLen.nrOfBytes();
 
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for (CPI_RepeatingGroup rg : repeatingGroups) {
-      baos.write(UtilCharacterEncoding.stringToByteArray(rg.graphicCharacterGID, cpIBM500, 8, Constants.EBCDIC_ID_FILLER));
-      baos.write(GraphicCharacterUseFlag.toByte(rg.graphicCharacterUseFlags));
-      baos.write(UtilBinaryDecoding.intToByteArray(rg.codePoint, nrOfBytes));
-      if (cpiRGLen.isUnicodeScalarValues()) {
-        if (rg.unicodeScalarValues == null) {
-          baos.write(0);
-        } else {
-          baos.write(rg.unicodeScalarValues.size());
-          for (Long usv : rg.unicodeScalarValues) {
-            baos.write(UtilBinaryDecoding.longToByteArray(usv, 4));
+    var baos = new ByteArrayOutputStream();
+    if (repeatingGroups != null) {
+      for (var rg : repeatingGroups) {
+        baos.write(UtilCharacterEncoding.stringToByteArray(rg.graphicCharacterGID, config.getAfpCharSet(), 8, Constants.EBCDIC_ID_FILLER));
+        baos.write(GraphicCharacterUseFlag.toByte(rg.graphicCharacterUseFlags));
+        baos.write(UtilBinaryDecoding.intToByteArray(rg.codePoint, nrOfBytes));
+        if (cpiRGLen.isUnicodeScalarValues()) {
+          if (rg.unicodeScalarValues == null) {
+            baos.write(0);
+          } else {
+            baos.write(rg.unicodeScalarValues.size());
+            for (var usv : rg.unicodeScalarValues) {
+              baos.write(UtilBinaryDecoding.longToByteArray(usv, 4));
+            }
           }
         }
       }
@@ -120,26 +126,29 @@ public class CPI_CodePageIndex extends StructuredField {
     return repeatingGroups;
   }
 
+  public void setRepeatingGroups(List<CPI_RepeatingGroup> repeatingGroups) {
+    this.repeatingGroups = repeatingGroups;
+  }
+
+  /**
+   * Graphic Character Use Flags.
+   */
   public enum GraphicCharacterUseFlag {
     /**
-     * When this flag is set, the character is an invalid coded character (see “Invalid Coded
-     * Character” on page 112). When this flag bit is set to B'0' (off), the character is a valid
-     * coded character.
+     * When this flag is set, the character is an invalid coded character.
      */
     InvalidCodedCharacter,
     /**
-     * When this flag is set, the character not to be printed (see “No Presentation” on page 113).
-     * When this flag bit is set to B'0' (off), the character is to be printed.
+     * When this flag is set, the character not to be printed.
      */
     NoPresentation,
     /**
-     * When this flag bit is set, the print position is not to be incremented (see “No Increment” on
-     * page 112). When this flag bit is set to B'0' (off), the print position is to be incremented.
+     * When this flag bit is set, the print position is not to be incremented.
      */
     NoIncrement;
 
     public static EnumSet<GraphicCharacterUseFlag> valueOf(int flagByte) {
-      EnumSet<GraphicCharacterUseFlag> result = EnumSet.noneOf(GraphicCharacterUseFlag.class);
+      var result = EnumSet.noneOf(GraphicCharacterUseFlag.class);
 
       if ((flagByte & 0x80) != 0) {
         result.add(InvalidCodedCharacter);
@@ -155,7 +164,10 @@ public class CPI_CodePageIndex extends StructuredField {
     }
 
     public static int toByte(EnumSet<GraphicCharacterUseFlag> flags) {
-      int result = 0;
+      var result = 0;
+      if (flags == null) {
+        return result;
+      }
 
       if (flags.contains(InvalidCodedCharacter)) {
         result += 0x80;
@@ -171,18 +183,21 @@ public class CPI_CodePageIndex extends StructuredField {
     }
   }
 
+  /**
+   * CPI Repeating Group.
+   */
   public static class CPI_RepeatingGroup {
     @AFPField
-    String graphicCharacterGID;
+    private String graphicCharacterGID;
     @AFPField
-    EnumSet<GraphicCharacterUseFlag> graphicCharacterUseFlags;
+    private EnumSet<GraphicCharacterUseFlag> graphicCharacterUseFlags;
     @AFPField
-    int codePoint;
+    private int codePoint;
     /**
      * Unicode scalar value to be mapped to the GCGID value and code point value.
      */
     @AFPField
-    List<Long> unicodeScalarValues;
+    private List<Long> unicodeScalarValues;
 
     public String getGraphicCharacterGID() {
       return graphicCharacterGID;

@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.foca;
 
 import com.mgz.afp.base.StructuredField;
@@ -32,150 +33,139 @@ import java.io.OutputStream;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * Font Control (FNC).
+ */
 public class FNC_FontControl extends StructuredField {
-  public static final byte FNPRepeatingGroupLength = 0x16;
-  public static final byte FNNRepeatingGroupLength = 0x0C;
-  public static final byte FNORepeatingGroupLength = 0x1A;
+  public static final byte FNP_REPEATING_GROUP_LENGTH_DEFAULT = 0x16;
+  public static final byte FNN_REPEATING_GROUP_LENGTH_DEFAULT = 0x0C;
+  public static final byte FNO_REPEATING_GROUP_LENGTH_DEFAULT = 0x1A;
+
   @AFPField
-  byte retired0 = 0x01;
+  private byte retired0 = 0x01;
   @AFPField
-  PatternTechnologyIdentifier patternTechnologyIdentifier;
+  private PatternTechnologyIdentifier patternTechnologyIdentifier;
   @AFPField
-  byte reserved2 = 0x00;
+  private byte reserved2 = 0x00;
   @AFPField
-  EnumSet<FNC_FontUseFlag> fontUseFlags;
+  private EnumSet<FncFontUseFlag> fontUseFlags;
   @AFPField
-  FontUnitBase xUnitBase;
+  private FontUnitBase xUnitBase;
   @AFPField
-  FontUnitBase yUnitBase;
+  private FontUnitBase yUnitBase;
   @AFPField
-  short xUnitsPerUnitBase;
+  private short xUnitsPerUnitBase;
   @AFPField
-  short yUnitsPerUnitBase;
+  private short yUnitsPerUnitBase;
   @AFPField
-  short maxCharacterBoxWidth;
+  private short maxCharacterBoxWidth;
   @AFPField
-  short maxCharacterBoxHeight;
+  private short maxCharacterBoxHeight;
   @AFPField
-  byte fnoRepeatingGroupLength = FNORepeatingGroupLength;
+  private byte fnoRepeatingGroupLength = FNO_REPEATING_GROUP_LENGTH_DEFAULT;
   @AFPField
-  short fniRepeatingGroupLength;
+  private short fniRepeatingGroupLength;
   @AFPField
-  RasterPatternDataAlignment rasterPatternDataAlignment;
+  private RasterPatternDataAlignment rasterPatternDataAlignment;
   @AFPField
-  int rasterPatternDataCount;
+  private int rasterPatternDataCount;
   @AFPField
-  byte fnpRepeatingGroupLength = FNPRepeatingGroupLength;
+  private byte fnpRepeatingGroupLength = FNP_REPEATING_GROUP_LENGTH_DEFAULT;
   @AFPField
-  byte fnmRepeatinGroupLength;
+  private byte fnmRepeatingGroupLength;
   @AFPField
-  byte ShapeResolutionXUnitBase10Inches = 0x00;
+  private byte shapeResolutionXUnitBase10Inches = 0x00;
   @AFPField
-  byte ShapeResolutionYUnitBase10Inches = 0x00;
+  private byte shapeResolutionYUnitBase10Inches = 0x00;
   @AFPField
-  short shapeResolutionXUnitsPerUnitBase;
+  private short shapeResolutionXUnitsPerUnitBase;
   @AFPField
-  short shapeResolutionYUnitsPerUnitBase;
+  private short shapeResolutionYUnitsPerUnitBase;
   @AFPField
-  long outlinePatternDataCount;
+  private long outlinePatternDataCount;
   @AFPField(size = 3)
-  byte[] reserved32_34 = {0x00, 0x00, 0x00};
+  private byte[] reserved32_34 = {0x00, 0x00, 0x00};
   @AFPField
-  byte fnnRepeatingGroupLength = FNNRepeatingGroupLength;
+  private byte fnnRepeatingGroupLength = FNN_REPEATING_GROUP_LENGTH_DEFAULT;
   @AFPField
-  long fnnDataCount;
+  private long fnnDataCount;
   @AFPField
-  int fnnIBMNameGCGIDCount;
+  private int fnnIbmNameGcgidCount;
   @AFPField
-  List<Triplet> triplets;
+  private List<Triplet> triplets;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     checkDataLength(sfData, offset, length, 22);
 
-    int actualLength = getActualLength(sfData, offset, length);
+    var actualLength = getActualLength(sfData, offset, length);
 
     patternTechnologyIdentifier = PatternTechnologyIdentifier.valueOf(sfData[offset + 1]);
-    fontUseFlags = FNC_FontUseFlag.valueOf(sfData[offset + 3]);
+    fontUseFlags = FncFontUseFlag.valueOf(sfData[offset + 3]);
     xUnitBase = FontUnitBase.valueOf(sfData[offset + 4]);
     yUnitBase = FontUnitBase.valueOf(sfData[offset + 5]);
     xUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 6, 2);
     yUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 8, 2);
     maxCharacterBoxWidth = UtilBinaryDecoding.parseShort(sfData, offset + 10, 2);
     maxCharacterBoxHeight = UtilBinaryDecoding.parseShort(sfData, offset + 12, 2);
-    fniRepeatingGroupLength = UtilBinaryDecoding.parseShort(sfData, offset + 15, 1);
+    fnoRepeatingGroupLength = sfData[offset + 14];
+    fniRepeatingGroupLength = (short) (sfData[offset + 15] & 0xFF);
     rasterPatternDataAlignment = RasterPatternDataAlignment.valueOf(sfData[offset + 16]);
     rasterPatternDataCount = UtilBinaryDecoding.parseInt(sfData, offset + 17, 3);
-    fnmRepeatinGroupLength = sfData[offset + 21];
+    fnpRepeatingGroupLength = sfData[offset + 20];
+    fnmRepeatingGroupLength = sfData[offset + 21];
 
     if (actualLength >= 26) {
+      shapeResolutionXUnitBase10Inches = sfData[offset + 22];
+      shapeResolutionYUnitBase10Inches = sfData[offset + 23];
       shapeResolutionXUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 24, 2);
-    } else {
-      shapeResolutionXUnitsPerUnitBase = 0;
     }
 
     if (actualLength >= 28) {
       shapeResolutionYUnitsPerUnitBase = UtilBinaryDecoding.parseShort(sfData, offset + 26, 2);
-    } else {
-      shapeResolutionYUnitsPerUnitBase = 0;
     }
 
     if (actualLength >= 32) {
       outlinePatternDataCount = UtilBinaryDecoding.parseLong(sfData, offset + 28, 4);
-    } else {
-      outlinePatternDataCount = 0;
     }
 
     if (actualLength >= 42) {
-      fnnIBMNameGCGIDCount = UtilBinaryDecoding.parseInt(sfData, offset + 40, 2);
-    } else {
-      fnnIBMNameGCGIDCount = 0;
+      fnnRepeatingGroupLength = sfData[offset + 35];
+      fnnDataCount = UtilBinaryDecoding.parseLong(sfData, offset + 36, 4);
+      fnnIbmNameGcgidCount = UtilBinaryDecoding.parseInt(sfData, offset + 40, 2);
     }
 
     if (actualLength >= 43) {
-      triplets = TripletParser.parseTriplets(sfData, 42, -1, config);
-    } else {
-      triplets = null;
+      triplets = TripletParser.parseTriplets(sfData, offset + 42, actualLength - 42, config);
     }
   }
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    var baos = new ByteArrayOutputStream();
 
     baos.write(retired0);
-    baos.write(patternTechnologyIdentifier.toByte());
+    baos.write(patternTechnologyIdentifier != null ? patternTechnologyIdentifier.toByte() : 0x05);
     baos.write(reserved2);
-    baos.write(FNC_FontUseFlag.toByte(fontUseFlags));
-    baos.write(xUnitBase.toByte());
-    baos.write(yUnitBase.toByte());
+    baos.write(FncFontUseFlag.toByte(fontUseFlags));
+    baos.write(xUnitBase != null ? xUnitBase.toByte() : 0x00);
+    baos.write(yUnitBase != null ? yUnitBase.toByte() : 0x00);
     baos.write(UtilBinaryDecoding.shortToByteArray(xUnitsPerUnitBase, 2));
     baos.write(UtilBinaryDecoding.shortToByteArray(yUnitsPerUnitBase, 2));
     baos.write(UtilBinaryDecoding.shortToByteArray(maxCharacterBoxWidth, 2));
     baos.write(UtilBinaryDecoding.shortToByteArray(maxCharacterBoxHeight, 2));
     baos.write(fnoRepeatingGroupLength);
     baos.write(UtilBinaryDecoding.shortToByteArray(fniRepeatingGroupLength, 1));
-    baos.write(rasterPatternDataAlignment.toByte());
+    baos.write(rasterPatternDataAlignment != null ? rasterPatternDataAlignment.toByte() : (byte) 0x00);
     baos.write(UtilBinaryDecoding.intToByteArray(rasterPatternDataCount, 3));
     baos.write(fnpRepeatingGroupLength);
-    baos.write(fnmRepeatinGroupLength);
+    baos.write(fnmRepeatingGroupLength);
 
     // Optional data:
-    if ((
-        this.xUnitBase == FontUnitBase.BaseIsFixedAt10Inches
-            && this.yUnitBase == FontUnitBase.BaseIsFixedAt10Inches
-            && xUnitsPerUnitBase == 0x0000
-            && yUnitsPerUnitBase == 0x0000
-    ) || (
-        this.xUnitBase == FontUnitBase.BaseIsRelativ
-            && this.yUnitBase == FontUnitBase.BaseIsRelativ
-            && xUnitsPerUnitBase == 0x0000
-            && yUnitsPerUnitBase == 0x0000)
-        ) {
-      // Done, no optional data et all.
-    } else {
-      baos.write(ShapeResolutionXUnitBase10Inches);
-      baos.write(ShapeResolutionYUnitBase10Inches);
+    if (xUnitsPerUnitBase != 0 || yUnitsPerUnitBase != 0 || shapeResolutionXUnitsPerUnitBase != 0 || shapeResolutionYUnitsPerUnitBase != 0
+        || outlinePatternDataCount != 0 || fnnIbmNameGcgidCount != 0 || (triplets != null && !triplets.isEmpty())) {
+      baos.write(shapeResolutionXUnitBase10Inches);
+      baos.write(shapeResolutionYUnitBase10Inches);
       baos.write(UtilBinaryDecoding.shortToByteArray(shapeResolutionXUnitsPerUnitBase, 2));
       baos.write(UtilBinaryDecoding.shortToByteArray(shapeResolutionYUnitsPerUnitBase, 2));
       if (patternTechnologyIdentifier != PatternTechnologyIdentifier.LaserMatrixNBitWide) {
@@ -183,10 +173,10 @@ public class FNC_FontControl extends StructuredField {
         baos.write(reserved32_34);
         baos.write(fnnRepeatingGroupLength);
         baos.write(UtilBinaryDecoding.longToByteArray(fnnDataCount, 4));
-        baos.write(UtilBinaryDecoding.intToByteArray(fnnIBMNameGCGIDCount, 2));
+        baos.write(UtilBinaryDecoding.intToByteArray(fnnIbmNameGcgidCount, 2));
       }
       if (triplets != null) {
-        for (Triplet t : triplets) {
+        for (var t : triplets) {
           t.writeAFP(baos, config);
         }
       }
@@ -204,11 +194,11 @@ public class FNC_FontControl extends StructuredField {
     this.patternTechnologyIdentifier = patternTechnologyIdentifier;
   }
 
-  public EnumSet<FNC_FontUseFlag> getFontUseFlags() {
+  public EnumSet<FncFontUseFlag> getFontUseFlags() {
     return fontUseFlags;
   }
 
-  public void setFontUseFlags(EnumSet<FNC_FontUseFlag> fontUseFlags) {
+  public void setFontUseFlags(EnumSet<FncFontUseFlag> fontUseFlags) {
     this.fontUseFlags = fontUseFlags;
   }
 
@@ -260,14 +250,6 @@ public class FNC_FontControl extends StructuredField {
     this.maxCharacterBoxHeight = maxCharacterBoxHeight;
   }
 
-  public byte getFNORepeatingGroupLength() {
-    return fnoRepeatingGroupLength;
-  }
-
-  public void setFNORepeatingGroupLength(byte fnoRepeatingGroupLength) {
-    this.fnoRepeatingGroupLength = fnoRepeatingGroupLength;
-  }
-
   public short getFniRepeatingGroupLength() {
     return fniRepeatingGroupLength;
   }
@@ -293,38 +275,30 @@ public class FNC_FontControl extends StructuredField {
     this.rasterPatternDataCount = rasterPatternDataCount;
   }
 
-  public byte getFNPRepeatingGroupLength() {
-    return fnpRepeatingGroupLength;
+  public byte getFnmRepeatingGroupLength() {
+    return fnmRepeatingGroupLength;
   }
 
-  public void setFNPRepeatingGroupLength(byte fNPRepeatingGroupLength) {
-    fnpRepeatingGroupLength = fNPRepeatingGroupLength;
-  }
-
-  public byte getFnmRepeatinGroupLength() {
-    return fnmRepeatinGroupLength;
-  }
-
-  public void setFnmRepeatinGroupLength(byte fnmRepeatinGroupLength) {
-    this.fnmRepeatinGroupLength = fnmRepeatinGroupLength;
+  public void setFnmRepeatingGroupLength(byte fnmRepeatingGroupLength) {
+    this.fnmRepeatingGroupLength = fnmRepeatingGroupLength;
   }
 
   public byte getShapeResolutionXUnitBase10Inches() {
-    return ShapeResolutionXUnitBase10Inches;
+    return shapeResolutionXUnitBase10Inches;
   }
 
   public void setShapeResolutionXUnitBase10Inches(
       byte shapeResolutionXUnitBase10Inches) {
-    ShapeResolutionXUnitBase10Inches = shapeResolutionXUnitBase10Inches;
+    this.shapeResolutionXUnitBase10Inches = shapeResolutionXUnitBase10Inches;
   }
 
   public byte getShapeResolutionYUnitBase10Inches() {
-    return ShapeResolutionYUnitBase10Inches;
+    return shapeResolutionYUnitBase10Inches;
   }
 
   public void setShapeResolutionYUnitBase10Inches(
       byte shapeResolutionYUnitBase10Inches) {
-    ShapeResolutionYUnitBase10Inches = shapeResolutionYUnitBase10Inches;
+    this.shapeResolutionYUnitBase10Inches = shapeResolutionYUnitBase10Inches;
   }
 
   public short getShapeResolutionXUnitsPerUnitBase() {
@@ -369,12 +343,12 @@ public class FNC_FontControl extends StructuredField {
     this.fnnDataCount = fnnDataCount;
   }
 
-  public int getFnnIBMNameGCGIDCount() {
-    return fnnIBMNameGCGIDCount;
+  public int getFnnIbmNameGcgidCount() {
+    return fnnIbmNameGcgidCount;
   }
 
-  public void setFnnIBMNameGCGIDCount(int fnnIBMNameGCGIDCount) {
-    this.fnnIBMNameGCGIDCount = fnnIBMNameGCGIDCount;
+  public void setFnnIbmNameGcgidCount(int fnnIbmNameGcgidCount) {
+    this.fnnIbmNameGcgidCount = fnnIbmNameGcgidCount;
   }
 
   public List<Triplet> getTriplets() {
@@ -383,14 +357,6 @@ public class FNC_FontControl extends StructuredField {
 
   public void setTriplets(List<Triplet> triplets) {
     this.triplets = triplets;
-  }
-
-  public byte getRetiredbyte0() {
-    return retired0;
-  }
-
-  public byte getReservedbyte2() {
-    return reserved2;
   }
 
   public byte getRetired0() {
@@ -433,6 +399,9 @@ public class FNC_FontControl extends StructuredField {
     this.fnnRepeatingGroupLength = fnnRepeatingGroupLength;
   }
 
+  /**
+   * Pattern Technology Identifier.
+   */
   public enum PatternTechnologyIdentifier {
     LaserMatrixNBitWide((byte) 0x05),
     CompositeAdobeType0((byte) 0x1E),
@@ -444,7 +413,7 @@ public class FNC_FontControl extends StructuredField {
     }
 
     public static PatternTechnologyIdentifier valueOf(byte patternTechnologyIdentifierByte) {
-      for (PatternTechnologyIdentifier pti : values()) {
+      for (var pti : values()) {
         if (pti.patternTechnologyIdentifierByte == patternTechnologyIdentifierByte) {
           return pti;
         }
@@ -457,14 +426,17 @@ public class FNC_FontControl extends StructuredField {
     }
   }
 
-  public enum FNC_FontUseFlag {
+  /**
+   * Font Use Flag.
+   */
+  public enum FncFontUseFlag {
     MICRPrinting, // bit 7
     ExtensionFont, // bit 6
     RetiredDoNotShiftBaseLineOffset, // bit 3
     UniformRasterPatternSize; // bit 1
 
-    public static EnumSet<FNC_FontUseFlag> valueOf(byte fontUseFlagByte) {
-      EnumSet<FNC_FontUseFlag> result = EnumSet.noneOf(FNC_FontUseFlag.class);
+    public static EnumSet<FncFontUseFlag> valueOf(byte fontUseFlagByte) {
+      var result = EnumSet.noneOf(FncFontUseFlag.class);
       if (((fontUseFlagByte & 0xFF) & 0x80) > 0) {
         result.add(MICRPrinting);
       }
@@ -481,8 +453,11 @@ public class FNC_FontControl extends StructuredField {
       return result;
     }
 
-    public static byte toByte(EnumSet<FNC_FontUseFlag> fontUseFlags) {
+    public static byte toByte(EnumSet<FncFontUseFlag> fontUseFlags) {
       byte result = 0;
+      if (fontUseFlags == null) {
+        return result;
+      }
 
       if (fontUseFlags.contains(MICRPrinting)) {
         result |= 0x80;
@@ -501,6 +476,9 @@ public class FNC_FontControl extends StructuredField {
     }
   }
 
+  /**
+   * Font Unit Base.
+   */
   public enum FontUnitBase {
     BaseIsFixedAt10Inches,
     BaseIsRelativ;
@@ -526,6 +504,9 @@ public class FNC_FontControl extends StructuredField {
     }
   }
 
+  /**
+   * Raster Pattern Data Alignment.
+   */
   public enum RasterPatternDataAlignment {
     Alignment_1Byte((byte) 0x00),
     Alignment_4Byte((byte) 0x02),
@@ -538,7 +519,7 @@ public class FNC_FontControl extends StructuredField {
     }
 
     public static RasterPatternDataAlignment valueOf(byte rasterPatternAlignmentCode) {
-      for (RasterPatternDataAlignment rpda : values()) {
+      for (var rpda : values()) {
         if (rasterPatternAlignmentCode == rpda.rasterPatternAlignmentByte) {
           return rpda;
         }

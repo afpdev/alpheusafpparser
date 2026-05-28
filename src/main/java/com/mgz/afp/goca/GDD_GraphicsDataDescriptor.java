@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.goca;
 
 import com.mgz.afp.base.StructuredField;
@@ -40,7 +41,7 @@ public class GDD_GraphicsDataDescriptor extends StructuredField {
 
     int pos = 0;
     while (0 <= pos && pos < actualLength) {
-      int paramLength = UtilBinaryDecoding.parseShort(sfData, offset + pos, 2) + 1;
+      int paramLength = (sfData[offset + pos + 1] & 0xFF) + 2;
 
       GDD_Parameter gddParameter = GDD_Parameter.buildGDDParameter(sfData, offset + pos, paramLength, config);
       gddParameters.add(gddParameter);

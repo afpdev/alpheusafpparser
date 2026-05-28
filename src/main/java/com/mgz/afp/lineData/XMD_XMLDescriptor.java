@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.lineData;
 
 import com.mgz.afp.base.StructuredFieldBaseTriplets;
@@ -57,7 +58,7 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
   int fieldDelimiter;
   int fieldNumber;
   int additionalBaselineIncrement;
-  byte[] reserved49_61 = new byte[13];
+  byte[] reserved48_61 = new byte[14];
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -65,7 +66,11 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
     flags = XMD_Flag.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 1, 3));
     reserved4 = sfData[offset + 4];
     inlinePosition = UtilBinaryDecoding.parseInt(sfData, offset + 5, 2);
-    baselinePosition = UtilBinaryDecoding.parseInt(sfData, offset + 7, 2);
+    if (flags.contains(XMD_Flag.RelativeBaselinePosition_RelativePosition)) {
+      baselinePosition = UtilBinaryDecoding.parseShort(sfData, offset + 7, 2);
+    } else {
+      baselinePosition = UtilBinaryDecoding.parseInt(sfData, offset + 7, 2);
+    }
     inlineOrientation = AFPOrientation.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 9, 2));
     baselineOrientation = AFPOrientation.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 11, 2));
     primaryFontLocalId = UtilBinaryDecoding.parseShort(sfData, offset + 13, 1);
@@ -75,22 +80,22 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
     suppressionTokenName = new String(sfData, offset + 18, 8, config.getAfpCharSet());
     reserved26 = sfData[offset + 26];
     dataStartPosition = UtilBinaryDecoding.parseInt(sfData, offset + 27, 3);
-    dataLength = UtilBinaryDecoding.parseInt(sfData, offset + 31, 2);
-    conditionalProcessingRCDPointer = UtilBinaryDecoding.parseInt(sfData, offset + 33, 2);
-    subpageID = sfData[offset + 35];
-    ccpIdentifier = UtilBinaryDecoding.parseInt(sfData, offset + 36, 2);
-    startingPageNumber = UtilBinaryDecoding.parseInt(sfData, offset + 38, 2);
-    endSpace = UtilBinaryDecoding.parseInt(sfData, offset + 40, 2);
-    fieldAllignment = sfData[offset + 42];
-    fieldDelimiter = UtilBinaryDecoding.parseInt(sfData, offset + 43, 2);
-    fieldNumber = UtilBinaryDecoding.parseInt(sfData, offset + 45, 2);
-    additionalBaselineIncrement = UtilBinaryDecoding.parseInt(sfData, offset + 47, 2);
-    reserved49_61 = new byte[13];
-    System.arraycopy(sfData, offset + 49, reserved49_61, 0, reserved49_61.length);
+    dataLength = UtilBinaryDecoding.parseInt(sfData, offset + 30, 2);
+    conditionalProcessingRCDPointer = UtilBinaryDecoding.parseInt(sfData, offset + 32, 2);
+    subpageID = sfData[offset + 34];
+    ccpIdentifier = UtilBinaryDecoding.parseInt(sfData, offset + 35, 2);
+    startingPageNumber = UtilBinaryDecoding.parseInt(sfData, offset + 37, 2);
+    endSpace = UtilBinaryDecoding.parseInt(sfData, offset + 39, 2);
+    fieldAllignment = sfData[offset + 41];
+    fieldDelimiter = UtilBinaryDecoding.parseInt(sfData, offset + 42, 2);
+    fieldNumber = UtilBinaryDecoding.parseInt(sfData, offset + 44, 2);
+    additionalBaselineIncrement = UtilBinaryDecoding.parseInt(sfData, offset + 46, 2);
+    reserved48_61 = new byte[14];
+    System.arraycopy(sfData, offset + 48, reserved48_61, 0, reserved48_61.length);
 
     int actualLength = getActualLength(sfData, offset, length);
-    if (actualLength > 63) {
-      super.decodeAFP(sfData, offset, actualLength, config);
+    if (actualLength > 62) {
+      super.decodeAFP(sfData, offset + 62, actualLength - 62, config);
     }
   }
 
@@ -120,7 +125,7 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
     baos.write(UtilBinaryDecoding.intToByteArray(fieldDelimiter, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(fieldNumber, 2));
     baos.write(UtilBinaryDecoding.intToByteArray(additionalBaselineIncrement, 2));
-    baos.write(reserved49_61);
+    baos.write(reserved48_61);
     if (triplets != null) {
       for (Triplet t : triplets) {
         t.writeAFP(baos, config);
@@ -315,12 +320,12 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
     this.additionalBaselineIncrement = additionalBaselineIncrement;
   }
 
-  public byte[] getReserved49_61() {
-    return reserved49_61;
+  public byte[] getReserved48_61() {
+    return reserved48_61;
   }
 
-  public void setReserved49_61(byte[] reserved49_61) {
-    this.reserved49_61 = reserved49_61;
+  public void setReserved48_61(byte[] reserved48_61) {
+    this.reserved48_61 = reserved48_61;
   }
 
   public enum XMD_Flag {
@@ -338,17 +343,17 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
     FieldXMD_Field(6),
     UseFixedData_DoNotPresent(7),
     UseFixedData_DoPresent(7),
-    // (8)	reserved.
-    // (9)	reserved.
+    // (8)    reserved.
+    // (9)    reserved.
     AttributeXMD_Element(10),
     AttributeXMD_Attribute(10),
     ConditionalProcessing_DoNotPerformCP(11),
     ConditionalProcessing_DoPerformCP(11),
-    // (12)	reserved.
+    // (12)    reserved.
     RelativeBaselinePosition_AbsolutePosition(13),
     RelativeBaselinePosition_RelativePosition(13),
-    // (14)	reserved.
-    // (15)	reserved.
+    // (14)    reserved.
+    // (15)    reserved.
     NewPage_NoEffect(16),
     NewPage_LogicalPageEject(16),
     PrintPageNumber_NoEffect(17),
@@ -361,7 +366,7 @@ public class XMD_XMLDescriptor extends StructuredFieldBaseTriplets {
     FieldDelimeterSize_2Bytes(20),
     UseStartTag_DoNotSelectStartTag(21),
     UseStartTag_DoSelectStartTag(21),
-    // (22)	reserved.
+    // (22)    reserved.
     HaiderTrailerContinued_IsNotAContinuationOfHeaderTrailer(23),
     HaiderTrailerContinued_IsAContinuationOfHeaderTrailer(23);
 

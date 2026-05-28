@@ -1,0 +1,30 @@
+# Appendix B. Bilevel, Grayscale, and Color Images
+This appendix describes the functions of the Image Data parameters that represent bilevel, grayscale, and color images.
+Related Image Data Parameters The Image Data parameters that represent bilevel, grayscale, and color images are:
+• IDE Size parameter [IOCA-B-001]
+• IDE Structure parameter [IOCA-B-002]
+The IDE Size Parameter specifies the total number of bits per IDE, including all the color planes. If the IDE Size Parameter is absent, the IDE size defaults to 1 bit per IDE. This implies a bilevel image. If the IDE Structure Parameter is absent, the image is assumed to be bilevel if the IDE size is 1 and grayscale otherwise.
+If the image is bilevel, the foreground color can be set to an arbitrary color using the Set Bilevel Image Color and Set Extended Bilevel Image Color structured fields in the Image Data Descriptor in MO:DCA. If an image tile is bilevel, the foreground color can also be set using the Tile Set Color parameter. If no color has been specified, the device default is used. [IOCA-B-003]
+## Bilevel Images
+The IDE size must be 1 (IDESZ=1) in the IDE Size parameter, or the IDE Size Parameter may be omitted. If the IDE Structure parameter is omitted, the default color space is YCbCr (the Y component is used to express the IDE value) and the GRAYCODE defaults to B'0' (off). The IDE value of B'1' is treated as a significant (toned) pel, while the IDE value of B'0' is treated as an insignificant (untoned) pel.
+If the IDE Structure Parameter is present, the color space must be either X'02' (YCrCb) or X'12' (YCbCr) and the GRAYCODE flag must be B'0' (off). The ASFLAG is ignored and the IDE value of B'1' is treated as a significant (toned) pel, while the IDE value of B'0' is treated as an insignificant (untoned) pel.
+The foreground color of the significant (toned) pels can be set via the Set Bilevel Image Color and Set Extended Bilevel Image Color structured fields in the Image Data Descriptor in MO:DCA, or the Tile Set Color parameter for bilevel tiles. It is recommended that implementations set the foreground color only for images that conform to the definition of bilevel images earlier in this section; an example of an image that does not conform is a multiple-banded image that contains data in only one, bilevel band.
+Note: ASFLAG is ignored for bilevel images to maintain backward compatibility with the current usage, since the FS11, FS14, FS40, FS42, FS45, and FS48 function sets require ASFLAG of B'0' (additive) for bilevel images. For the Y color space, this would imply B'1' being white (untoned) pel, while the IDE value of B'0' is defined to be a toned pel. This is the opposite of how the images are processed. [IOCA-B-004]
+
+
+## Grayscale Images
+Grayscale images have a value of the IDESZ field in the IDE Size parameter greater than 1. The IDE Structure parameter may be omitted, in which case the default color space is YCbCr (the Y component is used to express the IDE value), the GRAYCODE flag is B'0' (off), and the ASFLAG is B'0' (additive). SIZE1 is assumed to be equal to IDESZ in the IDE Size Parameter. The IDE value of zero is interpreted as black, while the IDE value of 2 IDESZ-1 is interpreted as white.
+If the IDE Structure Parameter is present, the color space must be either X'02' (YCrCb) or X'12' (YCbCr). The ASFLAG value determines whether a higher IDE value is mapped to a brighter or a darker level. [IOCA-B-005]
+## Color Images
+The RGB, YCbCr, and YCrCb color spaces increase in intensity as the R,G,B, and Y increase. If the ASFLAG in the IDE Structure parameter is B'0' (additive), the maximum values represent white and zero values represent black.
+In the CMYK color space, an ASFLAG in the IDE Structure Parameter of B'0' means that the zero IDE is white and an IDE with maximum C, M, Y , and K values is black.
+In terms of color science, the RGB, YCbCr, and YCrCb color spaces are additive color spaces, while the CMYK color space is a subtractive color space. This means that colors in the RGB, YCbCr, and YCrCb spaces get lighter as the values increase, while the colors in the CMYK space get darker as the values increase. In both cases, the ASFLAG in the IDE Structure parameter should be set to B'0' (additive) to get the expected behavior. Setting ASFLAG to B'1' (subtractive) yields reverse video.
+In the nColor color space, since the characteristics of the color values might not be known, it also might not be known what the “expected behavior” is. Furthermore, a color management resource (CMR) from the controlling environment might be required to process the n color components, and the selection of the CMR to use is not affected by whether the IDEs are additive or subtractive. The CMR thus must be matched to the data in terms of whether the maximum value IDE for a color component corresponds with the component being at maximum intensity or minimum intensity. Therefore, for the nColor color space, ASFLAG is ignored.
+In practice, the YCbCr color space is most often used to carry RGB data for efficient JPEG compression, since it separates chrominance and luminance. Most image processing applications will describe such JPEG images as RGB. IOCA receivers should consider treating the data in interleaved JPEG-compressed RGB images as if they were YCbCr.
+Banded CMYK images may have the C, M, and Y bands marked as zero in the Band Image Data parameter by setting the LENGTH field to X'03'. The resulting image should be treated as a monochrome image by the receiver.
+Refer to the resource appendix in the Mixed Object Document Content Architecture (MO:DCA) Reference for a description of the RGB model and the Y component of the YCrCb and YCbCr models. [IOCA-B-006]
+## Color Management
+Color management is handled by the controlling environment. The controlling environment will take into account the input and output color space characteristics, usually specified via the Color Management Resources, as well as processing instructions specified through the color workflow.
+Bilevel, Grayscale, and Color Images [IOCA-B-007]
+
+

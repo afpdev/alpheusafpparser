@@ -16,9 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
+
 package com.mgz.afp.modca;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mgz.afp.base.IRepeatingGroup;
+import com.mgz.afp.base.RepeatingGroupPool;
 import com.mgz.afp.base.StructuredFieldBaseRepeatingGroups;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
@@ -36,33 +40,35 @@ import java.io.OutputStream;
  * structured field to medium overlay names.
  */
 public class MMO_MapMediumOverlay extends StructuredFieldBaseRepeatingGroups {
-  short lengtOfEachRepeatingGroup;
+  short lengthOfEachRepeatingGroup;
   byte[] reserved1_3 = new byte[3];
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    lengtOfEachRepeatingGroup = UtilBinaryDecoding.parseShort(sfData, offset, 1);
+    lengthOfEachRepeatingGroup = UtilBinaryDecoding.parseShort(sfData, offset, 1);
     reserved1_3 = new byte[3];
     System.arraycopy(sfData, offset + 1, reserved1_3, 0, reserved1_3.length);
     int actualLength = getActualLength(sfData, offset, length);
     if (actualLength > 4) {
       int pos = 4;
       while (pos < actualLength) {
-        MMO_PrepeatingGroup rg = new MMO_PrepeatingGroup();
+        MMO_RepeatingGroup rg = RepeatingGroupPool.acquire(MMO_RepeatingGroup.class);
+        if (rg == null) {
+          rg = new MMO_RepeatingGroup();
+        }
         rg.decodeAFP(sfData, offset + pos, actualLength - pos, config);
         addRepeatingGroup(rg);
-        pos += lengtOfEachRepeatingGroup;
+        pos += lengthOfEachRepeatingGroup;
       }
     } else {
       repeatingGroups = null;
     }
   }
 
-
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    baos.write(lengtOfEachRepeatingGroup);
+    baos.write(lengthOfEachRepeatingGroup);
     baos.write(reserved1_3);
     if (repeatingGroups != null) {
       for (IRepeatingGroup rg : repeatingGroups) {
@@ -73,12 +79,12 @@ public class MMO_MapMediumOverlay extends StructuredFieldBaseRepeatingGroups {
     writeFullStructuredField(os, baos.toByteArray());
   }
 
-  public short getLengtOfEachRepeatingGroup() {
-    return lengtOfEachRepeatingGroup;
+  public short getLengthOfEachRepeatingGroup() {
+    return lengthOfEachRepeatingGroup;
   }
 
-  public void setLengtOfEachRepeatingGroup(short lengtOfEachRepeatingGroup) {
-    this.lengtOfEachRepeatingGroup = lengtOfEachRepeatingGroup;
+  public void setLengthOfEachRepeatingGroup(short lengthOfEachRepeatingGroup) {
+    this.lengthOfEachRepeatingGroup = lengthOfEachRepeatingGroup;
   }
 
   public byte[] getReserved1_3() {
@@ -89,21 +95,29 @@ public class MMO_MapMediumOverlay extends StructuredFieldBaseRepeatingGroups {
     this.reserved1_3 = reserved1_3;
   }
 
-  public static class MMO_PrepeatingGroup implements IRepeatingGroup {
+  @XmlRootElement
+  public static class MMO_RepeatingGroup implements IRepeatingGroup {
     short mediumOverlayLocalId;
     MMO_Flag flag;
     byte[] reserved2_3 = new byte[2];
     String nameOfMediumOverlay;
 
     @Override
+    public void reset() {
+      mediumOverlayLocalId = 0;
+      flag = null;
+      reserved2_3 = new byte[2];
+      nameOfMediumOverlay = null;
+    }
+
+    @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       mediumOverlayLocalId = UtilBinaryDecoding.parseShort(sfData, offset, 1);
       flag = MMO_Flag.valueOf(sfData[offset + 1]);
       reserved2_3 = new byte[2];
-      System.arraycopy(sfData, offset + 3, reserved2_3, 0, reserved2_3.length);
+      System.arraycopy(sfData, offset + 2, reserved2_3, 0, reserved2_3.length);
       nameOfMediumOverlay = new String(sfData, offset + 4, 8, config.getAfpCharSet());
     }
-
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
@@ -147,7 +161,7 @@ public class MMO_MapMediumOverlay extends StructuredFieldBaseRepeatingGroups {
 
     /**
      * Shows whether the overlay is to be loaded into the printer as a raster pattern overlay or as
-     * a coded overlay:
+     * a coded overlay.
      */
     public enum MMO_Flag {
       RasterIndicator_CodedOverlay,

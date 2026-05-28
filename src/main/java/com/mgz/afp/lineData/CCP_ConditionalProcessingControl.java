@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.lineData;
 
 import com.mgz.afp.base.StructuredField;
@@ -23,13 +24,14 @@ import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
+import com.mgz.util.UtilCharacterEncoding;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Programming Guide and Line Data Reference (ha3l3r04.pdf), page 83<br> <br> The Conditional
@@ -64,7 +66,7 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
     repeatingGroups = new ArrayList<CCP_RepeatingGroup>();
     int actualLength = getActualLength(sfData, offset, length);
     int pos = 12;
-    while (pos < actualLength) {
+    while (pos + lengthOfRepeatingGroup <= actualLength) {
       CCP_RepeatingGroup rg = new CCP_RepeatingGroup();
       rg.decodeAFP(sfData, offset + pos, lengthOfRepeatingGroup, config);
       repeatingGroups.add(rg);
@@ -165,8 +167,9 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
     }
 
     public static CCP_Flag valueOf(byte flagByte) {
+      int val = flagByte & 0xFF;
       for (CCP_Flag flag : values()) {
-        if (flag.code == flagByte) {
+        if (flag.code == val) {
           return flag;
         }
       }
@@ -236,24 +239,24 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
       if (timingOfAction != null) {
         os.write(timingOfAction.toByte());
-        if (mediumMapAction != null) {
-          os.write(mediumMapAction.toByte());
-          if (mediumMapName != null) {
-            os.write(mediumMapName.getBytes(config.getAfpCharSet()));
-            if (dataMapAction != null) {
-              os.write(dataMapAction.toByte());
-              if (dataMapName != null) {
-                os.write(dataMapName.getBytes(config.getAfpCharSet()));
-                if (comparison != null) {
-                  os.write(comparison.toByte());
-                  if (comparisonString != null) {
-                    os.write(comparisonString.getBytes(config.getAfpCharSet()));
-                  }
-                }
-              }
-            }
-          }
-        }
+      }
+      if (mediumMapAction != null) {
+        os.write(mediumMapAction.toByte());
+      }
+      if (mediumMapName != null) {
+        os.write(UtilCharacterEncoding.stringToByteArray(mediumMapName, config.getAfpCharSet(), 8, com.mgz.util.Constants.EBCDIC_ID_FILLER));
+      }
+      if (dataMapAction != null) {
+        os.write(dataMapAction.toByte());
+      }
+      if (dataMapName != null) {
+        os.write(UtilCharacterEncoding.stringToByteArray(dataMapName, config.getAfpCharSet(), 8, com.mgz.util.Constants.EBCDIC_ID_FILLER));
+      }
+      if (comparison != null) {
+        os.write(comparison.toByte());
+      }
+      if (comparisonString != null) {
+        os.write(comparisonString.getBytes(config.getAfpCharSet()));
       }
     }
 
@@ -311,6 +314,11 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
 
     public void setComparisonString(String comparisonString) {
       this.comparisonString = comparisonString;
+    }
+
+    @XmlElement(name = "text")
+    public String getText() {
+      return UtilCharacterEncoding.sanitizeForXml(comparisonString);
     }
 
     public enum CCP_TimingOfAction {
@@ -406,6 +414,5 @@ public class CCP_ConditionalProcessingControl extends StructuredField {
       }
     }
   }
-
 
 }

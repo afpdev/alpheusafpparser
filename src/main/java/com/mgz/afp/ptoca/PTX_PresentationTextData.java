@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.ptoca;
 
 import com.mgz.afp.base.StructuredField;
@@ -25,6 +26,8 @@ import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.afp.parser.PTOCAControlSequenceParser;
 import com.mgz.afp.ptoca.controlSequence.PTOCAControlSequence;
 
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,12 +36,28 @@ import java.util.List;
 
 public class PTX_PresentationTextData extends StructuredField {
   @AFPField
+  @XmlTransient
   List<PTOCAControlSequence> controlSequences;
+
+  @XmlAnyElement(lax = true)
+  public List<PTOCAControlSequence> getControlSequencesXml() {
+    return controlSequences;
+  }
+
   volatile byte[] originalPayload;
   volatile Throwable controlSequenceException;
 
   @Override
+  public void reset() {
+    super.reset();
+    controlSequences = null;
+    originalPayload = null;
+    controlSequenceException = null;
+  }
+
+  @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+    long startTime = config.isPtxDebug() ? System.nanoTime() : 0;
     int actualLength = getActualLength(sfData, offset, length);
     if (actualLength > 0) {
       originalPayload = new byte[actualLength];
@@ -49,17 +68,23 @@ public class PTX_PresentationTextData extends StructuredField {
       controlSequences = null;
     }
 
+    if (config.isPtxDebug()) {
+      long duration = System.nanoTime() - startTime;
+      com.mgz.util.PTXPerformanceMonitor.recordPtxParse(duration, actualLength, controlSequences != null ? controlSequences.size() : 0);
+    }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     byte[] actualPayload = null;
     if (controlSequences != null) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      for (PTOCAControlSequence cs : controlSequences) {
+      for (int i = 0; i < controlSequences.size(); i++) {
+        PTOCAControlSequence cs = controlSequences.get(i);
+        ByteArrayOutputStream csBaos = new ByteArrayOutputStream();
+        cs.writeAFP(csBaos, config);
         baos.write(cs.getCsi().toBytes());
-        cs.writeAFP(baos, config);
+        baos.write(csBaos.toByteArray());
       }
       actualPayload = baos.toByteArray();
     } else if (originalPayload != null) {
@@ -91,5 +116,16 @@ public class PTX_PresentationTextData extends StructuredField {
       return;
     }
     controlSequences.remove(cs);
+  }
+
+  @Override
+  public void release() {
+    if (controlSequences != null) {
+      for (PTOCAControlSequence sequence : controlSequences) {
+        sequence.release();
+      }
+      controlSequences = null;
+    }
+    super.release();
   }
 }

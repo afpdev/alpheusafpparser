@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.lineData;
 
 import com.mgz.afp.base.StructuredField;
@@ -42,19 +43,18 @@ public class FDX_FixedDataText extends StructuredField {
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     int actualLength = getActualLength(sfData, offset, length);
     if (actualLength > 0) {
-      text = new String(sfData, 0, 8, config.getAfpCharSet());
+      text = new String(sfData, offset, actualLength, config.getAfpCharSet());
     } else {
       text = null;
     }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     if (text != null) {
       writeFullStructuredField(os, text.getBytes(config.getAfpCharSet()));
     } else {
-      writeFullStructuredField(os, null);
+      writeFullStructuredField(os, (byte[]) null);
     }
   }
 

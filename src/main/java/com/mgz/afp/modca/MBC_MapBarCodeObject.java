@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.modca;
 
 import com.mgz.afp.base.StructuredField;
@@ -35,11 +36,11 @@ public class MBC_MapBarCodeObject extends StructuredField {
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    checkDataLength(sfData, offset, length, 5);
+    int actualLength = getActualLength(sfData, offset, length);
+    checkDataLength(sfData, offset, actualLength, 5);
     lengthOfRepeatingGroup = UtilBinaryDecoding.parseShort(sfData, offset, 2);
-    triplet = TripletParser.parseTriplet(sfData, offset, length, config);
+    triplet = TripletParser.parseTriplet(sfData, offset + 2, actualLength - 2, config);
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {

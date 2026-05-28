@@ -16,9 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.base;
 
+import com.mgz.util.UtilCharacterEncoding;
 import com.mgz.afp.base.annotations.AFPField;
+
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.afp.parser.TripletParser;
@@ -32,8 +38,43 @@ import java.util.List;
 
 public abstract class StructuredFieldBaseTriplets extends StructuredField implements IHasTriplets {
   @AFPField
+  @XmlTransient
   protected List<Triplet> triplets;
 
+  @Override
+  public void reset() {
+    super.reset();
+    triplets = null;
+  }
+
+  @XmlTransient
+  @Override
+  public final List<Triplet> getTriplets() {
+    return triplets;
+  }
+
+  @XmlAnyElement(lax = true)
+  public final List<Triplet> getTripletsXml() {
+    return triplets;
+  }
+
+  @XmlElement(name = "text")
+  public String getText() {
+    if (triplets == null || triplets.isEmpty()) {
+      return null;
+    }
+    StringBuilder sb = new StringBuilder();
+    for (Triplet triplet : triplets) {
+      String tripletText = triplet.getText();
+      if (tripletText != null && !tripletText.trim().isEmpty()) {
+        if (sb.length() > 0) {
+          sb.append(" ");
+        }
+        sb.append(tripletText.trim());
+      }
+    }
+    return sb.length() > 0 ? sb.toString() : null;
+  }
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -54,11 +95,6 @@ public abstract class StructuredFieldBaseTriplets extends StructuredField implem
       }
     }
     writeFullStructuredField(os, baos.toByteArray());
-  }
-
-  @Override
-  public final List<Triplet> getTriplets() {
-    return triplets;
   }
 
   @Override

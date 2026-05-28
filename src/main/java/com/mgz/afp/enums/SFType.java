@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
-package com.mgz.afp.enums;
 
+package com.mgz.afp.enums;
 
 /**
  * The structured field type code. The type code identifies the function of the structured field,
@@ -31,7 +31,7 @@ public enum SFType {
   Undefined(0x00),
 
   /**
-   * FOCA ???
+   * FOCA ???.
    */
   Index(0x8C),
 
@@ -46,7 +46,7 @@ public enum SFType {
    */
   CopyCount_PatternsMap(0xA2),
   /**
-   * A descriptor structured field defines the initial characteristics and,	optionally, the
+   * A descriptor structured field defines the initial characteristics and,    optionally, the
    * formatting directives for all objects, object areas, and pages. Depending on the specific
    * descriptor structured field type, it may contain some set of parameters that identify:<ul><li>
    * The size of the page or object<li>Measurement units<li>Initial presentation conditions</ul>
@@ -68,11 +68,12 @@ public enum SFType {
    */
   End(0xA9),
   /**
-   * ???
+   * ???.
    */
   Size(0xAA),
   /**
-   * A map structured field	provides the following functions in the MO:DCA architecture:<ul><li>All
+   * A map structured field provides the following functions in the MO:DCA architecture.
+   * <ul><li>All
    * occurrences of a variable embedded in structured field parameter data can be given a new value
    * by changing only one reference in the mapping, rather than having to physically change each
    * occurrence. Thus all references to font X may cause a Times Roman font to be used in one
@@ -91,7 +92,7 @@ public enum SFType {
    */
   Process(0xAD),
   /**
-   * FOCA ???
+   * FOCA ???.
    */
   Orientation(0xAE),
   /**
@@ -126,20 +127,32 @@ public enum SFType {
    */
   Data(0xEE);
 
-
   int val;
+
+  private static final SFType[] VAL_MAP = new SFType[256];
+
+  static {
+    for (SFType type : values()) {
+      VAL_MAP[type.val & 0xFF] = type;
+    }
+  }
 
   SFType(int val) {
     this.val = val;
   }
 
+  /**
+   * Returns the {@link SFType} for given byte value sfTypeByte.
+   *
+   * @param sfTypeByte the byte value
+   * @return the corresponding {@link SFType}, or {@link #Undefined} if not found
+   */
   public static SFType valueOf(int sfTypeByte) {
-    for (SFType sfType : SFType.values()) {
-      if (sfType.val == sfTypeByte) {
-        return sfType;
-      }
+    if (sfTypeByte < 0 || sfTypeByte > 255) {
+      return Undefined;
     }
-    return Undefined;
+    SFType type = VAL_MAP[sfTypeByte];
+    return type != null ? type : Undefined;
   }
 
   public int toByte() {

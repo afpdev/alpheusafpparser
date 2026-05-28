@@ -16,9 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.base;
 
 import com.mgz.afp.base.annotations.AFPField;
+
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.afp.parser.TripletParser;
@@ -34,15 +39,55 @@ import java.util.List;
 
 public abstract class StructuredFieldBaseNameAndTriplets extends StructuredFieldBaseName implements IHasTriplets {
   @AFPField
+  @XmlTransient
   protected List<Triplet> triplets;
 
+  @Override
+  public void reset() {
+    super.reset();
+    triplets = null;
+  }
+
+  @XmlTransient
+  @Override
+  public final List<Triplet> getTriplets() {
+    return triplets;
+  }
+
+  @XmlAnyElement(lax = true)
+  public final List<Triplet> getTripletsXml() {
+    return triplets;
+  }
+
+  @Override
+  @XmlElement(name = "text")
+  public String getText() {
+    String nameText = super.getText();
+    StringBuilder sb = new StringBuilder();
+    if (nameText != null && !nameText.trim().isEmpty()) {
+      sb.append(nameText.trim());
+    }
+
+    if (triplets != null) {
+      for (Triplet triplet : triplets) {
+        String tripletText = triplet.getText();
+        if (tripletText != null && !tripletText.trim().isEmpty()) {
+          if (sb.length() > 0) {
+            sb.append(" ");
+          }
+          sb.append(tripletText.trim());
+        }
+      }
+    }
+    return sb.length() > 0 ? UtilCharacterEncoding.sanitizeForXml(sb.toString()) : null;
+  }
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
     super.decodeAFP(sfData, offset, length, config);
     int actualLength = getActualLength(sfData, offset, length);
     if (actualLength > 8) {
-      triplets = TripletParser.parseTriplets(sfData, 8, sfData.length - 8, config);
+      triplets = TripletParser.parseTriplets(sfData, offset + 8, actualLength - 8, config);
     } else {
       triplets = null;
     }
@@ -60,11 +105,6 @@ public abstract class StructuredFieldBaseNameAndTriplets extends StructuredField
       }
     }
     writeFullStructuredField(os, baos.toByteArray());
-  }
-
-  @Override
-  public final List<Triplet> getTriplets() {
-    return triplets;
   }
 
   @Override

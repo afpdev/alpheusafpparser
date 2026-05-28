@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.enums;
 
 /**
@@ -34,12 +35,23 @@ public enum SFClass {
   /**
    * Returns the {@link SFClass} for given byte value sfClass.
    */
+  private static final SFClass[] VAL_MAP = new SFClass[256];
+
+  static {
+    for (SFClass type : values()) {
+      VAL_MAP[type.val & 0xFF] = type;
+    }
+  }
+
+  /**
+   * Returns the {@link SFClass} for given byte value sfClass.
+   */
   public static SFClass valueOf(int sfClass) {
-    if (sfClass == 0xD3) {
-      return D3;
-    } else {
+    if (sfClass < 0 || sfClass > 255) {
       return Undefined;
     }
+    SFClass type = VAL_MAP[sfClass];
+    return type != null ? type : Undefined;
   }
 
   public int toByte() {

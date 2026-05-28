@@ -16,7 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.ptoca.controlSequence;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mgz.afp.base.StructuredField;
 import com.mgz.afp.base.annotations.AFPField;
@@ -27,16 +30,70 @@ import com.mgz.afp.enums.AFPOrientation;
 import com.mgz.afp.exceptions.AFPParserException;
 import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
 import com.mgz.afp.parser.AFPParserConfiguration;
+import com.mgz.util.Constants;
 import com.mgz.util.UtilBinaryDecoding;
+import com.mgz.util.UtilCharacterEncoding;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 @AFPType
-public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
+@XmlSeeAlso({
+    PTOCAControlSequence.TRN_TransparentData.class,
+    PTOCAControlSequence.GraphicCharacters.class,
+    PTOCAControlSequence.Undefined.class,
+    PTOCAControlSequence.AMI_AbsoluteMoveInline.class,
+    PTOCAControlSequence.AMB_AbsoluteMoveBaseline.class,
+    PTOCAControlSequence.RMI_RelativeMoveInline.class,
+    PTOCAControlSequence.RMB_RelativeMoveBaseline.class,
+    PTOCAControlSequence.SIM_SetInlineMargin.class,
+    PTOCAControlSequence.SBI_SetBaselineIncrement.class,
+    PTOCAControlSequence.BLN_BeginLine.class,
+    PTOCAControlSequence.STO_SetTextOrientation.class,
+    PTOCAControlSequence.SCFL_SetCodedFontLocal.class,
+    PTOCAControlSequence.STC_SetTextColor.class,
+    PTOCAControlSequence.SEC_SetExtendedTextColor.class,
+    PTOCAControlSequence.SIA_SetIntercharacterAdjustment.class,
+    PTOCAControlSequence.SVI_SetVariableSpaceCharacterIncrement.class,
+    PTOCAControlSequence.TBM_TemporaryBaselineMove.class,
+    PTOCAControlSequence.BSU_BeginSuppression.class,
+    PTOCAControlSequence.ESU_EndSuppression.class,
+    PTOCAControlSequence.OVS_Overstrike.class,
+    PTOCAControlSequence.USC_Underscore.class,
+    PTOCAControlSequence.RPS_RepeatString.class,
+    PTOCAControlSequence.DIR_DrawIaxisRule.class,
+    PTOCAControlSequence.DBR_DrawBaxisRule.class,
+    PTOCAControlSequence.NOP_NoOperation.class,
+    PTOCAControlSequence.UCT_UnicodeComplexText.class,
+    PTOCAControlSequence.GLC_GlyphLayoutControl.class,
+    PTOCAControlSequence.ENC_EncryptedData.class,
+    PTOCAControlSequence.SKI_SetKeyInformation.class,
+    PTOCAControlSequence.SEA_SetEncryptedAlternate.class,
+    PTOCAControlSequence.GIR_GlyphIdRun.class,
+    PTOCAControlSequence.GAR_GlyphAdvanceRun.class,
+    PTOCAControlSequence.GOR_GlyphOffsetRun.class
+})
+public abstract sealed class PTOCAControlSequence implements IAFPDecodeableWriteable permits PTOCAControlSequence.TRN_TransparentData, PTOCAControlSequence.GraphicCharacters, PTOCAControlSequence.Undefined, PTOCAControlSequence.AMI_AbsoluteMoveInline, PTOCAControlSequence.AMB_AbsoluteMoveBaseline, PTOCAControlSequence.RMI_RelativeMoveInline, PTOCAControlSequence.RMB_RelativeMoveBaseline, PTOCAControlSequence.SIM_SetInlineMargin, PTOCAControlSequence.SBI_SetBaselineIncrement, PTOCAControlSequence.BLN_BeginLine, PTOCAControlSequence.STO_SetTextOrientation, PTOCAControlSequence.SCFL_SetCodedFontLocal, PTOCAControlSequence.STC_SetTextColor, PTOCAControlSequence.SEC_SetExtendedTextColor, PTOCAControlSequence.SIA_SetIntercharacterAdjustment, PTOCAControlSequence.SVI_SetVariableSpaceCharacterIncrement, PTOCAControlSequence.TBM_TemporaryBaselineMove, PTOCAControlSequence.BSU_BeginSuppression, PTOCAControlSequence.ESU_EndSuppression, PTOCAControlSequence.OVS_Overstrike, PTOCAControlSequence.USC_Underscore, PTOCAControlSequence.RPS_RepeatString, PTOCAControlSequence.DIR_DrawIaxisRule, PTOCAControlSequence.DBR_DrawBaxisRule, PTOCAControlSequence.NOP_NoOperation, PTOCAControlSequence.UCT_UnicodeComplexText, PTOCAControlSequence.GLC_GlyphLayoutControl, PTOCAControlSequence.ENC_EncryptedData, PTOCAControlSequence.SKI_SetKeyInformation, PTOCAControlSequence.SEA_SetEncryptedAlternate, PTOCAControlSequence.GIR_GlyphIdRun, PTOCAControlSequence.GAR_GlyphAdvanceRun, PTOCAControlSequence.GOR_GlyphOffsetRun, Undefined {
   @AFPField(isHidden = true)
   ControlSequenceIntroducer csi;
+
+  /**
+   * Resets the control sequence to its initial state for reuse.
+   */
+  public void reset() {
+    csi = null;
+  }
+
+  /**
+   * Recursively releases any resources held by this control sequence back to their pools.
+   */
+  public void release() {
+    ControlSequencePool.release(this);
+  }
 
   public ControlSequenceIntroducer getCsi() {
     return csi;
@@ -72,11 +129,19 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     SCFL_SetCodedFontLocal(0xF0), // (SCFL)” on page 77
     BSU_BeginSuppression(0xF2), // (BSU)” on page 56
     ESU_EndSuppression(0xF4), // (ESU)” on page 62
+    UCT_UnicodeComplexText(0x6A), // (UCT)” on page 123
+    GLC_GlyphLayoutControl(0x6C), // (GLC)” on page 84
+    ENC_EncryptedData(0x98), // (ENC)” on page 101
+    SKI_SetKeyInformation(0x9A), // (SKI)” on page 78
+    SEA_SetEncryptedAlternate(0x9C), // (SEA)” on page 88
+    GIR_GlyphIdRun(0x8A), // (GIR)” on page 83
+    GAR_GlyphAdvanceRun(0x8C), // (GAR)” on page 82
+    GOR_GlyphOffsetRun(0x8E), // (GOR)” on page 89
     // Field Controls
     OVS_Overstrike(0x72), // (OVS)” on page 64
     USC_Underscore(0x76), // (USC)” on page 105
-    TBM_TemporaryBaselineMove(0x78); // (TBM)” on page 97
-
+    TBM_TemporaryBaselineMove(0x78), // (TBM)” on page 97
+    GraphicCharacters(0xFF);
 
     int typeCode;
 
@@ -131,6 +196,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
+  @XmlRootElement
   public static class ControlSequenceIntroducer {
 
     short csPrefix; // 0x2B
@@ -157,8 +223,8 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
         csi.csClass = UtilBinaryDecoding.parseShort(sfData, offset + 1, 1);
         pos = 2;
       }
-      csi.length = UtilBinaryDecoding.parseShort(sfData, offset + pos, 1);
-      originalCSFT = UtilBinaryDecoding.parseShort(sfData, offset + pos + 1, 1);
+      csi.length = (short) (sfData[offset + pos] & 0xFF);
+      originalCSFT = (short) (sfData[offset + pos + 1] & 0xFF);
       csi.controlSequenceFunctionType = ControlSequenceFunctionType.valueOf(originalCSFT);
 
       csi.isChained = (originalCSFT & 0x01) != 0;
@@ -238,9 +304,24 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  public static class Undefined extends PTOCAControlSequence {
+  @XmlRootElement
+  @XmlType(name = "ptocaUndefined")
+  public static final class Undefined extends PTOCAControlSequence {
     @AFPField
     byte[] undefinedData;
+    String text;
+
+    @Override
+    public void reset() {
+      super.reset();
+      undefinedData = null;
+      text = null;
+    }
+
+    @XmlElement(name = "text")
+    public String getText() {
+      return UtilCharacterEncoding.sanitizeForXml(text);
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -248,8 +329,12 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       if (actualLength > 0) {
         undefinedData = new byte[actualLength];
         System.arraycopy(sfData, offset, undefinedData, 0, actualLength);
+        if (UtilCharacterEncoding.isHumanReadable(undefinedData, config.getAfpCharSet())) {
+          text = new String(undefinedData, config.getAfpCharSet());
+        }
       } else {
         undefinedData = null;
+        text = null;
       }
     }
 
@@ -266,8 +351,15 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
    * PTOCA, Page 51. <br>The Absolute Move Baseline control sequence moves the baseline coordinate
    * relative to the I-axis.
    */
-  public static class AMB_AbsoluteMoveBaseline extends PTOCAControlSequence {
+  @XmlRootElement
+  public static final class AMB_AbsoluteMoveBaseline extends PTOCAControlSequence {
     short displacement;
+
+    @Override
+    public void reset() {
+      super.reset();
+      displacement = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -278,7 +370,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
       os.write(UtilBinaryDecoding.shortToByteArray(displacement, 2));
     }
-
 
     public short getDisplacement() {
       return displacement;
@@ -293,8 +384,15 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
    * PTOCA, Page 53. <br>The Absolute Move Inline control sequence moves the inline coordinate
    * position relative to the B-axis.
    */
-  public static class AMI_AbsoluteMoveInline extends PTOCAControlSequence {
+  @XmlRootElement
+  public static final class AMI_AbsoluteMoveInline extends PTOCAControlSequence {
     short displacement;
+
+    @Override
+    public void reset() {
+      super.reset();
+      displacement = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -305,7 +403,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
       os.write(UtilBinaryDecoding.shortToByteArray(displacement, 2));
     }
-
 
     public short getDisplacement() {
       return displacement;
@@ -319,7 +416,8 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
   /**
    * PTOCA, Page 55. <br> The Begin Line control sequence begins a new line.
    */
-  public static class BLN_BeginLine extends PTOCAControlSequence {
+  @XmlRootElement
+  public static final class BLN_BeginLine extends PTOCAControlSequence {
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException { /* NOP */}
 
@@ -332,8 +430,15 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
    * PTOCA, Page 56. <br>The Begin Suppression control sequence marks the beginning of a string of
    * presentation text that may be suppressed from the visible output.
    */
-  public static class BSU_BeginSuppression extends PTOCAControlSequence {
+  @XmlRootElement
+  public static final class BSU_BeginSuppression extends PTOCAControlSequence {
     short suppressionID;
+
+    @Override
+    public void reset() {
+      super.reset();
+      suppressionID = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -357,18 +462,31 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
   /**
    * PTOCA, Page 58. <br>The Draw B-axis Rule control sequence draws a rule in the B-direction.
    */
-  public static class DBR_DrawBaxisRule extends PTOCAControlSequence {
+  @XmlRootElement
+  public static final class DBR_DrawBaxisRule extends PTOCAControlSequence {
     short length;
     Short width;
     Byte widthFraction;
 
     @Override
+    public void reset() {
+      super.reset();
+      length = 0;
+      width = null;
+      widthFraction = null;
+    }
+
+    @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       this.length = UtilBinaryDecoding.parseShort(sfData, offset, 2);
       int actualLength = StructuredField.getActualLength(sfData, offset, length);
-      if (actualLength > 1) {
+      if (actualLength >= 4) {
         width = UtilBinaryDecoding.parseShort(sfData, offset + 2, 2);
-        widthFraction = sfData[offset + 4];
+        if (actualLength >= 5) {
+          widthFraction = sfData[offset + 4];
+        } else {
+          widthFraction = null;
+        }
       } else {
         width = null;
         widthFraction = null;
@@ -383,7 +501,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
         os.write(widthFraction != null ? widthFraction : 0x00);
       }
     }
-
 
     public short getLength() {
       return length;
@@ -410,19 +527,32 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 60. <br> The Draw I-axis Rule control sequence draws a rule in the I-direction.*/
-  public static class DIR_DrawIaxisRule extends PTOCAControlSequence {
+  /** PTOCA, Page 60. <br> The Draw I-axis Rule control sequence draws a rule in the I-direction.*/
+  @XmlRootElement
+  public static final class DIR_DrawIaxisRule extends PTOCAControlSequence {
     short length;
     Short width;
     Byte widthFraction;
 
     @Override
+    public void reset() {
+      super.reset();
+      length = 0;
+      width = null;
+      widthFraction = null;
+    }
+
+    @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       this.length = UtilBinaryDecoding.parseShort(sfData, offset, 2);
       int actualLength = StructuredField.getActualLength(sfData, offset, length);
-      if (actualLength > 2) {
+      if (actualLength >= 4) {
         width = UtilBinaryDecoding.parseShort(sfData, offset + 2, 2);
-        widthFraction = sfData[offset + 4];
+        if (actualLength >= 5) {
+          widthFraction = sfData[offset + 4];
+        } else {
+          widthFraction = null;
+        }
       } else {
         width = null;
         widthFraction = null;
@@ -437,7 +567,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
         os.write(widthFraction != null ? widthFraction : 0x00);
       }
     }
-
 
     public short getLength() {
       return length;
@@ -464,9 +593,16 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 62. <br> */
-  public static class ESU_EndSuppression extends PTOCAControlSequence {
+  /** PTOCA, Page 62. <br> */
+  @XmlRootElement
+  public static final class ESU_EndSuppression extends PTOCAControlSequence {
     short suppressionID;
+
+    @Override
+    public void reset() {
+      super.reset();
+      suppressionID = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -487,9 +623,24 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 63. <br> */
-  public static class NOP_NoOperation extends PTOCAControlSequence {
+  /** PTOCA, Page 63. <br> */
+  @XmlRootElement
+  @XmlType(name = "ptocaNOP_NoOperation")
+  public static final class NOP_NoOperation extends PTOCAControlSequence {
     byte[] ignoredData;
+    String text;
+
+    @Override
+    public void reset() {
+      super.reset();
+      ignoredData = null;
+      text = null;
+    }
+
+    @XmlElement(name = "text")
+    public String getText() {
+      return UtilCharacterEncoding.sanitizeForXml(text);
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -497,8 +648,12 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       if (actualLength > 0) {
         ignoredData = new byte[actualLength];
         System.arraycopy(sfData, offset, ignoredData, 0, actualLength);
+        if (UtilCharacterEncoding.isHumanReadable(ignoredData, config.getAfpCharSet())) {
+          text = new String(ignoredData, config.getAfpCharSet());
+        }
       } else {
         ignoredData = null;
+        text = null;
       }
     }
 
@@ -509,7 +664,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       }
     }
 
-
     public byte[] getIgnoredData() {
       return ignoredData;
     }
@@ -519,15 +673,32 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 64. <br> */
-  public static class OVS_Overstrike extends PTOCAControlSequence {
+  /** PTOCA, Page 64. <br> */
+  @XmlRootElement
+  public static final class OVS_Overstrike extends PTOCAControlSequence {
     PTOCA_BypassFlag bypassFlag;
     int overStrikeCharacterCodePoint;
+    String text;
+
+    @Override
+    public void reset() {
+      super.reset();
+      bypassFlag = null;
+      overStrikeCharacterCodePoint = 0;
+      text = null;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       bypassFlag = PTOCA_BypassFlag.valueOf(sfData[offset]);
       overStrikeCharacterCodePoint = UtilBinaryDecoding.parseInt(sfData, offset + 1, 2);
+      if (overStrikeCharacterCodePoint <= 0xFF) {
+        text = new String(new byte[] {(byte) overStrikeCharacterCodePoint}, config.getAfpCharSet());
+      } else {
+        text = new String(
+            UtilBinaryDecoding.intToByteArray(overStrikeCharacterCodePoint, 2),
+            config.getAfpCharSet());
+      }
     }
 
     @Override
@@ -552,12 +723,22 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       this.overStrikeCharacterCodePoint = overStrikeCharacterCodePoint;
     }
 
-
+    @XmlElement(name = "text")
+    public String getText() {
+      return UtilCharacterEncoding.sanitizeForXml(text);
+    }
   }
 
-  /* PTOCA, Page 69. <br> */
-  public static class RMB_RelativeMoveBaseline extends PTOCAControlSequence {
+  /** PTOCA, Page 69. <br> */
+  @XmlRootElement
+  public static final class RMB_RelativeMoveBaseline extends PTOCAControlSequence {
     short increment;
+
+    @Override
+    public void reset() {
+      super.reset();
+      increment = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -569,7 +750,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       os.write(UtilBinaryDecoding.shortToByteArray(increment, 2));
     }
 
-
     public short getIncrement() {
       return increment;
     }
@@ -579,9 +759,16 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 71. <br> */
-  public static class RMI_RelativeMoveInline extends PTOCAControlSequence {
+  /** PTOCA, Page 71. <br> */
+  @XmlRootElement
+  public static final class RMI_RelativeMoveInline extends PTOCAControlSequence {
     short increment;
+
+    @Override
+    public void reset() {
+      super.reset();
+      increment = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -593,7 +780,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       os.write(UtilBinaryDecoding.shortToByteArray(increment, 2));
     }
 
-
     public short getIncrement() {
       return increment;
     }
@@ -603,10 +789,25 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 73. <br> */
-  public static class RPS_RepeatString extends PTOCAControlSequence {
+  /** PTOCA, Page 73. <br> */
+  @XmlRootElement
+  public static final class RPS_RepeatString extends PTOCAControlSequence {
     short repeatLength;
     byte[] repeatData;
+    String text;
+
+    @Override
+    public void reset() {
+      super.reset();
+      repeatLength = 0;
+      repeatData = null;
+      text = null;
+    }
+
+    @XmlElement(name = "text")
+    public String getText() {
+      return UtilCharacterEncoding.sanitizeForXml(text);
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -615,8 +816,18 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       if (actualLegth > 2) {
         repeatData = new byte[actualLegth - 2];
         System.arraycopy(sfData, offset + 2, repeatData, 0, repeatData.length);
+
+        int len = repeatLength & 0xFFFF;
+        byte[] fullData = new byte[len];
+        for (int i = 0; i < len; i++) {
+          fullData[i] = repeatData[i % repeatData.length];
+        }
+        if (UtilCharacterEncoding.isHumanReadable(fullData, config.getAfpCharSet())) {
+          text = new String(fullData, config.getAfpCharSet());
+        }
       } else {
         repeatData = null;
+        text = null;
       }
 
     }
@@ -628,7 +839,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
         os.write(repeatData);
       }
     }
-
 
     public short getRepeatLength() {
       return repeatLength;
@@ -652,9 +862,16 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
 
   }
 
-  /* PTOCA, Page 75. <br> The Set Baseline Increment control sequence specifies the increment to be added to the current baseline coordinate when a Begin Line control sequence is executed. This is a modal control sequence. */
-  public static class SBI_SetBaselineIncrement extends PTOCAControlSequence {
+  /** PTOCA, Page 75. <br> The Set Baseline Increment control sequence specifies the increment to be added to the current baseline coordinate when a Begin Line control sequence is executed. This is a modal control sequence. */
+  @XmlRootElement
+  public static final class SBI_SetBaselineIncrement extends PTOCAControlSequence {
     short increment;
+
+    @Override
+    public void reset() {
+      super.reset();
+      increment = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -666,7 +883,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       os.write(UtilBinaryDecoding.shortToByteArray(increment, 2));
     }
 
-
     public short getIncrement() {
       return increment;
     }
@@ -676,20 +892,30 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 77. <br> The Set Coded Font Local control sequence activates a coded font and specifies the character attributes to be used. This is a modal control sequence. */
-  public static class SCFL_SetCodedFontLocal extends PTOCAControlSequence {
+  /** PTOCA, Page 77. <br> The Set Coded Font Local control sequence activates a coded font and specifies the character attributes to be used. This is a modal control sequence. */
+  @XmlRootElement
+  public static final class SCFL_SetCodedFontLocal extends PTOCAControlSequence {
     short codedFontLocalID;
+
+    @Override
+    public void reset() {
+      super.reset();
+      codedFontLocalID = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       codedFontLocalID = UtilBinaryDecoding.parseShort(sfData, offset, 1);
+      Charset cs = config.getCharsetForLID(codedFontLocalID);
+      if (cs != null) {
+        config.setAfpCharSet(cs);
+      }
     }
 
     @Override
     public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
       os.write(UtilBinaryDecoding.intToByteArray(codedFontLocalID, 1));
     }
-
 
     public short getCodedFontLocalID() {
       return codedFontLocalID;
@@ -700,8 +926,9 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 79. <br> The Set Extended Text Color control sequence specifies a color value and defines the color space and encoding for that value. The specified color value is applied to foreground areas of the text presentation space. */
-  public static class SEC_SetExtendedTextColor extends PTOCAControlSequence {
+  /** PTOCA, Page 79. <br> The Set Extended Text Color control sequence specifies a color value and defines the color space and encoding for that value. The specified color value is applied to foreground areas of the text presentation space. */
+  @XmlRootElement
+  public static final class SEC_SetExtendedTextColor extends PTOCAControlSequence {
     byte reserved4 = 0x00;
     AFPColorSpace colorSpace;
     byte[] reserved6_9 = new byte[4];
@@ -710,6 +937,19 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     byte nrOfBitsComponent3;
     byte nrOfBitsComponent4;
     byte[] colorValue;
+
+    @Override
+    public void reset() {
+      super.reset();
+      reserved4 = 0x00;
+      colorSpace = null;
+      reserved6_9 = new byte[4];
+      nrOfBitsComponent1 = 0;
+      nrOfBitsComponent2 = 0;
+      nrOfBitsComponent3 = 0;
+      nrOfBitsComponent4 = 0;
+      colorValue = null;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -802,16 +1042,24 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 84. <br> The Set Intercharacter Adjustment control sequence specifies additional increment or decrement between graphic characters. This is a modal control sequence. */
-  public static class SIA_SetIntercharacterAdjustment extends PTOCAControlSequence {
+  /** PTOCA, Page 84. <br> The Set Intercharacter Adjustment control sequence specifies additional increment or decrement between graphic characters. This is a modal control sequence. */
+  @XmlRootElement
+  public static final class SIA_SetIntercharacterAdjustment extends PTOCAControlSequence {
     short adjustment;
     SIA_Direction direction;
 
     @Override
+    public void reset() {
+      super.reset();
+      adjustment = 0;
+      direction = null;
+    }
+
+    @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       adjustment = UtilBinaryDecoding.parseShort(sfData, offset, 2);
-      if (StructuredField.getActualLength(sfData, offset, length) > 2) {
-        direction = SIA_Direction.valueOf(sfData[offset + 1]);
+      if (StructuredField.getActualLength(sfData, offset, length) >= 3) {
+        direction = SIA_Direction.valueOf(sfData[offset + 2]);
       } else {
         direction = null;
       }
@@ -863,9 +1111,16 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 87. <br> The Set Inline Margin control sequence specifies the position of an inline margin. This is a modal control sequence. */
-  public static class SIM_SetInlineMargin extends PTOCAControlSequence {
+  /** PTOCA, Page 87. <br> The Set Inline Margin control sequence specifies the position of an inline margin. This is a modal control sequence. */
+  @XmlRootElement
+  public static final class SIM_SetInlineMargin extends PTOCAControlSequence {
     short displacement;
+
+    @Override
+    public void reset() {
+      super.reset();
+      displacement = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -877,7 +1132,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       os.write(UtilBinaryDecoding.shortToByteArray(displacement, 2));
     }
 
-
     public short getDisplacement() {
       return displacement;
     }
@@ -887,10 +1141,18 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 89. <br> The Set Text Color control sequence specifies a color attribute for the foreground areas of the text presentation space. */
-  public static class STC_SetTextColor extends PTOCAControlSequence {
+  /** PTOCA, Page 89. <br> The Set Text Color control sequence specifies a color attribute for the foreground areas of the text presentation space. */
+  @XmlRootElement
+  public static final class STC_SetTextColor extends PTOCAControlSequence {
     AFPColorValue foregroundColor;
     STC_Precision precision;
+
+    @Override
+    public void reset() {
+      super.reset();
+      foregroundColor = null;
+      precision = null;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -949,10 +1211,18 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 92. <br> The Set Text Orientation control sequence establishes the I-direction and B-direction for the subsequent text. This is a modal control sequence. */
-  public static class STO_SetTextOrientation extends PTOCAControlSequence {
+  /** PTOCA, Page 92. <br> The Set Text Orientation control sequence establishes the I-direction and B-direction for the subsequent text. This is a modal control sequence. */
+  @XmlRootElement
+  public static final class STO_SetTextOrientation extends PTOCAControlSequence {
     AFPOrientation xOrientation;
     AFPOrientation yOrientation;
+
+    @Override
+    public void reset() {
+      super.reset();
+      xOrientation = null;
+      yOrientation = null;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -983,9 +1253,16 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 95. <br> The Set Variable Space Character Increment control sequence specifies the increment for a variable space character.*/
-  public static class SVI_SetVariableSpaceCharacterIncrement extends PTOCAControlSequence {
+  /** PTOCA, Page 95. <br> The Set Variable Space Character Increment control sequence specifies the increment for a variable space character.*/
+  @XmlRootElement
+  public static final class SVI_SetVariableSpaceCharacterIncrement extends PTOCAControlSequence {
     short increment;
+
+    @Override
+    public void reset() {
+      super.reset();
+      increment = 0;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -997,7 +1274,6 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       os.write(UtilBinaryDecoding.shortToByteArray(increment, 2));
     }
 
-
     public short getIncrement() {
       return increment;
     }
@@ -1007,11 +1283,20 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 97. <br> The Temporary Baseline Move control sequence changes the position of the baseline without changing the established baseline. */
-  public static class TBM_TemporaryBaselineMove extends PTOCAControlSequence {
+  /** PTOCA, Page 97. <br> The Temporary Baseline Move control sequence changes the position of the baseline without changing the established baseline. */
+  @XmlRootElement
+  public static final class TBM_TemporaryBaselineMove extends PTOCAControlSequence {
     TBM_Direction direction;
     TBM_Precision precision;
     Short temporaryBaselineIncrement;
+
+    @Override
+    public void reset() {
+      super.reset();
+      direction = null;
+      precision = null;
+      temporaryBaselineIncrement = null;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -1104,20 +1389,41 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 103. <br> The Transparent Data control sequence contains a sequence of code points that are presented without a scan for embedded control sequences. */
-  public static class TRN_TransparentData extends PTOCAControlSequence {
+  /** PTOCA, Page 103. <br> The Transparent Data control sequence contains a sequence of code points that are presented without a scan for embedded control sequences. */
+  @XmlRootElement
+  public static final class TRN_TransparentData extends PTOCAControlSequence {
     String transparentData;
     byte[] transparentDataEBCDIC;
 
     volatile boolean isUseEBCDICData;
 
     @Override
+    public void reset() {
+      super.reset();
+      transparentData = null;
+      transparentDataEBCDIC = null;
+      isUseEBCDICData = false;
+    }
+
+    @XmlElement(name = "text")
+    public String getText() {
+      if (transparentData == null || transparentData.isEmpty()) {
+        return null;
+      }
+      return UtilCharacterEncoding.sanitizeForXml(transparentData);
+    }
+
+    @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
       int actualLength = StructuredField.getActualLength(sfData, offset, length);
       if (actualLength > 0) {
-        transparentDataEBCDIC = new byte[actualLength];
-        System.arraycopy(sfData, offset, transparentDataEBCDIC, 0, actualLength);
-        transparentData = new String(transparentDataEBCDIC, config.getAfpCharSet());
+        transparentData = UtilCharacterEncoding.decodeEbcdic(sfData, offset, length, config);
+        if (isUseEBCDICData) {
+          transparentDataEBCDIC = new byte[actualLength];
+          System.arraycopy(sfData, offset, transparentDataEBCDIC, 0, actualLength);
+        } else {
+          transparentDataEBCDIC = null;
+        }
       } else {
         transparentData = null;
         transparentDataEBCDIC = null;
@@ -1137,6 +1443,7 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
       }
     }
 
+    @javax.xml.bind.annotation.XmlTransient
     public String getTransparentData() {
       return transparentData;
     }
@@ -1173,9 +1480,368 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
     }
   }
 
-  /* PTOCA, Page 105. <br> The Underscore control sequence identifies text fields that are to be underscored. */
-  public static class USC_Underscore extends PTOCAControlSequence {
+  /**
+   * PTOCA, Page 123. <br>The Unicode Complex Text control sequence marks the start of a string of
+   * code points, all of which are to be processed as graphic characters.
+   */
+  @XmlRootElement
+  public static final class UCT_UnicodeComplexText extends PTOCAControlSequence {
+    byte uctVers = 0x01;
+    int ctLength;
+    byte ctFlags;
+    byte bidiCt;
+    byte glyphCt;
+    short altiPos;
+    byte[] complexText;
+
+    @Override
+    public void reset() {
+      super.reset();
+      uctVers = 0x01;
+      ctLength = 0;
+      ctFlags = 0;
+      bidiCt = 0;
+      glyphCt = 0;
+      altiPos = 0;
+      complexText = null;
+    }
+
+    @XmlElement(name = "text")
+    public String getText() {
+      if (complexText == null || complexText.length == 0) {
+        return null;
+      }
+      return UtilCharacterEncoding.sanitizeForXml(new String(complexText, java.nio.charset.StandardCharsets.UTF_16BE));
+    }
+
+    @Override
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config)
+        throws AFPParserException {
+      uctVers = sfData[offset];
+      ctLength = UtilBinaryDecoding.parseInt(sfData, offset + 2, 2);
+      ctFlags = sfData[offset + 4];
+      bidiCt = sfData[offset + 6];
+      glyphCt = sfData[offset + 7];
+      altiPos = UtilBinaryDecoding.parseShort(sfData, offset + 12, 2);
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(uctVers);
+      os.write(0x00); // Reserved
+      os.write(UtilBinaryDecoding.intToByteArray(ctLength, 2));
+      os.write(ctFlags);
+      os.write(0x00); // Reserved
+      os.write(bidiCt);
+      os.write(glyphCt);
+      os.write(new byte[4]); // Reserved
+      os.write(UtilBinaryDecoding.shortToByteArray(altiPos, 2));
+      if (complexText != null) {
+        os.write(complexText);
+      }
+    }
+
+    public byte getUctVers() {
+      return uctVers;
+    }
+
+    public void setUctVers(byte uctVers) {
+      this.uctVers = uctVers;
+    }
+
+    public int getCtLength() {
+      return ctLength;
+    }
+
+    public void setCtLength(int ctLength) {
+      this.ctLength = ctLength;
+    }
+
+    public byte getCtFlags() {
+      return ctFlags;
+    }
+
+    public void setCtFlags(byte ctFlags) {
+      this.ctFlags = ctFlags;
+    }
+
+    public byte getBidiCt() {
+      return bidiCt;
+    }
+
+    public void setBidiCt(byte bidiCt) {
+      this.bidiCt = bidiCt;
+    }
+
+    public byte getGlyphCt() {
+      return glyphCt;
+    }
+
+    public void setGlyphCt(byte glyphCt) {
+      this.glyphCt = glyphCt;
+    }
+
+    public short getAltiPos() {
+      return altiPos;
+    }
+
+    public void setAltiPos(short altiPos) {
+      this.altiPos = altiPos;
+    }
+
+    public byte[] getComplexText() {
+      return complexText;
+    }
+
+    public void setComplexText(byte[] complexText) {
+      this.complexText = complexText;
+      this.ctLength = (complexText != null) ? complexText.length : 0;
+    }
+  }
+
+  /**
+   * PTOCA, Page 101. <br>The Encrypted Data control sequence contains a sequence of bytes that are
+   * encrypted and must be decrypted into text strings for standard text processing.
+   */
+  @XmlRootElement
+  public static final class ENC_EncryptedData extends PTOCAControlSequence {
+    @AFPField
+    int reserved4_7 = 0x00;
+    @AFPField
+    byte[] encryptedData;
+
+    @Override
+    public void reset() {
+      super.reset();
+      reserved4_7 = 0x00;
+      encryptedData = null;
+    }
+
+    @Override
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+      reserved4_7 = UtilBinaryDecoding.parseInt(sfData, offset, 4);
+      int actualLength = StructuredField.getActualLength(sfData, offset, length);
+      if (actualLength > 4) {
+        encryptedData = new byte[actualLength - 4];
+        System.arraycopy(sfData, offset + 4, encryptedData, 0, encryptedData.length);
+      } else {
+        encryptedData = null;
+      }
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(UtilBinaryDecoding.intToByteArray(reserved4_7, 4));
+      if (encryptedData != null) {
+        os.write(encryptedData);
+      }
+    }
+
+    public int getReserved4_7() {
+      return reserved4_7;
+    }
+
+    public void setReserved4_7(int reserved4_7) {
+      this.reserved4_7 = reserved4_7;
+    }
+
+    public byte[] getEncryptedData() {
+      return encryptedData;
+    }
+
+    public void setEncryptedData(byte[] encryptedData) {
+      this.encryptedData = encryptedData;
+    }
+  }
+
+  /**
+   * PTOCA, Page 78. <br>The Set Key Information control sequence provides encryption key
+   * information to be used with Encrypted Data (ENC) controls.
+   */
+  @XmlRootElement
+  public static final class SKI_SetKeyInformation extends PTOCAControlSequence {
+    @AFPField
+    int reserved4_7 = 0x00;
+    @AFPField
+    byte[] keyInfo;
+
+    @Override
+    public void reset() {
+      super.reset();
+      reserved4_7 = 0x00;
+      keyInfo = null;
+    }
+
+    @Override
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+      reserved4_7 = UtilBinaryDecoding.parseInt(sfData, offset, 4);
+      int actualLength = StructuredField.getActualLength(sfData, offset, length);
+      if (actualLength > 4) {
+        keyInfo = new byte[actualLength - 4];
+        System.arraycopy(sfData, offset + 4, keyInfo, 0, keyInfo.length);
+      } else {
+        keyInfo = null;
+      }
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      if (keyInfo == null || keyInfo.length <= 249) {
+        os.write(UtilBinaryDecoding.intToByteArray(reserved4_7, 4));
+        if (keyInfo != null) {
+          os.write(keyInfo);
+        }
+      } else {
+        // Concatenated payload support: split into multiple chained control sequences.
+        int remaining = keyInfo.length;
+        int offset = 0;
+        while (remaining > 0) {
+          int chunkLen = Math.min(remaining, 249);
+          remaining -= chunkLen;
+          boolean last = (remaining == 0);
+
+          if (offset > 0) {
+            // Write chained introducer for subsequent chunks.
+            // Length is chunkLen + 6 (4 reserved + 1 length byte + 1 type byte)
+            os.write(chunkLen + 6);
+            os.write(ControlSequenceFunctionType.SKI_SetKeyInformation.toByte(!last));
+          } else {
+            // Update the first chunk's CSI if it was originally thought to be the only one.
+            if (!last && csi != null) {
+              csi.setChained(true);
+              csi.setLength((short) (chunkLen + 6));
+            }
+          }
+
+          os.write(UtilBinaryDecoding.intToByteArray(reserved4_7, 4));
+          os.write(keyInfo, offset, chunkLen);
+          offset += chunkLen;
+        }
+      }
+    }
+
+    public int getReserved4_7() {
+      return reserved4_7;
+    }
+
+    public void setReserved4_7(int reserved4_7) {
+      this.reserved4_7 = reserved4_7;
+    }
+
+    public byte[] getKeyInfo() {
+      return keyInfo;
+    }
+
+    public void setKeyInfo(byte[] keyInfo) {
+      this.keyInfo = keyInfo;
+    }
+  }
+
+  /**
+   * PTOCA, Page 88. <br>The Set Encrypted Alternate control sequence contains the alternate text
+   * as a series of code points to be used if the decryption of the encrypted bytes in the ENC
+   * control fails.
+   */
+  @XmlRootElement
+  public static final class SEA_SetEncryptedAlternate extends PTOCAControlSequence {
+    @AFPField
+    int reserved4_7 = 0x00;
+    @AFPField
+    byte[] alternateText;
+    String text;
+
+    @Override
+    public void reset() {
+      super.reset();
+      reserved4_7 = 0x00;
+      alternateText = null;
+      text = null;
+    }
+
+    @Override
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+      reserved4_7 = UtilBinaryDecoding.parseInt(sfData, offset, 4);
+      int actualLength = StructuredField.getActualLength(sfData, offset, length);
+      if (actualLength > 4) {
+        alternateText = new byte[actualLength - 4];
+        System.arraycopy(sfData, offset + 4, alternateText, 0, alternateText.length);
+        if (UtilCharacterEncoding.isHumanReadable(alternateText, config.getAfpCharSet())) {
+          text = new String(alternateText, config.getAfpCharSet());
+        }
+      } else {
+        alternateText = null;
+        text = null;
+      }
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      if (alternateText == null || alternateText.length <= 249) {
+        os.write(UtilBinaryDecoding.intToByteArray(reserved4_7, 4));
+        if (alternateText != null) {
+          os.write(alternateText);
+        }
+      } else {
+        // Concatenated payload support: split into multiple chained control sequences.
+        int remaining = alternateText.length;
+        int offset = 0;
+        while (remaining > 0) {
+          int chunkLen = Math.min(remaining, 249);
+          remaining -= chunkLen;
+          boolean last = (remaining == 0);
+
+          if (offset > 0) {
+            // Write chained introducer for subsequent chunks.
+            // Length is chunkLen + 6 (4 reserved + 1 length byte + 1 type byte)
+            os.write(chunkLen + 6);
+            os.write(ControlSequenceFunctionType.SEA_SetEncryptedAlternate.toByte(!last));
+          } else {
+            // Update the first chunk's CSI if it was originally thought to be the only one.
+            if (!last && csi != null) {
+              csi.setChained(true);
+              csi.setLength((short) (chunkLen + 6));
+            }
+          }
+
+          os.write(UtilBinaryDecoding.intToByteArray(reserved4_7, 4));
+          os.write(alternateText, offset, chunkLen);
+          offset += chunkLen;
+        }
+      }
+    }
+
+    @XmlElement(name = "text")
+    public String getText() {
+      return UtilCharacterEncoding.sanitizeForXml(text);
+    }
+
+    public int getReserved4_7() {
+      return reserved4_7;
+    }
+
+    public void setReserved4_7(int reserved4_7) {
+      this.reserved4_7 = reserved4_7;
+    }
+
+    public byte[] getAlternateText() {
+      return alternateText;
+    }
+
+    public void setAlternateText(byte[] alternateText) {
+      this.alternateText = alternateText;
+    }
+  }
+
+  /** PTOCA, Page 105. <br> The Underscore control sequence identifies text fields that are to be underscored. */
+  @XmlRootElement
+  public static final class USC_Underscore extends PTOCAControlSequence {
     PTOCA_BypassFlag bypassFlag;
+
+    @Override
+    public void reset() {
+      super.reset();
+      bypassFlag = null;
+    }
 
     @Override
     public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
@@ -1193,6 +1859,281 @@ public abstract class PTOCAControlSequence implements IAFPDecodeableWriteable {
 
     public void setBypassFlag(PTOCA_BypassFlag bypassFlag) {
       this.bypassFlag = bypassFlag;
+    }
+  }
+
+  /**
+   * Represents a run of free-standing graphic characters in a PTX field.
+   */
+  @XmlRootElement
+  public static final class GraphicCharacters extends PTOCAControlSequence {
+    @AFPField
+    byte[] data;
+    String text;
+
+    @Override
+    public void reset() {
+      super.reset();
+      data = null;
+      text = null;
+    }
+
+    @XmlElement(name = "text")
+    public String getText() {
+      return UtilCharacterEncoding.sanitizeForXml(text);
+    }
+
+    @Override
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
+      int actualLength = StructuredField.getActualLength(sfData, offset, length);
+      if (actualLength > 0) {
+        text = UtilCharacterEncoding.decodeEbcdic(sfData, offset, length, config);
+        data = new byte[actualLength];
+        System.arraycopy(sfData, offset, data, 0, actualLength);
+      } else {
+        data = null;
+        text = null;
+      }
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      if (data != null) {
+        os.write(data);
+      }
+    }
+
+    public byte[] getData() {
+      return data;
+    }
+
+    public void setData(byte[] data) {
+      this.data = data;
+    }
+  }
+
+  @XmlRootElement
+  public static final class GLC_GlyphLayoutControl extends PTOCAControlSequence {
+    short iAdvance;
+    short oidLgth;
+    short ffnLgth;
+    byte[] fontOid;
+    String ffontName;
+
+    @Override
+    public void reset() {
+      super.reset();
+      iAdvance = 0;
+      oidLgth = 0;
+      ffnLgth = 0;
+      fontOid = null;
+      ffontName = null;
+    }
+
+    @Override
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config)
+        throws AFPParserException {
+      iAdvance = UtilBinaryDecoding.parseShort(sfData, offset, 2);
+      oidLgth = (short) (sfData[offset + 2] & 0xFF);
+      ffnLgth = (short) (sfData[offset + 3] & 0xFF);
+
+      if (oidLgth > 0) {
+        fontOid = new byte[oidLgth];
+        System.arraycopy(sfData, offset + 8, fontOid, 0, oidLgth);
+      }
+      if (ffnLgth > 0) {
+        ffontName =
+            new String(
+                sfData,
+                offset + 8 + (oidLgth > 0 ? oidLgth : 0),
+                ffnLgth,
+                java.nio.charset.StandardCharsets.UTF_16BE);
+      }
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(UtilBinaryDecoding.shortToByteArray(iAdvance, 2));
+      os.write(oidLgth & 0xFF);
+      os.write(ffnLgth & 0xFF);
+      os.write(new byte[4]); // Reserved
+      if (fontOid != null) {
+        os.write(fontOid);
+      }
+      if (ffontName != null) {
+        os.write(ffontName.getBytes(java.nio.charset.StandardCharsets.UTF_16BE));
+      }
+    }
+
+    @XmlElement(name = "text")
+    public String getText() {
+      return UtilCharacterEncoding.sanitizeForXml(ffontName);
+    }
+
+    public short getIAdvance() {
+      return iAdvance;
+    }
+
+    public void setIAdvance(short iAdvance) {
+      this.iAdvance = iAdvance;
+    }
+
+    public short getOidLgth() {
+      return oidLgth;
+    }
+
+    public void setOidLgth(short oidLgth) {
+      this.oidLgth = oidLgth;
+    }
+
+    public short getFfnLgth() {
+      return ffnLgth;
+    }
+
+    public void setFfnLgth(short ffnLgth) {
+      this.ffnLgth = ffnLgth;
+    }
+
+    public byte[] getFontOid() {
+      return fontOid;
+    }
+
+    public void setFontOid(byte[] fontOid) {
+      this.fontOid = fontOid;
+    }
+
+    public String getFfontName() {
+      return UtilCharacterEncoding.sanitizeForXml(ffontName);
+    }
+
+    public void setFfontName(String ffontName) {
+      this.ffontName = ffontName;
+    }
+  }
+
+  @XmlRootElement
+  public static final class GIR_GlyphIdRun extends PTOCAControlSequence {
+    int[] glyphIds;
+
+    @Override
+    public void reset() {
+      super.reset();
+      glyphIds = null;
+    }
+
+    @Override
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config)
+        throws AFPParserException {
+      // PTOCA-04 (AFPC-0005-04), page 83: LL=4 + n*2. Bytes 2-3 are Reserved.
+      if (length >= 2) {
+        int count = (length - 2) / 2;
+        glyphIds = new int[count];
+        for (int i = 0; i < count; i++) {
+          glyphIds[i] = UtilBinaryDecoding.parseInt(sfData, offset + 2 + i * 2, 2);
+        }
+      }
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(new byte[2]); // Reserved
+      if (glyphIds != null) {
+        for (int id : glyphIds) {
+          os.write(UtilBinaryDecoding.intToByteArray(id, 2));
+        }
+      }
+    }
+
+    public int[] getGlyphIds() {
+      return glyphIds;
+    }
+
+    public void setGlyphIds(int[] glyphIds) {
+      this.glyphIds = glyphIds;
+    }
+  }
+
+  @XmlRootElement
+  public static final class GAR_GlyphAdvanceRun extends PTOCAControlSequence {
+    short[] advances;
+
+    @Override
+    public void reset() {
+      super.reset();
+      advances = null;
+    }
+
+    @Override
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config)
+        throws AFPParserException {
+      // PTOCA-04 (AFPC-0005-04), page 82: LL=4 + n*2. Bytes 2-3 are Reserved.
+      if (length >= 2) {
+        int count = (length - 2) / 2;
+        advances = new short[count];
+        for (int i = 0; i < count; i++) {
+          advances[i] = UtilBinaryDecoding.parseShort(sfData, offset + 2 + i * 2, 2);
+        }
+      }
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(new byte[2]); // Reserved
+      if (advances != null) {
+        for (short adv : advances) {
+          os.write(UtilBinaryDecoding.shortToByteArray(adv, 2));
+        }
+      }
+    }
+
+    public short[] getAdvances() {
+      return advances;
+    }
+
+    public void setAdvances(short[] advances) {
+      this.advances = advances;
+    }
+  }
+
+  @XmlRootElement
+  public static final class GOR_GlyphOffsetRun extends PTOCAControlSequence {
+    short[] offsets;
+
+    @Override
+    public void reset() {
+      super.reset();
+      offsets = null;
+    }
+
+    @Override
+    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config)
+        throws AFPParserException {
+      // PTOCA-04 (AFPC-0005-04), page 89: LL=4 + n*2. Bytes 2-3 are Reserved.
+      if (length >= 2) {
+        int count = (length - 2) / 2;
+        offsets = new short[count];
+        for (int i = 0; i < count; i++) {
+          offsets[i] = UtilBinaryDecoding.parseShort(sfData, offset + 2 + i * 2, 2);
+        }
+      }
+    }
+
+    @Override
+    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
+      os.write(new byte[2]); // Reserved
+      if (offsets != null) {
+        for (short off : offsets) {
+          os.write(UtilBinaryDecoding.shortToByteArray(off, 2));
+        }
+      }
+    }
+
+    public short[] getOffsets() {
+      return offsets;
+    }
+
+    public void setOffsets(short[] offsets) {
+      this.offsets = offsets;
     }
   }
 }

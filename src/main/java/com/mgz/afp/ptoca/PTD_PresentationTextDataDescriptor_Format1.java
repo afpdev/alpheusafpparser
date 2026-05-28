@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.ptoca;
 
 import com.mgz.afp.base.StructuredField;
@@ -54,14 +55,13 @@ public class PTD_PresentationTextDataDescriptor_Format1 extends StructuredField 
     ySize = UtilBinaryDecoding.parseShort(sfData, offset + 8, 2);
 
     int actualLength = StructuredField.getActualLength(sfData, offset, length);
-    if (actualLength > 10) {
+    if (actualLength >= 12) {
       reserved10_11 = new byte[2];
-      System.arraycopy(sfData, offset + 10, reserved10_11, 0, reserved10_11.length);
+      System.arraycopy(sfData, offset + 10, reserved10_11, 0, 2);
     } else {
       reserved10_11 = null;
     }
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
@@ -73,9 +73,7 @@ public class PTD_PresentationTextDataDescriptor_Format1 extends StructuredField 
     baos.write(UtilBinaryDecoding.shortToByteArray(yUnitsPerUnitBase, 2));
     baos.write(UtilBinaryDecoding.shortToByteArray(xSize, 2));
     baos.write(UtilBinaryDecoding.shortToByteArray(ySize, 2));
-    if (reserved10_11 != null) {
-      baos.write(reserved10_11, 0, 2);
-    }
+    baos.write(reserved10_11 != null ? reserved10_11 : new byte[2]);
 
     writeFullStructuredField(os, baos.toByteArray());
   }

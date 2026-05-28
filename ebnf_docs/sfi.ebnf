@@ -1,0 +1,27 @@
+(* AFP EBNF: Phase 2 - MO:DCA Structured Field Introducer (SFI) *)
+
+import "primitives.ebnf"
+
+(* SFI Structure *)
+SFI               = SFLength, SFTypeID, FlagByte, Reserved2B, [ SFIExtension ], [ Padding ] ;
+
+(* SFI Components *)
+SFLength          = UBIN2 ; (* Range: 8–32,767 *)
+SFTypeID          = CODE3 ; (* Format: D3TTCC *)
+
+FlagByte          = bit, (* ExtFlag: 1=Extension present *)
+                    bit, (* Reserved *)
+                    bit, (* SegFlag: 1=Data segmented *)
+                    bit, (* Reserved *)
+                    bit, (* PadFlag: 1=Padding present *)
+                    bit, bit, bit ; (* Reserved *)
+
+Reserved2B        = byte, byte ; (* Must be X'0000' *)
+
+(* Optional SFI Extension *)
+SFIExtension      = ExtLength, ExtData ;
+ExtLength         = UBIN1 ; (* Range: 1–255 *)
+ExtData           = { byte } ; (* Length = ExtLength - 1 *)
+
+(* Optional Padding *)
+Padding           = { byte } ;

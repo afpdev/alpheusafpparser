@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.modca;
 
 import com.mgz.afp.base.StructuredFieldBaseName;
@@ -58,7 +59,8 @@ public class IOB_IncludeObject extends StructuredFieldBaseName {
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    checkDataLength(sfData, offset, length, 28);
+    int actualLength = getActualLength(sfData, offset, length);
+    checkDataLength(sfData, offset, length, 27);
     super.decodeAFP(sfData, offset, length, config); // Decode name.
     reserved8 = sfData[offset + 8];
     objectType = AFPObjectType.valueOf(UtilBinaryDecoding.parseShort(sfData, offset + 9, 1));
@@ -68,12 +70,11 @@ public class IOB_IncludeObject extends StructuredFieldBaseName {
     yRotation = AFPOrientation.valueOf(UtilBinaryDecoding.parseInt(sfData, offset + 18, 2));
     xOriginOfContent = UtilBinaryDecoding.parseInt(sfData, offset + 20, 3);
     yOriginOfContent = UtilBinaryDecoding.parseInt(sfData, offset + 23, 3);
-    referenceCoordinateSystem = sfData[26];
+    referenceCoordinateSystem = sfData[offset + 26];
 
-    triplets = TripletParser.parseTriplets(sfData, offset + 27, -1, config);
+    triplets = TripletParser.parseTriplets(sfData, offset + 27, actualLength - 27, config);
 
   }
-
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {

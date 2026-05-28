@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.foca;
 
 import com.mgz.afp.base.IHasTriplets;
@@ -42,31 +43,41 @@ public class CFC_CodedFontControl extends StructuredField implements IHasTriplet
    * parameter defines the length of the repeating group used in the Coded Font Index (CFI)
    * structured field.
    */
+  public static final int CFI_REPEATING_GROUP_LENGTH_DEFAULT = 0x19;
+  /**
+   * This is a control parameter, used to manage the data structures. The value contained in this
+   * parameter defines the length of the repeating group used in the Coded Font Index (CFI)
+   * structured field.
+   */
   @AFPField
-  public static final int CFIRepeatingGroupLength = 0x19;
+  private byte cfiRepeatingGroupLength = CFI_REPEATING_GROUP_LENGTH_DEFAULT;
   /**
    * This is a retired parameter which must be set to a constant value of X'01'. No significance
    * should be attached to the value by any using application, but any font generator should set the
    * value as indicated.
    */
   @AFPField
-  public static final int RETIRED = 0x01;
+  private byte retired = 0x01;
   @AFPField
   List<Triplet> triplets;
 
   @Override
   public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-    checkDataLength(sfData, offset, length, -1);
+    checkDataLength(sfData, offset, length, 2);
 
-    TripletParser.parseTriplets(sfData, 2, -1, config);
+    cfiRepeatingGroupLength = sfData[offset];
+    retired = sfData[offset + 1];
+
+    int actualLength = getActualLength(sfData, offset, length);
+    triplets = TripletParser.parseTriplets(sfData, offset + 2, actualLength - 2, config);
   }
 
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    baos.write(CFIRepeatingGroupLength);
-    baos.write(RETIRED);
+    baos.write(cfiRepeatingGroupLength);
+    baos.write(retired);
     if (triplets != null) {
       for (Triplet triplet : triplets) {
         triplet.writeAFP(baos, config);
@@ -99,5 +110,21 @@ public class CFC_CodedFontControl extends StructuredField implements IHasTriplet
       return;
     }
     triplets.remove(triplet);
+  }
+
+  public byte getCfiRepeatingGroupLength() {
+    return cfiRepeatingGroupLength;
+  }
+
+  public void setCfiRepeatingGroupLength(byte cfiRepeatingGroupLength) {
+    this.cfiRepeatingGroupLength = cfiRepeatingGroupLength;
+  }
+
+  public byte getRetired() {
+    return retired;
+  }
+
+  public void setRetired(byte retired) {
+    this.retired = retired;
   }
 }

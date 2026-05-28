@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.util;
 
 import com.mgz.afp.base.annotations.AFPField;
@@ -25,13 +26,18 @@ import com.mgz.afp.exceptions.AFPParserException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UtilReflection {
 
   public static final Comparator<Field> comparatorFields = new FieldComparator();
   private static AFPField annotationAFPField;
-  public static final AFPField defaultAFPFieldAnnotation = getAFPFieldDefaultAnnotation();
+  public static final AFPField defaultAFPFieldAnnotation = getAfpFieldDefaultAnnotation();
 
   public static Object getFieldValue(Field field, Object instance) throws AFPParserException {
     if (instance == null) {
@@ -42,10 +48,8 @@ public class UtilReflection {
 
     // Try to get value by accessing the field.
     try {
-      boolean isAccessable = field.isAccessible();
       field.setAccessible(true);
       Object val = field.get(instance);
-      field.setAccessible(isAccessable);
       return val;
     } catch (IllegalArgumentException | IllegalAccessException e1) {
       // We don't give up.
@@ -74,10 +78,8 @@ public class UtilReflection {
   public static void setFieldValue(Field field, Object instance, Object value) throws AFPParserException {
     // Try to set value by accessing the field.
     try {
-      boolean isAccessable = field.isAccessible();
       field.setAccessible(true);
       field.set(instance, value);
-      field.setAccessible(isAccessable);
     } catch (IllegalArgumentException | IllegalAccessException e1) {
       throw new AFPParserException("Failed to set value.", e1);
     }
@@ -95,7 +97,7 @@ public class UtilReflection {
     );
   }
 
-  public static boolean isAFPType(Class<?> clazz) {
+  public static boolean isAfpType(Class<?> clazz) {
     while (clazz != null && clazz != Object.class) {
       if (clazz.getAnnotation(AFPType.class) != null) {
         return true;
@@ -110,7 +112,7 @@ public class UtilReflection {
     return false;
   }
 
-  public static AFPField getAFPFieldDefaultAnnotation() {
+  public static AFPField getAfpFieldDefaultAnnotation() {
     if (annotationAFPField != null) {
       return annotationAFPField;
     }
@@ -119,9 +121,8 @@ public class UtilReflection {
     return annotationAFPField = afpFieldAnnotationBearer.getClass().getAnnotation(AFPField.class);
   }
 
-  public static List<Field> getAFPFields(Class<?> clazz) {
+  public static List<Field> getAfpFields(Class<?> clazz) {
     AFPField defaultAnnotation = null;
-
 
     List<Class<?>> listOfClasses = new ArrayList<Class<?>>();
     while (clazz != null && clazz != Object.class) {

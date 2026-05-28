@@ -16,10 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
 package com.mgz.afp.enums;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 public enum SFTypeID {
   Undefined(0, 0, 0),
@@ -62,6 +67,7 @@ public enum SFTypeID {
   CAT_ColorAttributeTable(0xD3, 0xB0, 0x77),
   CCP_ConditionalProcessingControl(0xD3, 0xA7, 0xCA),
   CDD_ContainerDataDescriptor(0xD3, 0xA6, 0x92),
+  CMR_ColorManagementResource(0xD3, 0xA0, 0xA2),
   CFC_CodedFontControl(0xD3, 0xA7, 0x8A), // FOCA page 133
   CFI_CodedFontIndex(0xD3, 0x8C, 0x8A), // FOCA page 134
   CPC_CodePageControl(0xD3, 0xA7, 0x87),    // FOCA page 137
@@ -127,8 +133,9 @@ public enum SFTypeID {
   LLE_LinkLogicalElement(0xD3, 0xB4, 0x90),
   LNC_LineDescriptorCount(0xD3, 0xAA, 0xE7),
   LND_LineDescriptor(0xD3, 0xA6, 0xE7),
+  MPT_MapPresentationText(0xD3, 0xAB, 0x9B),
   MBC_MapBarCodeObject(0xD3, 0xAB, 0xEB),
-  MCA_MapColorAttribteTable(0xD3, 0xAB, 0x77),
+  MCA_MapColorAttributeTable(0xD3, 0xAB, 0x77),
   MCC_MediumCopyCount(0xD3, 0xA2, 0x88),
   MCD_MapContainerData(0xD3, 0xAB, 0x92),
   MCF_MapCodedFont_Format1(0xD3, 0xB1, 0x8A),
@@ -164,7 +171,6 @@ public enum SFTypeID {
   TLE_TagLogicalElement(0xD3, 0xA0, 0x90),
   XMD_XMLDescriptor(0xD3, 0xA6, 0x8E),;
 
-
   /**
    * SFTypeID[2].
    */
@@ -178,26 +184,74 @@ public enum SFTypeID {
    */
   SFCategory sfCategory;
 
+  private static final Map<Integer, SFTypeID> VAL_MAP = new HashMap<>();
+
+  static {
+    for (SFTypeID type : values()) {
+      VAL_MAP.put(calcKey(type.sfClass.val, type.sfType.val, type.sfCategory.val), type);
+    }
+  }
+
   SFTypeID(int sfClass, int sfType, int sfCategory) {
     this.sfClass = SFClass.valueOf(sfClass);
     this.sfType = SFType.valueOf(sfType);
     this.sfCategory = SFCategory.valueOf(sfCategory);
   }
 
+  private static int calcKey(int sfClass, int sfType, int sfCategory) {
+    return ((sfClass & 0xFF) << 16) | ((sfType & 0xFF) << 8) | (sfCategory & 0xFF);
+  }
+
   public static SFTypeID parse(InputStream is) throws IOException {
     int sfClass = is.read();
+    if (sfClass == -1) {
+      throw new IOException("Reached end of stream while parsing SFTypeID class.");
+    }
     int sfType = is.read();
+    if (sfType == -1) {
+      throw new IOException("Reached end of stream while parsing SFTypeID type.");
+    }
     int sfCategory = is.read();
-
-    for (SFTypeID sfTypeID : SFTypeID.values()) {
-      if (sfTypeID.sfClass.val == sfClass
-          && sfTypeID.sfType.val == sfType
-          && sfTypeID.sfCategory.val == sfCategory) {
-        return sfTypeID;
-      }
+    if (sfCategory == -1) {
+      throw new IOException("Reached end of stream while parsing SFTypeID category.");
     }
 
-    return Undefined;
+    SFTypeID sfTypeID = VAL_MAP.get(calcKey(sfClass, sfType, sfCategory));
+    return sfTypeID != null ? sfTypeID : Undefined;
+  }
+
+  /**
+   * Parses a {@link SFTypeID} from a {@link ByteBuffer}.
+   *
+   * @param buffer the buffer to parse from
+   * @return the parsed {@link SFTypeID}
+   */
+  public static SFTypeID parse(ByteBuffer buffer) {
+    int sfClass = buffer.get() & 0xFF;
+    int sfType = buffer.get() & 0xFF;
+    int sfCategory = buffer.get() & 0xFF;
+
+    return valueOf(sfClass, sfType, sfCategory);
+  }
+
+  /**
+   * Parses a {@link SFTypeID} from a {@link ByteBuffer} at the given offset.
+   *
+   * @param buffer the buffer to parse from
+   * @param offset the starting offset in the buffer
+   * @return the parsed {@link SFTypeID}
+   */
+  public static SFTypeID parse(ByteBuffer buffer, int offset) {
+    int sfClass = buffer.get(offset) & 0xFF;
+    int sfType = buffer.get(offset + 1) & 0xFF;
+    int sfCategory = buffer.get(offset + 2) & 0xFF;
+
+    return valueOf(sfClass, sfType, sfCategory);
+  }
+
+  private static SFTypeID valueOf(int sfClass, int sfType, int sfCategory) {
+    SFTypeID sfTypeID = VAL_MAP.get(calcKey(sfClass, sfType, sfCategory));
+    return sfTypeID != null ? sfTypeID : Undefined;
   }
 
   public byte[] toBytes() {
@@ -206,6 +260,18 @@ public enum SFTypeID {
     data[1] = (byte) sfType.val;
     data[2] = (byte) sfCategory.val;
     return data;
+  }
+
+  /**
+   * Writes the SFTypeID directly to the given {@link OutputStream}.
+   *
+   * @param os the {@link OutputStream} to write to
+   * @throws IOException if writing fails
+   */
+  public void write(OutputStream os) throws IOException {
+    os.write(sfClass.val);
+    os.write(sfType.val);
+    os.write(sfCategory.val);
   }
 
   public SFClass getSfClass() {

@@ -16,11 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Alpheus AFP Parser.  If not, see <http://www.gnu.org/licenses/>
 */
+
+
 package com.mgz.afp.modca;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.mgz.afp.base.StructuredField;
+import com.mgz.afp.base.annotations.AFPField;
 import com.mgz.afp.exceptions.AFPParserException;
-import com.mgz.afp.exceptions.IAFPDecodeableWriteable;
 import com.mgz.afp.parser.AFPParserConfiguration;
 import com.mgz.util.UtilBinaryDecoding;
 
@@ -39,9 +42,13 @@ public class MCC_MediumCopyCount extends StructuredField {
     int pos = 0;
     repeatingGroups = new ArrayList<MCC_MediumCopyCount.MCC_RepeatingGroup>();
     while (pos < actualLength) {
-      MCC_RepeatingGroup rg = new MCC_RepeatingGroup();
-      rg.decodeAFP(sfData, offset + pos, actualLength - pos, config);
-      repeatingGroups.add(rg);
+      checkDataLength(sfData, offset + pos, actualLength - pos, 6);
+      short startingCopyNumber = UtilBinaryDecoding.parseShort(sfData, offset + pos, 2);
+      short endingCopyNumber = UtilBinaryDecoding.parseShort(sfData, offset + pos + 2, 2);
+      byte reserved4 = sfData[offset + pos + 4];
+      byte mediumModificationControlIdentifier = sfData[offset + pos + 5];
+
+      repeatingGroups.add(new MCC_RepeatingGroup(startingCopyNumber, endingCopyNumber, reserved4, mediumModificationControlIdentifier));
       pos += 6;
     }
   }
@@ -49,8 +56,13 @@ public class MCC_MediumCopyCount extends StructuredField {
   @Override
   public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    for (MCC_RepeatingGroup rg : repeatingGroups) {
-      rg.writeAFP(baos, config);
+    if (repeatingGroups != null) {
+      for (MCC_RepeatingGroup rg : repeatingGroups) {
+        baos.write(UtilBinaryDecoding.shortToByteArray(rg.startingCopyNumber(), 2));
+        baos.write(UtilBinaryDecoding.shortToByteArray(rg.endingCopyNumber(), 2));
+        baos.write(rg.reserved4());
+        baos.write(rg.mediumModificationControlIdentifier());
+      }
     }
 
     writeFullStructuredField(os, baos.toByteArray());
@@ -81,60 +93,10 @@ public class MCC_MediumCopyCount extends StructuredField {
     repeatingGroups.remove(rg);
   }
 
-  public static class MCC_RepeatingGroup implements IAFPDecodeableWriteable {
-    short startingCopyNumber;
-    short endingCopyNumber;
-    byte reserved4 = 0x00;
-    byte mediumModificationControlIdentifier;
-
-    @Override
-    public void decodeAFP(byte[] sfData, int offset, int length, AFPParserConfiguration config) throws AFPParserException {
-      checkDataLength(sfData, offset, length, 6);
-      startingCopyNumber = UtilBinaryDecoding.parseShort(sfData, offset, 2);
-      endingCopyNumber = UtilBinaryDecoding.parseShort(sfData, offset + 2, 2);
-      reserved4 = sfData[4];
-      mediumModificationControlIdentifier = sfData[5];
-    }
-
-    @Override
-    public void writeAFP(OutputStream os, AFPParserConfiguration config) throws IOException {
-      os.write(UtilBinaryDecoding.shortToByteArray(startingCopyNumber, 2));
-      os.write(UtilBinaryDecoding.shortToByteArray(endingCopyNumber, 2));
-      os.write(reserved4);
-      os.write(mediumModificationControlIdentifier);
-    }
-
-    public short getStartingCopyNumber() {
-      return startingCopyNumber;
-    }
-
-    public void setStartingCopyNumber(short startingCopyNumber) {
-      this.startingCopyNumber = startingCopyNumber;
-    }
-
-    public short getEndingCopyNumber() {
-      return endingCopyNumber;
-    }
-
-    public void setEndingCopyNumber(short endingCopyNumber) {
-      this.endingCopyNumber = endingCopyNumber;
-    }
-
-    public byte getReserved4() {
-      return reserved4;
-    }
-
-    public void setReserved4(byte reserved4) {
-      this.reserved4 = reserved4;
-    }
-
-    public byte getMediumModificationControlIdentifier() {
-      return mediumModificationControlIdentifier;
-    }
-
-    public void setMediumModificationControlIdentifier(
-        byte mediumModificationControlIdentifier) {
-      this.mediumModificationControlIdentifier = mediumModificationControlIdentifier;
-    }
-  }
+  @XmlRootElement
+  public record MCC_RepeatingGroup(
+      @AFPField short startingCopyNumber,
+      @AFPField short endingCopyNumber,
+      @AFPField byte reserved4,
+      @AFPField byte mediumModificationControlIdentifier) {}
 }

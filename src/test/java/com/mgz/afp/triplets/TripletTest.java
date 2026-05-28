@@ -21,13 +21,13 @@ package com.mgz.afp.triplets;
 import com.mgz.afp.parser.TripletParser;
 import com.mgz.afp.triplets.Triplet.TripletID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 public class TripletTest {
